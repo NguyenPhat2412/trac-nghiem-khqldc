@@ -96,3 +96,27 @@ Tên là tự khai; mã người chơi thuộc trình duyệt, không xác thự
 - WebSocket tối đa 4 kết nối/người và 512 kết nối/máy chủ, 2 đăng ký/kết nối, không đăng ký trùng phòng; 60 lệnh/phút/kết nối. Đóng kết nối giải phóng hạn mức. Thông báo chỉ chứa mã phòng, phiên bản và giờ; trình duyệt gộp thông báo dồn dập trong 120 ms rồi lấy trạng thái có phân quyền.
 - Thứ tự đáp án mới được tạo ổn định bằng mã ngẫu nhiên riêng từng người, giảm kích thước trạng thái phòng. Phòng cũ giữ nguyên thứ tự đã lưu. Ảnh câu hỏi tải ưu tiên và giải mã bất đồng bộ; cache ảnh vẫn phụ thuộc HTTP header của nơi lưu ảnh. Không có proxy tải URL tùy ý từ máy chủ. Nên dùng nguồn ảnh HTTPS do đơn vị quản lý, tên tệp có phiên bản và cache dài hạn.
 - Kiểm tra bổ sung trên **cơ sở dữ liệu thử**: `python3 scripts/resource-security-test.py`, `python3 scripts/room-load-test.py after`, và trong `frontend`: `node tests/resource-ws-check.mjs`. Chạy riêng từng bài tải 100 người; khởi động lại test-backend giữa các nhóm để không chạm hạn mức tạo phiên khách. Bài kiểm tra resource-security chủ động sửa bảng hạn mức của `vju_quiz_test`, không dùng với cơ sở dữ liệu thật.
+
+
+### Kiểm thử chạy lâu và mất mạng
+
+Các bài sau cố định địa chỉ `localhost:8081`, chỉ dùng `vju_quiz_test`. Không chạy script đặt lại database hoặc khởi động lại test-backend khác trong khi bài chạy lâu đang hoạt động. Cần các image đã build, `.env` có tài khoản quản trị của database thử và dependencies frontend đã cài.
+
+```sh
+# Chuẩn bị database thử (xóa dữ liệu thử cũ), đồng thời chạy kiểm thử API cơ bản
+./scripts/test-integration.sh
+# Chạy riêng trong frontend: 100 người, 100 câu, ít nhất 30 phút thực
+cd frontend
+SOAK_RUN=30min-100students node tests/soak-reconnect.mjs
+```
+
+- Mỗi vòng: 20 người luân phiên mất mạng; mỗi 15 vòng mất mạng cả 100 người. Có cả đóng kết nối và giữ kết nối TCP nhưng bỏ toàn bộ lưu lượng. Mỗi 10 vòng, 10 người trở lại sau hạn để kiểm tra câu bỏ trống và từ chối đáp án muộn. Bài tự khởi động lại **test-backend** ở vòng 50.
+- Kiểm tra lựa chọn, thời gian, điểm, thứ tự đáp án sau nối lại; gửi lại và gửi câu cũ; quyền quản trị; dữ liệu riêng trong kết quả cuối. Các client dùng thư viện STOMP giống frontend và REST thật, không phải 100 trình duyệt render giao diện.
+- `work/soak-<SOAK_RUN>/results.json` cập nhật định kỳ. `status: passed` cùng `finalVerified: true` mới là hoàn thành; không đánh giá dựa trên vài vòng đầu. Độ trễ `answers` gồm cả yêu cầu trả lời và yêu cầu cố tình bị từ chối; `recoveryIncludingOffline` bao gồm thời gian cố tình mất mạng.
+- Theo dõi tài nguyên độc lập từ thư mục gốc: `python3 scripts/soak-monitor.py`. Theo mặc định quan sát run `30min-100students`, chỉ đọc trạng thái, không sửa dữ liệu.
+- Phép thử riêng không ép nối lại: trong frontend chạy `node tests/network-recovery-check.mjs after`. Kiểm tra client tự phát hiện mất mạng âm thầm, tự nối lại và phục hồi đáp án đã được máy chủ nhận nhưng phản hồi bị mất. `node tests/network-probe.mjs after` kiểm tra socket chết được thu hồi và không chiếm hạn mức mãi mãi.
+- Kiểm tra timeout và phản hồi bị cắt: `node --test tests/api-network.test.mjs` (Node 24).
+
+Broker gửi/nhận nhịp kiểm tra mỗi 10 giây; client bỏ socket lỗi ngay khi phát hiện mất nhịp và thử lại sau 2 giây. Đây không phải cam kết khôi phục trong 2 giây: phát hiện mạng mất âm thầm còn phụ thuộc ngưỡng heartbeat và trình duyệt. REST có thời hạn 15 giây cho cả nhận header và đọc nội dung; nhập Excel có thời hạn 120 giây. Không tự gửi lại lệnh ghi khi timeout: phòng tải lại trạng thái và giữ lựa chọn đầu tiên mà máy chủ đã lưu.
+
+Trang phòng ngừng hỏi trạng thái và đóng WebSocket sau khi đã nhận kết quả cuối. Chủ trì chọn một sinh viên để xem bài chi tiết, tránh dựng đồng thời 10.000 câu review khi phòng có 100 người × 100 câu. Sinh viên vẫn xem được bài của chính mình; việc lọc quyền tiếp tục do backend thực hiện.

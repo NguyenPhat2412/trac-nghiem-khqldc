@@ -2,11 +2,13 @@ package vn.vju.quiz;
 
 import java.util.*;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.*;
 import org.springframework.messaging.simp.config.*;
 import org.springframework.messaging.simp.stomp.*;
 import org.springframework.messaging.support.*;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.socket.*;
 import org.springframework.web.socket.config.annotation.*;
@@ -95,8 +97,19 @@ public class Realtime implements WebSocketMessageBrokerConfigurer {
     origin = o;
   }
 
+  @Bean
+  public ThreadPoolTaskScheduler quizBrokerHeartbeatScheduler() {
+    var scheduler = new ThreadPoolTaskScheduler();
+    scheduler.setPoolSize(1);
+    scheduler.setThreadNamePrefix("quiz-heartbeat-");
+    scheduler.setRemoveOnCancelPolicy(true);
+    return scheduler;
+  }
+
   public void configureMessageBroker(MessageBrokerRegistry r) {
-    r.enableSimpleBroker("/topic");
+    r.enableSimpleBroker("/topic")
+        .setHeartbeatValue(new long[] {10000, 10000})
+        .setTaskScheduler(quizBrokerHeartbeatScheduler());
     r.setApplicationDestinationPrefixes("/app");
   }
 

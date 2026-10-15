@@ -46,6 +46,8 @@ export function RoomPage({ code }: { code: string }) {
   const [endConfirm, setEndConfirm] = useState(false);
   const [origin, setOrigin] = useState("");
   const [expiredQuestion, setExpiredQuestion] = useState("");
+  const [reviewPlayer, setReviewPlayer] = useState("");
+  const finished = data?.id === code && data.status === "FINISHED";
   const sending = useRef(false);
   const ref = useRef<Room | null>(null);
   const fetching = useRef(false);
@@ -57,6 +59,7 @@ export function RoomPage({ code }: { code: string }) {
     }
   };
   async function refresh() {
+    if (ref.current?.id === code && ref.current.status === "FINISHED") return;
     if (fetching.current) {
       refreshPending.current = true;
       return;
@@ -77,7 +80,7 @@ export function RoomPage({ code }: { code: string }) {
   }
   useEffect(() => {
     setOrigin(window.location.origin);
-    if (!actor) return;
+    if (!actor || finished) return;
     void refresh();
     const url =
       process.env.NEXT_PUBLIC_WS_URL ||
@@ -94,6 +97,8 @@ export function RoomPage({ code }: { code: string }) {
       brokerURL: url,
       connectHeaders: { "X-CSRF-Token": actor.csrf },
       reconnectDelay: 2000,
+      connectionTimeout: 10000,
+      discardWebsocketOnCommFailure: true,
       heartbeatIncoming: 10000,
       heartbeatOutgoing: 10000,
       onConnect: () => {
@@ -118,7 +123,7 @@ export function RoomPage({ code }: { code: string }) {
       document.removeEventListener("visibilitychange", returned);
       void client.deactivate();
     };
-  }, [actor, code]);
+  }, [actor, code, finished]);
   async function action(action: string, body: unknown = {}) {
     if (sending.current) return;
     sending.current = true;
@@ -201,8 +206,18 @@ export function RoomPage({ code }: { code: string }) {
         }
       >
         <span className="connection">
-          {connected ? <Wifi size={16} /> : <WifiOff size={16} />}{" "}
-          {connected ? "Trực tiếp" : "Đang kết nối lại"}
+          {finished ? (
+            <Check size={16} />
+          ) : connected ? (
+            <Wifi size={16} />
+          ) : (
+            <WifiOff size={16} />
+          )}{" "}
+          {finished
+            ? "Đã hoàn tất"
+            : connected
+              ? "Trực tiếp"
+              : "Đang kết nối lại"}
         </span>
       </PageTitle>
       <ErrorNote error={error} />
@@ -355,18 +370,36 @@ export function RoomPage({ code }: { code: string }) {
               </Link>
             )}
           </div>
-          {data.details?.map((d) => (
-            <section key={d.playerId}>
-              <h2 className="section-label">Bài làm của {d.name}</h2>
-              {d.questions.map((x) => (
-                <Review
-                  key={x.question.id}
-                  question={x.question}
-                  selected={x.answer}
-                />
-              ))}
-            </section>
-          ))}
+          {data.host && !!data.details?.length && (
+            <label>
+              Xem bài làm của sinh viên
+              <select
+                value={reviewPlayer}
+                onChange={(event) => setReviewPlayer(event.target.value)}
+              >
+                <option value="">Chọn một sinh viên để xem chi tiết</option>
+                {data.details.map((detail) => (
+                  <option key={detail.playerId} value={detail.playerId}>
+                    {detail.name} · #{detail.playerId.slice(0, 6)}
+                  </option>
+                ))}
+              </select>
+            </label>
+          )}
+          {data.details
+            ?.filter((detail) => !data.host || detail.playerId === reviewPlayer)
+            .map((d) => (
+              <section key={d.playerId}>
+                <h2 className="section-label">Bài làm của {d.name}</h2>
+                {d.questions.map((x) => (
+                  <Review
+                    key={x.question.id}
+                    question={x.question}
+                    selected={x.answer}
+                  />
+                ))}
+              </section>
+            ))}
         </>
       ) : (
         <>
