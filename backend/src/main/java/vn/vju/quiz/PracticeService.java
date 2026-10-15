@@ -25,6 +25,7 @@ public class PracticeService {
 
   @Transactional
   public Map<String, Object> start(Actor p, Start input) {
+    s.guardActiveAttempts(p.id());
     Attempt a = new Attempt();
     a.playerId = p.id();
     a.name = p.name();

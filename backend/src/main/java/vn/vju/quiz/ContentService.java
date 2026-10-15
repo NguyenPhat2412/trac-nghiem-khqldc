@@ -8,6 +8,19 @@ import vn.vju.quiz.Domain.*;
 @Service
 public class ContentService {
   final Store s;
+  private Map<String, Object> cachedCatalog;
+  private long cachedRevision = -1, catalogExpiresAt;
+
+  // Only immutable public summaries are cached. Never cache mutable questions or player views.
+  public synchronized Map<String, Object> catalog() {
+    long now = System.nanoTime(), revision = s.contentRevision();
+    if (cachedCatalog == null || revision != cachedRevision || now >= catalogExpiresAt) {
+      cachedCatalog = buildCatalog();
+      cachedRevision = revision;
+      catalogExpiresAt = now + java.util.concurrent.TimeUnit.SECONDS.toNanos(15);
+    }
+    return cachedCatalog;
+  }
 
   public ContentService(Store s) {
     this.s = s;
@@ -28,7 +41,7 @@ public class ContentService {
     s.get("chapters", q.chapterId, Chapter.class, false);
   }
 
-  public Map<String, Object> catalog() {
+  Map<String, Object> buildCatalog() {
     var chapters =
         s.all("chapters", Chapter.class).stream()
             .filter(c -> c.status.equals("PUBLISHED"))

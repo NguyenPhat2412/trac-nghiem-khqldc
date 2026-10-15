@@ -208,6 +208,9 @@ export function Practice({ id }: { id: string }) {
       <h2>{q.text}</h2>
       {q.imageUrl && (
         <img
+          decoding="async"
+          fetchPriority="high"
+          referrerPolicy="no-referrer"
           className="question-image"
           src={q.imageUrl}
           alt="Hình minh họa câu hỏi"

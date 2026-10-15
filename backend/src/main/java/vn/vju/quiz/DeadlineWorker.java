@@ -45,5 +45,6 @@ public class DeadlineWorker {
   @Scheduled(fixedDelay = 3600000)
   public void cleanup() {
     s.db.update("delete from sessions where expires_at<?", System.currentTimeMillis());
+    s.db.update("delete from allocation_budgets where expires_at<?", System.currentTimeMillis());
   }
 }

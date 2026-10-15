@@ -11,6 +11,27 @@ import org.springframework.web.server.ResponseStatusException;
 public class Store {
   final JdbcTemplate db;
   final ObjectMapper json;
+  private final java.util.concurrent.atomic.AtomicLong contentRevision =
+      new java.util.concurrent.atomic.AtomicLong();
+
+  public long contentRevision() {
+    return contentRevision.get();
+  }
+
+  private void contentChanged(String table) {
+    if (!Set.of("chapters", "questions", "quizzes").contains(table)) return;
+    if (org.springframework.transaction.support.TransactionSynchronizationManager
+        .isSynchronizationActive()) {
+      org.springframework.transaction.support.TransactionSynchronizationManager
+          .registerSynchronization(
+              new org.springframework.transaction.support.TransactionSynchronization() {
+                public void afterCommit() {
+                  contentRevision.incrementAndGet();
+                }
+              });
+    } else contentRevision.incrementAndGet();
+  }
+
   private static final Set<String> TABLES =
       Set.of("chapters", "questions", "quizzes", "attempts", "rooms");
 
@@ -61,6 +82,42 @@ public class Store {
             + " (id,data) values (?,?::jsonb) on conflict(id) do update set data=excluded.data",
         id,
         write(value));
+    contentChanged(table);
+  }
+
+  // Called inside PracticeService.start's transaction. The lock also covers concurrent tabs.
+  public void guardActiveAttempts(String playerId) {
+    db.queryForList("select pg_advisory_xact_lock(hashtextextended(?, 0))", "attempt:" + playerId);
+    Long count =
+        db.queryForObject(
+            "select count(*) from attempts where data->>'playerId'=? and data->>'status'='ACTIVE'"
+                + " and ((data->>'deadline')::bigint=0 or (data->>'deadline')::bigint>?)",
+            Long.class,
+            playerId,
+            System.currentTimeMillis());
+    if (count != null && count >= 5)
+      throw new ResponseStatusException(
+          HttpStatus.TOO_MANY_REQUESTS,
+          "Bạn đang có 5 bài chưa hoàn thành. Mở Lịch sử để tiếp tục hoặc nộp bài trước.");
+  }
+
+  // Atomic, persistent fixed-window budgets cannot be reset by changing a guest cookie.
+  public void allocationBudget(String key, int maximum, long windowMs) {
+    long bucket = System.currentTimeMillis() / windowMs;
+    var accepted =
+        db.queryForList(
+            "insert into allocation_budgets(scope, bucket, expires_at, used) values (?, ?, ?, 1) on"
+                + " conflict(scope,bucket) do update set used=allocation_budgets.used+1 where"
+                + " allocation_budgets.used<? returning used",
+            Integer.class,
+            key,
+            bucket,
+            (bucket + 1) * windowMs,
+            maximum);
+    if (accepted.isEmpty())
+      throw new ResponseStatusException(
+          HttpStatus.TOO_MANY_REQUESTS,
+          "Đã đạt giới hạn tạo bài. Vui lòng tiếp tục bài đang làm hoặc thử lại sau.");
   }
 
   public String write(Object v) {

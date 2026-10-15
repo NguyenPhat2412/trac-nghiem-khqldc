@@ -49,6 +49,7 @@ export function RoomPage({ code }: { code: string }) {
   const sending = useRef(false);
   const ref = useRef<Room | null>(null);
   const fetching = useRef(false);
+  const refreshPending = useRef(false);
   const apply = (r: Room) => {
     if (!ref.current || r.version >= ref.current.version) {
       ref.current = r;
@@ -56,7 +57,10 @@ export function RoomPage({ code }: { code: string }) {
     }
   };
   async function refresh() {
-    if (fetching.current) return;
+    if (fetching.current) {
+      refreshPending.current = true;
+      return;
+    }
     fetching.current = true;
     try {
       apply(await api<Room>("/rooms/" + code));
@@ -65,6 +69,10 @@ export function RoomPage({ code }: { code: string }) {
       setError((e as Error).message);
     } finally {
       fetching.current = false;
+      if (refreshPending.current) {
+        refreshPending.current = false;
+        void refresh();
+      }
     }
   }
   useEffect(() => {
@@ -74,6 +82,14 @@ export function RoomPage({ code }: { code: string }) {
     const url =
       process.env.NEXT_PUBLIC_WS_URL ||
       `${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/ws`;
+    let refreshTimer: ReturnType<typeof setTimeout> | undefined;
+    const scheduleRefresh = () => {
+      if (refreshTimer) return;
+      refreshTimer = setTimeout(() => {
+        refreshTimer = undefined;
+        void refresh();
+      }, 120);
+    };
     const client = new Client({
       brokerURL: url,
       connectHeaders: { "X-CSRF-Token": actor.csrf },
@@ -82,7 +98,7 @@ export function RoomPage({ code }: { code: string }) {
       heartbeatOutgoing: 10000,
       onConnect: () => {
         setConnected(true);
-        client.subscribe("/topic/rooms/" + code, () => void refresh());
+        client.subscribe("/topic/rooms/" + code, scheduleRefresh);
         void refresh();
       },
       onWebSocketClose: () => setConnected(false),
@@ -97,6 +113,7 @@ export function RoomPage({ code }: { code: string }) {
     document.addEventListener("visibilitychange", returned);
     return () => {
       clearInterval(poll);
+      clearTimeout(refreshTimer);
       window.removeEventListener("online", returned);
       document.removeEventListener("visibilitychange", returned);
       void client.deactivate();
@@ -399,6 +416,9 @@ export function RoomPage({ code }: { code: string }) {
               <h2>{data.question?.text}</h2>
               {data.question?.imageUrl && (
                 <img
+                  decoding="async"
+                  fetchPriority="high"
+                  referrerPolicy="no-referrer"
                   className="question-image"
                   src={data.question.imageUrl}
                   alt="Hình minh họa câu hỏi"

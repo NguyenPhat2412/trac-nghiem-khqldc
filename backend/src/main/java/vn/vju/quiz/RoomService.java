@@ -71,23 +71,27 @@ public class RoomService {
   @Transactional
   public Map<String, Object> join(Actor a, String code) {
     Room r = s.get("rooms", code, Room.class, true);
+    Errors.forbidden(!r.bannedIds.contains(a.id()));
     Member existing = r.members.get(a.id());
     if (existing != null) {
       Errors.forbidden(!existing.kicked);
       return view(a, r);
     }
     Errors.require(r.status.equals("LOBBY") && !r.locked, "Phòng đã bắt đầu hoặc đang khóa");
+    // Compact old lobby bans without changing their identity or allowing re-entry.
+    for (Member member : new ArrayList<>(r.members.values())) {
+      if (member.kicked) {
+        r.bannedIds.add(member.id);
+        r.members.remove(member.id);
+      }
+    }
+    Errors.require(
+        r.bannedIds.size() < 1000, "Phòng đã đạt giới hạn loại người chơi. Hãy tạo phòng mới.");
     Errors.require(r.members.size() < 100, "Phòng đã đủ 100 người");
     Member m = new Member();
     m.id = a.id();
     m.name = a.name();
-    if (r.shuffleAnswers) {
-      for (Question q : r.quiz.questions) {
-        List<Integer> order = new ArrayList<>(List.of(0, 1, 2, 3));
-        Collections.shuffle(order, random);
-        m.optionOrders.put(q.id, order);
-      }
-    }
+    if (r.shuffleAnswers) m.optionSeed = UUID.randomUUID().toString();
     r.members.put(m.id, m);
     save(r);
     return view(a, r);
@@ -95,9 +99,13 @@ public class RoomService {
 
   @Transactional
   public Map<String, Object> get(Actor a, String code) {
-    Room r = s.get("rooms", code, Room.class, true);
+    Room r = s.get("rooms", code, Room.class, false);
     Errors.forbidden(access(a, r));
-    expire(r);
+    if (r.status.equals("QUESTION") && System.currentTimeMillis() >= r.deadline) {
+      r = s.get("rooms", code, Room.class, true);
+      Errors.forbidden(access(a, r));
+      expire(r);
+    }
     return view(a, r);
   }
 
@@ -127,7 +135,10 @@ public class RoomService {
       case "kick" -> {
         Errors.require(
             r.status.equals("LOBBY") && r.members.containsKey(player), "Không thể loại người chơi");
-        r.members.get(player).kicked = true;
+        Errors.require(
+            r.bannedIds.size() < 1000, "Phòng đã đạt giới hạn loại người chơi. Hãy tạo phòng mới.");
+        r.bannedIds.add(player);
+        r.members.remove(player);
       }
       case "start", "next" -> {
         Errors.require(
@@ -182,7 +193,20 @@ public class RoomService {
   }
 
   List<Integer> order(Member m, Question q) {
-    return m == null ? List.of(0, 1, 2, 3) : m.optionOrders.getOrDefault(q.id, List.of(0, 1, 2, 3));
+    if (m == null) return List.of(0, 1, 2, 3);
+    if (m.optionOrders.containsKey(q.id)) return m.optionOrders.get(q.id);
+    if (m.optionSeed == null || m.optionSeed.isBlank()) return List.of(0, 1, 2, 3);
+    try {
+      byte[] digest =
+          java.security.MessageDigest.getInstance("SHA-256")
+              .digest(
+                  (m.optionSeed + ":" + q.id).getBytes(java.nio.charset.StandardCharsets.UTF_8));
+      var order = new ArrayList<>(List.of(0, 1, 2, 3));
+      Collections.shuffle(order, new Random(java.nio.ByteBuffer.wrap(digest).getLong()));
+      return order;
+    } catch (java.security.NoSuchAlgorithmException e) {
+      throw new IllegalStateException(e);
+    }
   }
 
   Map<String, Object> playerQuestion(Question q, Member m, boolean reveal) {

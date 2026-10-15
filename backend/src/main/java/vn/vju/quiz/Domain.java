@@ -4,6 +4,11 @@ import java.util.*;
 
 public final class Domain {
   public record Actor(String id, String name, String role, String csrf) {
+    @Override
+    public String toString() {
+      return "Actor[id=" + id + ", role=" + role + "]";
+    }
+
     public boolean staff() {
       return role.equals("ADMIN") || role.equals("EDITOR");
     }
@@ -56,6 +61,7 @@ public final class Domain {
 
   public static class Member {
     public String id, name;
+    public String optionSeed = "";
     public boolean kicked;
     public Map<String, Integer> answers = new HashMap<>();
     public Map<String, Long> times = new HashMap<>();
@@ -70,5 +76,6 @@ public final class Domain {
     public int current = -1;
     public long version = 0, openedAt, deadline, createdAt = System.currentTimeMillis(), finishedAt;
     public Map<String, Member> members = new LinkedHashMap<>();
+    public Set<String> bannedIds = new HashSet<>();
   }
 }

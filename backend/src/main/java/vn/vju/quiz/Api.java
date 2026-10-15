@@ -40,9 +40,20 @@ public class Api {
   }
 
   @PostMapping("/attempts")
-  Object start(@RequestBody PracticeService.Start in) {
+  Object start(
+      @RequestBody PracticeService.Start in, jakarta.servlet.http.HttpServletRequest request) {
     var a = Auth.actor();
     auth.limit("attempt:" + a.id(), 20);
+    String source =
+        java.util
+            .UUID
+            .nameUUIDFromBytes(
+                request.getRemoteAddr().getBytes(java.nio.charset.StandardCharsets.UTF_8))
+            .toString();
+    s.allocationBudget("attempt-ip-minute:" + source, 200, 60000);
+    s.allocationBudget("attempt-global-minute", 600, 60000);
+    s.allocationBudget("attempt-ip-day:" + source, 5000, 86400000);
+    s.allocationBudget("attempt-global-day", 20000, 86400000);
     return p.start(a, in);
   }
 
