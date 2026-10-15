@@ -18,6 +18,7 @@ import vn.vju.quiz.Domain.*;
 @Configuration
 @EnableWebSocketMessageBroker
 public class Realtime implements WebSocketMessageBrokerConfigurer {
+  private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(Realtime.class);
   final Store s;
   final String origin;
   final Map<String, SocketState> sockets = new HashMap<>();
@@ -183,6 +184,13 @@ public class Realtime implements WebSocketMessageBrokerConfigurer {
               }
               return msg;
             } catch (RuntimeException failure) {
+              boolean denied =
+                  (failure
+                              instanceof
+                              org.springframework.web.server.ResponseStatusException rejection
+                          && rejection.getStatusCode().is4xxClientError())
+                      || failure
+                          instanceof org.springframework.security.access.AccessDeniedException;
               SocketState state;
               synchronized (sockets) {
                 state = sockets.get(h.getSessionId());
@@ -191,10 +199,25 @@ public class Realtime implements WebSocketMessageBrokerConfigurer {
               // explicitly.
               if (state != null)
                 try {
-                  state.session.close(CloseStatus.POLICY_VIOLATION);
+                  state.session.close(
+                      denied ? CloseStatus.POLICY_VIOLATION : CloseStatus.SERVER_ERROR);
                 } catch (java.io.IOException ignored) {
                 }
-              throw failure;
+              // Returning null discards the denied frame. Rethrowing lets Spring log the
+              // complete CONNECT frame, including its CSRF token, on every retry.
+              if (denied)
+                log.warn(
+                    "WebSocket rejected command={} session={} reason={}",
+                    h.getCommand(),
+                    h.getSessionId(),
+                    failure.getClass().getSimpleName());
+              else
+                log.error(
+                    "WebSocket failed command={} session={} reason={}",
+                    h.getCommand(),
+                    h.getSessionId(),
+                    failure.getClass().getSimpleName());
+              return null;
             }
           }
         });

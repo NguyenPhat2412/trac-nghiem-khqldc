@@ -68,3 +68,7 @@ Cache trong tiến trình chỉ chứa quiz snapshot cố định, tối đa 128
 Phòng từ schema cũ vẫn đọc được. Lệnh đầu tiên giữ khóa phòng chuyển đổi aggregate cũ trong một giao dịch, bảo toàn snapshot, thứ tự đáp án, thời gian, điểm, phiên bản và lịch sử. Giao dịch bị từ chối phải rollback cả việc chuyển đổi. Phòng đã hoàn tất từ bản cũ chưa được sửa có thể tiếp tục đọc theo định dạng cũ.
 
 Sau khi đã chuyển đổi phòng, **không chỉ đổi về image cũ**: phiên bản cũ không hiểu định dạng compact. Muốn quay lui bản phát hành phải dừng dịch vụ và khôi phục backup database trước nâng cấp cùng image tương ứng; dữ liệu phát sinh sau backup cần được xử lý riêng. Kiểm thử restore trên database riêng trước khi thao tác dữ liệu chính.
+
+## Từ chối kết nối mà không tạo vòng lặp
+
+Lỗi quyền/phiên ở STOMP đóng transport bằng 1008, loại frame khỏi kênh và ghi audit chỉ gồm command, mã socket và loại lỗi. Không ném lại ngoại lệ chứa frame CONNECT để Spring ghi token vào log. Lỗi máy chủ tạm thời đóng bằng 1011 để client vẫn được nối lại. Frontend dừng polling, timer làm mới và reconnect sau 1008; bỏ qua phản hồi đang chờ để không ghi đè thông báo. Tải lại trang lấy phiên hiện tại. Các giới hạn socket, subscription và kiểm tra CSRF/thành viên giữ nguyên.

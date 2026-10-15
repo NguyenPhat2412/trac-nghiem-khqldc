@@ -42,6 +42,7 @@ export function RoomPage({ code }: { code: string }) {
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const [connected, setConnected] = useState(false);
+  const [connectionBlocked, setConnectionBlocked] = useState(false);
   const [copied, setCopied] = useState(false);
   const [endConfirm, setEndConfirm] = useState(false);
   const [origin, setOrigin] = useState("");
@@ -52,6 +53,7 @@ export function RoomPage({ code }: { code: string }) {
   const ref = useRef<Room | null>(null);
   const fetching = useRef(false);
   const refreshPending = useRef(false);
+  const connectionDenied = useRef(false);
   const apply = (r: Room) => {
     if (!ref.current || r.version >= ref.current.version) {
       ref.current = r;
@@ -59,6 +61,7 @@ export function RoomPage({ code }: { code: string }) {
     }
   };
   async function refresh() {
+    if (connectionDenied.current) return;
     if (ref.current?.id === code && ref.current.status === "FINISHED") return;
     if (fetching.current) {
       refreshPending.current = true;
@@ -66,10 +69,12 @@ export function RoomPage({ code }: { code: string }) {
     }
     fetching.current = true;
     try {
-      apply(await api<Room>("/rooms/" + code));
+      const next = await api<Room>("/rooms/" + code);
+      if (connectionDenied.current) return;
+      apply(next);
       setError("");
     } catch (e) {
-      setError((e as Error).message);
+      if (!connectionDenied.current) setError((e as Error).message);
     } finally {
       fetching.current = false;
       if (refreshPending.current) {
@@ -81,13 +86,15 @@ export function RoomPage({ code }: { code: string }) {
   useEffect(() => {
     setOrigin(window.location.origin);
     if (!actor || finished) return;
+    connectionDenied.current = false;
+    setConnectionBlocked(false);
     void refresh();
     const url =
       process.env.NEXT_PUBLIC_WS_URL ||
       `${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/ws`;
     let refreshTimer: ReturnType<typeof setTimeout> | undefined;
     const scheduleRefresh = () => {
-      if (refreshTimer) return;
+      if (refreshTimer || connectionDenied.current) return;
       refreshTimer = setTimeout(() => {
         refreshTimer = undefined;
         void refresh();
@@ -106,7 +113,21 @@ export function RoomPage({ code }: { code: string }) {
         client.subscribe("/topic/rooms/" + code, scheduleRefresh);
         void refresh();
       },
-      onWebSocketClose: () => setConnected(false),
+      onWebSocketClose: (event) => {
+        setConnected(false);
+        if (event.code === 1008) {
+          connectionDenied.current = true;
+          setConnectionBlocked(true);
+          refreshPending.current = false;
+          clearInterval(poll);
+          clearTimeout(refreshTimer);
+          client.reconnectDelay = 0;
+          void client.deactivate({ force: true });
+          setError(
+            "Phiên kết nối không còn hợp lệ. Hãy tải lại trang để tiếp tục.",
+          );
+        }
+      },
       onStompError: () => setConnected(false),
     });
     client.activate();
@@ -125,7 +146,7 @@ export function RoomPage({ code }: { code: string }) {
     };
   }, [actor, code, finished]);
   async function action(action: string, body: unknown = {}) {
-    if (sending.current) return;
+    if (sending.current || connectionDenied.current) return;
     sending.current = true;
     setBusy(true);
     setError("");
@@ -142,6 +163,7 @@ export function RoomPage({ code }: { code: string }) {
   async function answer(choice: number) {
     if (
       sending.current ||
+      connectionDenied.current ||
       !data?.question ||
       data.host ||
       data.myAnswer >= 0 ||
@@ -215,12 +237,22 @@ export function RoomPage({ code }: { code: string }) {
           )}{" "}
           {finished
             ? "Đã hoàn tất"
-            : connected
-              ? "Trực tiếp"
-              : "Đang kết nối lại"}
+            : connectionBlocked
+              ? "Cần tải lại trang"
+              : connected
+                ? "Trực tiếp"
+                : "Đang kết nối lại"}
         </span>
       </PageTitle>
       <ErrorNote error={error} />
+      {connectionBlocked && (
+        <button
+          className="button outline"
+          onClick={() => window.location.reload()}
+        >
+          Tải lại trang
+        </button>
+      )}
       {data.shuffleAnswers && data.status !== "FINISHED" && (
         <p className="muted">
           Vị trí A/B/C/D được đảo riêng cho mỗi người. Hãy trả lời theo nội
@@ -307,7 +339,7 @@ export function RoomPage({ code }: { code: string }) {
                         <button
                           className="icon-button"
                           aria-label={"Loại " + m.name}
-                          disabled={busy}
+                          disabled={busy || connectionBlocked}
                           onClick={() => action("kick", { playerId: m.id })}
                         >
                           ×
@@ -322,7 +354,7 @@ export function RoomPage({ code }: { code: string }) {
                   <>
                     <button
                       className="button outline"
-                      disabled={busy}
+                      disabled={busy || connectionBlocked}
                       onClick={() => action("lock")}
                     >
                       {data.locked ? <Unlock size={18} /> : <Lock size={18} />}{" "}
@@ -330,7 +362,9 @@ export function RoomPage({ code }: { code: string }) {
                     </button>
                     <button
                       className="button"
-                      disabled={busy || !data.members.length}
+                      disabled={
+                        busy || connectionBlocked || !data.members.length
+                      }
                       onClick={() => action("start")}
                     >
                       <Play size={18} />
@@ -464,6 +498,7 @@ export function RoomPage({ code }: { code: string }) {
                   reveal={data.status === "REVEAL"}
                   disabled={
                     busy ||
+                    connectionBlocked ||
                     !online ||
                     expiredQuestion === data.question.id ||
                     data.myAnswer >= 0 ||
@@ -546,7 +581,7 @@ export function RoomPage({ code }: { code: string }) {
             <div className="host-controls">
               <button
                 className="button danger-outline"
-                disabled={busy}
+                disabled={busy || connectionBlocked}
                 onClick={() => setEndConfirm(true)}
               >
                 Kết thúc sớm
@@ -554,7 +589,7 @@ export function RoomPage({ code }: { code: string }) {
               {data.status === "REVEAL" && (
                 <button
                   className="button"
-                  disabled={busy}
+                  disabled={busy || connectionBlocked}
                   onClick={() => action("next")}
                 >
                   {data.current + 1 === data.count
@@ -591,7 +626,7 @@ export function RoomPage({ code }: { code: string }) {
             </button>
             <button
               className="button danger"
-              disabled={busy}
+              disabled={busy || connectionBlocked}
               onClick={() => action("finish")}
             >
               Kết thúc phòng
