@@ -163,8 +163,7 @@ public class Realtime implements WebSocketMessageBrokerConfigurer {
                           && !state.subscriptions.containsKey(h.getSubscriptionId())
                           && !state.subscriptions.containsValue(dest));
                 }
-                Room room =
-                    s.get("rooms", dest.substring(dest.lastIndexOf('/') + 1), Room.class, false);
+                Room room = s.liveRoom(dest.substring(dest.lastIndexOf('/') + 1), false);
                 Errors.forbidden(
                     actor.role().equals("ADMIN")
                         || room.hostId.equals(actor.id())

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Observe the local test backend during a soak; never resets databases or services."""
-import json,subprocess,time,urllib.request
+import json,subprocess,time,urllib.request,sys
 from pathlib import Path
-folder=Path('work/soak-30min-100students');samples=[]
+folder=Path(sys.argv[1] if len(sys.argv)>1 else 'work/soak-30min-100students');samples=[]
 while True:
  try:
   state=json.loads((folder/'results.json').read_text())
@@ -11,6 +11,10 @@ while True:
   process={line.split(':',1)[0]:line.split(':',1)[1].strip() for line in process.splitlines() if line.startswith(('VmRSS:','VmSize:','Threads:'))}
   query="select json_build_object('connections',count(*),'active',count(*) filter(where state='active'),'lockWaits',count(*) filter(where wait_event_type='Lock')) from pg_stat_activity where datname='vju_quiz_test';"
   database=json.loads(subprocess.check_output(['docker','compose','exec','-T','db','psql','-U','vju','-d','vju_quiz_test','-Atc',query],text=True))
+  room_id=state.get('roomId','')
+  if len(room_id)==6 and room_id.isdigit():
+   room_query="select json_build_object('hotJsonBytes',octet_length(data::text),'storedBytes',pg_column_size(data)) from rooms where id='"+room_id+"';"
+   database['room']=json.loads(subprocess.check_output(['docker','compose','exec','-T','db','psql','-U','vju','-d','vju_quiz_test','-Atc',room_query],text=True))
   start=time.monotonic()
   with urllib.request.urlopen('http://localhost:3000/api/catalog',timeout=10) as response:main_ok=response.status==200
   samples.append({'at':time.strftime('%Y-%m-%dT%H:%M:%S%z'),'round':state['completedRounds'],'containers':[json.loads(line) for line in stats.splitlines()],'process':process,'database':database,'mainHealthy':main_ok,'mainCatalogMs':round((time.monotonic()-start)*1000,2)})

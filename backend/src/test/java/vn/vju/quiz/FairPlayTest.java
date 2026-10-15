@@ -76,7 +76,7 @@ class FairPlayTest {
     m.name = "Player";
     m.optionOrders.put(q.id, List.of(2, 0, 3, 1));
     r.members.put(m.id, m);
-    when(s.get("rooms", r.id, Room.class, true)).thenReturn(r);
+    when(s.liveRoom(r.id, true)).thenReturn(r);
     var actor = new Actor(m.id, m.name, "GUEST", "csrf");
     var before = (Map<?, ?>) service.view(actor, r).get("question");
     assertEquals("three", ((List<?>) before.get("options")).getFirst());

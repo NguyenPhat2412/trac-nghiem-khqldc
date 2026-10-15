@@ -11,6 +11,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class Store {
   final JdbcTemplate db;
   final ObjectMapper json;
+  final RoomPersistence rooms;
   private final java.util.concurrent.atomic.AtomicLong contentRevision =
       new java.util.concurrent.atomic.AtomicLong();
 
@@ -38,6 +39,7 @@ public class Store {
   public Store(JdbcTemplate db, ObjectMapper json) {
     this.db = db;
     this.json = json;
+    this.rooms = new RoomPersistence(db, json);
   }
 
   private String table(String s) {
@@ -46,6 +48,7 @@ public class Store {
   }
 
   public <T> T get(String table, String id, Class<T> type, boolean lock) {
+    if (table.equals("rooms")) return type.cast(rooms.get(id, lock, true));
     var rows =
         db.queryForList(
             "select data::text from " + table(table) + " where id=?" + (lock ? " for update" : ""),
@@ -58,7 +61,7 @@ public class Store {
 
   public <T> List<T> all(String table, Class<T> type) {
     return db.queryForList("select data::text from " + table(table), String.class).stream()
-        .map(s -> read(s, type))
+        .map(s -> table.equals("rooms") ? type.cast(rooms.decode(s, true)) : read(s, type))
         .toList();
   }
 
@@ -75,7 +78,23 @@ public class Store {
         .toList();
   }
 
+  public Domain.Room liveRoom(String id, boolean lock) {
+    return rooms.get(id, lock, false);
+  }
+
+  public void roomHistory(Domain.Room room, String playerId) {
+    rooms.history(room, playerId);
+  }
+
+  public void advanceRoom(Domain.Room room) {
+    rooms.advance(room);
+  }
+
   public void save(String table, String id, Object value) {
+    if (table.equals("rooms")) {
+      rooms.save((Domain.Room) value);
+      return;
+    }
     db.update(
         "insert into "
             + table(table)

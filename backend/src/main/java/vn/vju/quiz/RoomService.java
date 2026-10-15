@@ -70,7 +70,7 @@ public class RoomService {
 
   @Transactional
   public Map<String, Object> join(Actor a, String code) {
-    Room r = s.get("rooms", code, Room.class, true);
+    Room r = s.liveRoom(code, true);
     Errors.forbidden(!r.bannedIds.contains(a.id()));
     Member existing = r.members.get(a.id());
     if (existing != null) {
@@ -99,10 +99,10 @@ public class RoomService {
 
   @Transactional
   public Map<String, Object> get(Actor a, String code) {
-    Room r = s.get("rooms", code, Room.class, false);
+    Room r = s.liveRoom(code, false);
     Errors.forbidden(access(a, r));
     if (r.status.equals("QUESTION") && System.currentTimeMillis() >= r.deadline) {
-      r = s.get("rooms", code, Room.class, true);
+      r = s.liveRoom(code, true);
       Errors.forbidden(access(a, r));
       expire(r);
     }
@@ -118,13 +118,13 @@ public class RoomService {
 
   @Transactional
   public void tick(String code) {
-    Room r = s.get("rooms", code, Room.class, true);
+    Room r = s.liveRoom(code, true);
     expire(r);
   }
 
   @Transactional
   public Map<String, Object> action(Actor a, String code, String action, String player) {
-    Room r = s.get("rooms", code, Room.class, true);
+    Room r = s.liveRoom(code, true);
     host(a, r);
     expire(r);
     switch (action) {
@@ -151,6 +151,7 @@ public class RoomService {
           r.status = "FINISHED";
           r.finishedAt = System.currentTimeMillis();
         } else {
+          s.advanceRoom(r);
           r.current++;
           r.status = "QUESTION";
           r.openedAt = System.currentTimeMillis();
@@ -172,7 +173,7 @@ public class RoomService {
 
   @Transactional
   public Map<String, Object> answer(Actor a, String code, String questionId, int choice) {
-    Room r = s.get("rooms", code, Room.class, true);
+    Room r = s.liveRoom(code, true);
     Errors.forbidden(r.members.containsKey(a.id()) && !r.members.get(a.id()).kicked);
     expire(r);
     Errors.require(
@@ -219,7 +220,7 @@ public class RoomService {
 
   @Transactional
   public void integrity(Actor a, String code, Integrity.Event event) {
-    Room r = s.get("rooms", code, Room.class, true);
+    Room r = s.liveRoom(code, true);
     Member m = r.members.get(a.id());
     Errors.forbidden(m != null && !m.kicked);
     Errors.require(
@@ -233,9 +234,9 @@ public class RoomService {
     List<Map<String, Object>> list = new ArrayList<>();
     for (Member m : r.members.values()) {
       if (m.kicked) continue;
-      int correct = 0;
-      long time = 0;
-      for (int i = 0; i < n; i++) {
+      int correct = r.compact ? m.completedCorrect : 0;
+      long time = r.compact ? m.completedDurationMs : 0;
+      for (int i = r.compact ? Math.max(0, r.current) : 0; i < n; i++) {
         Question q = r.quiz.questions.get(i);
         if (Objects.equals(m.answers.get(q.id), q.correct)) correct++;
         time += m.times.getOrDefault(q.id, r.quiz.questionSeconds * 1000L);
@@ -331,6 +332,7 @@ public class RoomService {
       }
     }
     if (r.status.equals("FINISHED")) {
+      s.roomHistory(r, isHost ? null : a.id());
       var detail = new ArrayList<Map<String, Object>>();
       for (Member m : r.members.values())
         if (!m.kicked && (isHost || m.id.equals(a.id()))) {

@@ -64,7 +64,10 @@ class CacheSafetyTest {
     } finally {
       TransactionSynchronizationManager.clearSynchronization();
     }
-    s.save("rooms", "123456", Map.of());
+    var room = new Room();
+    room.id = "123456";
+    room.compact = true;
+    s.save("rooms", room.id, room);
     assertEquals(1, s.contentRevision());
   }
 }

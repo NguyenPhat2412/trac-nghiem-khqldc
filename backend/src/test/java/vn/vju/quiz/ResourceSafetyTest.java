@@ -34,7 +34,7 @@ class ResourceSafetyTest {
     Room r = new Room();
     r.id = "123456";
     for (int i = 0; i < 1000; i++) r.bannedIds.add("blocked" + i);
-    when(store.get("rooms", r.id, Room.class, true)).thenReturn(r);
+    when(store.liveRoom(r.id, true)).thenReturn(r);
     assertThrows(
         RuntimeException.class, () -> service.join(new Actor("new", "New", "GUEST", "csrf"), r.id));
     assertThrows(
@@ -60,8 +60,8 @@ class ResourceSafetyTest {
     Room current = new Room();
     current.id = stale.id;
     current.hostId = "host";
-    when(store.get("rooms", stale.id, Room.class, false)).thenReturn(stale);
-    when(store.get("rooms", stale.id, Room.class, true)).thenReturn(current);
+    when(store.liveRoom(stale.id, false)).thenReturn(stale);
+    when(store.liveRoom(stale.id, true)).thenReturn(current);
     assertThrows(
         RuntimeException.class,
         () -> service.get(new Actor("p", "Player", "GUEST", "csrf"), stale.id));

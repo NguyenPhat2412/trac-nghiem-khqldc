@@ -10,9 +10,11 @@ import assert from "node:assert/strict";
 const exec = promisify(execFile),
   base = "http://localhost:8081",
   count = 100;
+const noFaults = process.env.SOAK_NO_FAULTS === "1";
+const sloMs = Number(process.env.SOAK_SLO_MS || 0);
 const rounds = Number(process.env.SOAK_ROUNDS || 100),
   roundMs = Number(process.env.SOAK_ROUND_MS || 18000);
-assert(rounds >= 1 && rounds <= 100 && roundMs >= 16000);
+assert(rounds >= 1 && rounds <= 100 && roundMs >= (noFaults ? 1000 : 16000));
 const run =
   process.env.SOAK_RUN || new Date().toISOString().replace(/[:.]/g, "-");
 const dir = "../work/soak-" + run;
@@ -28,6 +30,8 @@ const metrics = {
   run,
   startedAt: new Date().toISOString(),
   players: count,
+  noFaults,
+  sloMs,
   plannedRounds: rounds,
   roundMs,
   completedRounds: 0,
@@ -50,8 +54,13 @@ const metrics = {
   recoveryMs: [],
   apiMs: [],
   answerMs: [],
+  acceptedAnswerMs: [],
+  finalReadMs: [],
   stompErrors: 0,
+  setupRateLimitWaits: 0,
 };
+let checkpointWrites = Promise.resolve();
+let terminalStatus = null;
 let stopping = false,
   restarting = false,
   roomId,
@@ -99,8 +108,20 @@ async function call(
   };
 }
 async function session(body, path = "/session") {
-  const r = await call(null, path, body);
-  return { actor: r.data, cookie: r.cookie };
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const r = await call(
+      null,
+      path,
+      body,
+      path === "/session" ? [200, 429] : [200],
+    );
+    if (r.status === 200) return { actor: r.data, cookie: r.cookie };
+    // Consecutive runs share the same loopback IP. Respect the production guest budget.
+    metrics.setupRateLimitWaits++;
+    console.log("Waiting for guest-session setup budget (61 seconds)");
+    await delay(61000);
+  }
+  throw new Error("Guest-session setup budget unavailable");
 }
 const links = new Set();
 const proxy = net.createServer((down) => {
@@ -269,14 +290,17 @@ class Student {
       expected,
     );
     metrics.answerMs.push(performance.now() - start);
-    if (r.status === 200) this.apply(r.data);
+    if (r.status === 200) {
+      metrics.acceptedAnswerMs.push(performance.now() - start);
+      this.apply(r.data);
+    }
     return r;
   }
   async stop() {
     this.closed = true;
     clearInterval(this.poll);
     clearTimeout(this.timer);
-    await this.client.deactivate({ force: true });
+    await this.client?.deactivate({ force: true });
   }
 }
 function stats(a) {
@@ -291,27 +315,36 @@ function stats(a) {
   };
 }
 async function checkpoint(status = "running") {
+  if (status !== "running") terminalStatus = status;
+  if (terminalStatus && status === "running") return;
   const snapshot = {
     ...metrics,
     status,
     elapsedSeconds: Math.round((Date.now() - started) / 1000),
     api: stats(metrics.apiMs),
     answers: stats(metrics.answerMs),
+    acceptedAnswers: stats(metrics.acceptedAnswerMs),
+    finalReads: stats(metrics.finalReadMs),
     recoveryIncludingOffline: stats(metrics.recoveryMs),
   };
   delete snapshot.apiMs;
   delete snapshot.answerMs;
+  delete snapshot.acceptedAnswerMs;
+  delete snapshot.finalReadMs;
   delete snapshot.recoveryMs;
-  await writeFile(dir + "/results.json", JSON.stringify(snapshot, null, 2));
-  await writeFile(
-    "../work/soak-latest.json",
-    JSON.stringify({
-      directory: dir,
-      status,
-      completedRounds: metrics.completedRounds,
-      elapsedSeconds: snapshot.elapsedSeconds,
-    }),
-  );
+  checkpointWrites = checkpointWrites.then(async () => {
+    await writeFile(dir + "/results.json", JSON.stringify(snapshot, null, 2));
+    await writeFile(
+      "../work/soak-latest.json",
+      JSON.stringify({
+        directory: dir,
+        status,
+        completedRounds: metrics.completedRounds,
+        elapsedSeconds: snapshot.elapsedSeconds,
+      }),
+    );
+  });
+  await checkpointWrites;
 }
 async function resource() {
   try {
@@ -402,7 +435,8 @@ try {
   for (let round = 0; round < rounds; round++) {
     if (fatal) throw fatal;
     const roundStart = Date.now(),
-      latencyStart = metrics.answerMs.length;
+      latencyStart = metrics.answerMs.length,
+      acceptedStart = metrics.acceptedAnswerMs.length;
     const opened = (
       await call(
         admin,
@@ -423,7 +457,7 @@ try {
     if (previousQuestion) await students[0].submit(previousQuestion, 0, [400]);
     const allDrop = (round + 1) % 15 === 0;
     const affected = students.filter(
-      (p) => allDrop || (p.index + round * 7) % 100 < 20,
+      (p) => !noFaults && (allDrop || (p.index + round * 7) % 100 < 20),
     );
     const blank =
       (round + 1) % 10 === 0 ? new Set(affected.slice(0, 10)) : new Set();
@@ -437,7 +471,7 @@ try {
       metrics.answerAccepted++;
     }
     await Promise.all(normal.map(answer));
-    await delay(Math.max(0, roundStart + 3000 - Date.now()));
+    if (!noFaults) await delay(Math.max(0, roundStart + 3000 - Date.now()));
     await Promise.all(
       affected
         .filter((p) => !blank.has(p))
@@ -500,7 +534,7 @@ try {
       await call(students[0], "/admin/questions", undefined, [403]);
       await resource();
     }
-    if (round === 49) {
+    if (round === 49 && !noFaults) {
       restarting = true;
       const before = students.map((p) => p.connections);
       await exec(
@@ -532,6 +566,9 @@ try {
       answers: 100 - blank.size,
       offline: affected.length,
       answerLatency: stats(metrics.answerMs.slice(latencyStart)),
+      acceptedAnswerLatency: stats(
+        metrics.acceptedAnswerMs.slice(acceptedStart),
+      ),
       connections: students.filter((p) => p.connected).length,
     });
     previousQuestion = qid;
@@ -548,13 +585,17 @@ try {
       }),
     );
   }
+  const finishStart = performance.now();
   const final = (await call(admin, "/admin/rooms/" + roomId + "/next", {}))
     .data;
+  metrics.hostFinishMs = Math.round(performance.now() - finishStart);
   assert.equal(final.status, "FINISHED");
   assert.equal(final.early, false);
   await Promise.all(
     students.map(async (p) => {
+      const start = performance.now();
       const v = (await call(p, "/rooms/" + roomId)).data;
+      metrics.finalReadMs.push(performance.now() - start);
       assert.equal(v.details.length, 1);
       const details = v.details[0];
       assert.equal(details.playerId, p.actor.id);
@@ -568,8 +609,27 @@ try {
       assert.equal(rank.durationMs, p.lastDuration);
     }),
   );
+  if (fatal) throw fatal;
   metrics.finalVerified = true;
+  if (sloMs > 0) {
+    assert(
+      stats(metrics.acceptedAnswerMs).p95 < sloMs,
+      "Overall accepted-answer p95 exceeds SLO",
+    );
+    for (const r of metrics.rounds.slice(-10))
+      assert(
+        r.acceptedAnswerLatency.p95 < sloMs,
+        `Round ${r.round} p95 exceeds SLO`,
+      );
+    assert(
+      stats(metrics.finalReadMs).p95 < sloMs,
+      "Student final-result p95 exceeds SLO",
+    );
+    assert(metrics.hostFinishMs < sloMs, "Host finish exceeds SLO");
+    metrics.sloPassed = true;
+  }
   await resource();
+  if (fatal) throw fatal;
   await checkpoint("passed");
   console.log("PASS soak " + run);
 } catch (e) {

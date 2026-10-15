@@ -63,6 +63,8 @@ public final class Domain {
     public String id, name;
     public String optionSeed = "";
     public boolean kicked;
+    public int completedCorrect;
+    public long completedDurationMs;
     public Map<String, Integer> answers = new HashMap<>();
     public Map<String, Long> times = new HashMap<>();
     public Map<String, List<Integer>> optionOrders = new HashMap<>();
@@ -72,7 +74,7 @@ public final class Domain {
   public static class Room {
     public String id, hostId, title, status = "LOBBY";
     public Quiz quiz;
-    public boolean locked, early, shuffleAnswers;
+    public boolean locked, early, shuffleAnswers, compact;
     public int current = -1;
     public long version = 0, openedAt, deadline, createdAt = System.currentTimeMillis(), finishedAt;
     public Map<String, Member> members = new LinkedHashMap<>();

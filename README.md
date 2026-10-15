@@ -90,7 +90,7 @@ Tên là tự khai; mã người chơi thuộc trình duyệt, không xác thự
 
 ### Giới hạn tài nguyên và bộ nhớ đệm
 
-- Danh mục công khai dùng một bản tóm tắt bất biến trong bộ nhớ, tối đa 15 giây; thêm/sửa/xuất bản nội dung xóa hiệu lực cache sau khi giao dịch hoàn tất. Cache không chứa câu hỏi, đáp án, phiên hay dữ liệu người chơi. Bài đang làm, phòng và báo cáo vẫn trả `no-store` và kiểm tra quyền từng yêu cầu.
+- Danh mục công khai dùng một bản tóm tắt bất biến trong bộ nhớ, tối đa 15 giây; thêm/sửa/xuất bản nội dung xóa hiệu lực cache sau khi giao dịch hoàn tất. Cache danh mục không chứa câu hỏi, đáp án, phiên hay dữ liệu người chơi. Cache quiz snapshot nội bộ được mô tả riêng bên dưới. Bài đang làm, phòng và báo cáo vẫn trả `no-store` và kiểm tra quyền từng yêu cầu.
 - Mỗi người có tối đa 5 bài đang làm; có thể vào Lịch sử để tiếp tục/nộp. Bài có giờ đã hết hạn không chiếm hạn mức. Tạo bài còn chịu giới hạn bền vững theo địa chỉ nguồn đã xác thực: 200/phút, 5.000/ngày; toàn máy chủ: 600/phút, 20.000/ngày. Đổi cookie hoặc khởi động lại không xóa hạn mức. Cửa sổ cố định tính theo giờ máy chủ; đây là giới hạn tốc độ tăng dữ liệu, không phải hạn mức dung lượng lưu trữ. Kết quả cũ không bị tự xóa; cần theo dõi dung lượng và lập chính sách lưu trữ khi triển khai lâu dài.
 - Phòng chứa 100 thành viên đang tham gia. Loại người chơi trả lại chỗ nhưng giữ mã bị chặn; tối đa 1.000 mã bị chặn/phòng, sau đó cần phòng mới. Danh tính khách vẫn tự khai: nếu có người liên tục tạo danh tính mới, chủ trì nên khóa phòng sau khi đủ lớp.
 - WebSocket tối đa 4 kết nối/người và 512 kết nối/máy chủ, 2 đăng ký/kết nối, không đăng ký trùng phòng; 60 lệnh/phút/kết nối. Đóng kết nối giải phóng hạn mức. Thông báo chỉ chứa mã phòng, phiên bản và giờ; trình duyệt gộp thông báo dồn dập trong 120 ms rồi lấy trạng thái có phân quyền.
@@ -113,10 +113,30 @@ SOAK_RUN=30min-100students node tests/soak-reconnect.mjs
 - Mỗi vòng: 20 người luân phiên mất mạng; mỗi 15 vòng mất mạng cả 100 người. Có cả đóng kết nối và giữ kết nối TCP nhưng bỏ toàn bộ lưu lượng. Mỗi 10 vòng, 10 người trở lại sau hạn để kiểm tra câu bỏ trống và từ chối đáp án muộn. Bài tự khởi động lại **test-backend** ở vòng 50.
 - Kiểm tra lựa chọn, thời gian, điểm, thứ tự đáp án sau nối lại; gửi lại và gửi câu cũ; quyền quản trị; dữ liệu riêng trong kết quả cuối. Các client dùng thư viện STOMP giống frontend và REST thật, không phải 100 trình duyệt render giao diện.
 - `work/soak-<SOAK_RUN>/results.json` cập nhật định kỳ. `status: passed` cùng `finalVerified: true` mới là hoàn thành; không đánh giá dựa trên vài vòng đầu. Độ trễ `answers` gồm cả yêu cầu trả lời và yêu cầu cố tình bị từ chối; `recoveryIncludingOffline` bao gồm thời gian cố tình mất mạng.
-- Theo dõi tài nguyên độc lập từ thư mục gốc: `python3 scripts/soak-monitor.py`. Theo mặc định quan sát run `30min-100students`, chỉ đọc trạng thái, không sửa dữ liệu.
+- Theo dõi tài nguyên độc lập từ thư mục gốc: `python3 scripts/soak-monitor.py work/soak-<SOAK_RUN>`. Theo mặc định quan sát run `30min-100students`, chỉ đọc trạng thái, không sửa dữ liệu.
 - Phép thử riêng không ép nối lại: trong frontend chạy `node tests/network-recovery-check.mjs after`. Kiểm tra client tự phát hiện mất mạng âm thầm, tự nối lại và phục hồi đáp án đã được máy chủ nhận nhưng phản hồi bị mất. `node tests/network-probe.mjs after` kiểm tra socket chết được thu hồi và không chiếm hạn mức mãi mãi.
 - Kiểm tra timeout và phản hồi bị cắt: `node --test tests/api-network.test.mjs` (Node 24).
 
 Broker gửi/nhận nhịp kiểm tra mỗi 10 giây; client bỏ socket lỗi ngay khi phát hiện mất nhịp và thử lại sau 2 giây. Đây không phải cam kết khôi phục trong 2 giây: phát hiện mạng mất âm thầm còn phụ thuộc ngưỡng heartbeat và trình duyệt. REST có thời hạn 15 giây cho cả nhận header và đọc nội dung; nhập Excel có thời hạn 120 giây. Không tự gửi lại lệnh ghi khi timeout: phòng tải lại trạng thái và giữ lựa chọn đầu tiên mà máy chủ đã lưu.
 
 Trang phòng ngừng hỏi trạng thái và đóng WebSocket sau khi đã nhận kết quả cuối. Chủ trì chọn một sinh viên để xem bài chi tiết, tránh dựng đồng thời 10.000 câu review khi phòng có 100 người × 100 câu. Sinh viên vẫn xem được bài của chính mình; việc lọc quyền tiếp tục do backend thực hiện.
+
+### Kiểm tra mục tiêu phản hồi dưới một giây
+
+Kết quả đo và giới hạn: [báo cáo tối ưu cuối bài](docs/PERFORMANCE_SUBSECOND.md).
+
+Schema V4 tách quiz snapshot và lịch sử ra khỏi hàng phòng được cập nhật mỗi lần trả lời. Cache nội bộ chỉ giữ snapshot cố định, giới hạn 128 phòng/ngân sách trọng số 32 MiB; không cache quyền, đáp án người chơi hay phản hồi riêng. Chi tiết và quy trình rollback ở [kiến trúc](docs/ARCHITECTURE.md).
+
+Chạy riêng từng bài trên database thử, không biên dịch ứng dụng hay chạy bài tải khác cùng lúc:
+
+```sh
+# Từ thư mục frontend: 100 người cùng trả lời đủ 100 câu, có STOMP + polling
+SOAK_RUN=subsecond-burst SOAK_NO_FAULTS=1 SOAK_ROUND_MS=1000 SOAK_SLO_MS=1000 node tests/soak-reconnect.mjs
+# Bài chạy lâu có mất mạng và restart tại câu 50
+SOAK_RUN=subsecond-endurance SOAK_SLO_MS=1000 node tests/soak-reconnect.mjs
+# Trên macOS, thay "node ..." bằng "caffeinate -is node ..." để máy không tự ngủ khi đo.
+```
+
+`acceptedAnswers` đo riêng yêu cầu gửi đáp án được nhận, `finalReads` đo 100 người lấy kết quả cuối, `hostFinishMs` đo lệnh tổng kết. Khi đặt `SOAK_SLO_MS=1000`, bài thử chỉ đạt khi p95 gửi đáp án toàn bài, p95 từng câu trong 10 câu cuối, p95 lấy kết quả sinh viên và thời gian lệnh tổng kết đều dưới 1.000 ms. Vẫn ghi p99 và tối đa, không dùng p95 để khẳng định mọi yêu cầu luôn dưới ngưỡng. Bộ tạo phiên thử chờ cửa sổ hạn mức nếu các bài liên tiếp dùng chung IP; không tắt bộ giới hạn.
+
+Từ thư mục gốc, `python3 scripts/room-storage-regression.py` kiểm tra lịch sử, chuyển dữ liệu cũ, rollback khi không có quyền, restart giữa câu và sau kết thúc, snapshot không đổi sau sửa ngân hàng, cùng thông báo 401/403 bằng UTF-8. Bài này tự restart **test-backend**, không chạy cùng bài đo tải.

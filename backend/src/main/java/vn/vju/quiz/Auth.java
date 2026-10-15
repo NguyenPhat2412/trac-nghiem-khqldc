@@ -171,13 +171,13 @@ public class Auth {
                                   Objects.toString(req.getHeader("X-CSRF-Token"), "")
                                       .getBytes(StandardCharsets.UTF_8)))))) {
                 res.setStatus(403);
-                res.setContentType("application/json");
+                res.setContentType("application/json;charset=UTF-8");
                 res.getWriter().write("{\"message\":\"Phiên không hợp lệ. Hãy tải lại trang.\"}");
                 return;
               }
               if (admin.matches(req) && (actor == null || !actor.staff())) {
                 res.setStatus(actor == null ? 401 : 403);
-                res.setContentType("application/json");
+                res.setContentType("application/json;charset=UTF-8");
                 res.getWriter().write("{\"message\":\"Cần tài khoản quản lý\"}");
                 return;
               }

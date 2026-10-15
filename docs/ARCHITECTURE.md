@@ -35,7 +35,7 @@ Question snapshot giữ nguyên nội dung/đáp án trong attempt và room, dù
 
 ## Thứ tự đáp án và tín hiệu tập trung
 
-Phòng mới lấy cờ `shuffle` từ quiz. Thứ tự câu được đảo chung; `Member.optionOrders` giữ hoán vị lựa chọn cho từng câu của từng người. Máy chủ ánh xạ lựa chọn hiển thị về chỉ số chuẩn trước khi lưu/chấm, rồi ánh xạ ngược khi trả đáp án/phân bố/review. Phòng cũ thiếu trường này dùng thứ tự chuẩn để giữ tương thích.
+Phòng mới lấy cờ `shuffle` từ quiz. Thứ tự câu được đảo chung; hoán vị đáp án được tạo ổn định từ `Member.optionSeed` riêng và mã câu hỏi. `Member.optionOrders` cũ vẫn được ưu tiên để giữ lịch sử. Máy chủ ánh xạ lựa chọn hiển thị về chỉ số chuẩn trước khi lưu/chấm, rồi ánh xạ ngược khi trả đáp án/phân bố/review. Phòng cũ thiếu trường này dùng thứ tự chuẩn để giữ tương thích.
 
 `Integrity` lưu tối đa 100 sự kiện có mã riêng cùng thời gian nhận máy chủ, gộp sự kiện gửi lại. Tổng hợp chỉ trả cho chủ trì hoặc báo cáo có quyền; không sửa điểm/thứ hạng. Sự kiện là dữ liệu do trình duyệt tự báo, không phải bằng chứng gian lận.
 
@@ -50,3 +50,21 @@ Practice giữ số thứ tự thay đổi cục bộ để bỏ phản hồi đ
 ## Vận hành
 
 `/actuator/health` báo sức khỏe. Dữ liệu chính nằm trên ổ D qua bind mount; không chứa trong image. Bản local bind cổng vào loopback. Bản công khai cần TLS và APP_ORIGIN/SECURE_COOKIE tương ứng. Sao lưu PostgreSQL bằng pg_dump; trước nâng cấp schema, lưu bản sao và kiểm thử khôi phục trên database riêng.
+
+## Trạng thái phòng nhỏ và lịch sử tách riêng (schema V4)
+
+`RoomPersistence` lưu ba phần trong cùng PostgreSQL:
+
+- `rooms.data`: trạng thái, phiên bản, deadline, thành viên, đáp án của câu hiện tại, điểm/thời gian tích lũy của các câu trước. Câu hỏi và lịch sử trả lời không tăng kích thước hàng này theo số câu.
+- `room_snapshots`: bản quiz cố định theo mã phòng; không thay đổi khi sửa ngân hàng hoặc xuất bản phiên bản quiz mới.
+- `room_history`: các lựa chọn và thời gian đã lưu trước đó theo `(room_id, player_id)`; chỉ cần tải khi xem chi tiết cuối bài hoặc báo cáo.
+
+Khi chủ trì mở câu tiếp, hệ thống lưu câu cũ vào lịch sử, cộng điểm/thời gian (câu bỏ trống tính đủ thời lượng), xóa lựa chọn hiện tại rồi mở câu mới. Tất cả nằm trong giao dịch đang giữ khóa phòng. Khi chuyển sang FINISHED, câu cuối vẫn nằm trong trạng thái phòng; đọc kết quả ghép lịch sử với câu cuối. Khóa hàng, phiên bản, deadline, lựa chọn đầu tiên và phát sự kiện sau commit vẫn giữ nguyên.
+
+Bảng xếp hạng tính từ tổng tích lũy và câu hiện tại, không duyệt lại toàn bộ bài cho mỗi người. GET phòng vẫn đọc trạng thái và kiểm tra quyền từ database; chỉ tải lịch sử của đúng sinh viên khi họ xem kết quả. Chủ trì/báo cáo được cấp quyền mới tải lịch sử nhiều người. DTO công khai vẫn được tạo riêng theo actor; không đưa khóa đáp án, hoán vị bí mật, tổng nội bộ hay đáp án người khác vào cache HTTP.
+
+Cache trong tiến trình chỉ chứa quiz snapshot cố định, tối đa 128 phòng và ngân sách trọng số 32 MiB (ước lượng theo kích thước JSON, không phải giới hạn chính xác toàn bộ heap). Cache không chứa phiên, tư cách thành viên, lựa chọn hay DTO kết quả. Snapshot mới chỉ được đưa vào cache sau commit và tách khỏi đối tượng mà lệnh tạo phòng có thể sửa. Sau restart hoặc eviction, cache đọc lại PostgreSQL. Vì snapshot không đổi, không cần TTL hay invalidation theo chỉnh sửa ngân hàng.
+
+Phòng từ schema cũ vẫn đọc được. Lệnh đầu tiên giữ khóa phòng chuyển đổi aggregate cũ trong một giao dịch, bảo toàn snapshot, thứ tự đáp án, thời gian, điểm, phiên bản và lịch sử. Giao dịch bị từ chối phải rollback cả việc chuyển đổi. Phòng đã hoàn tất từ bản cũ chưa được sửa có thể tiếp tục đọc theo định dạng cũ.
+
+Sau khi đã chuyển đổi phòng, **không chỉ đổi về image cũ**: phiên bản cũ không hiểu định dạng compact. Muốn quay lui bản phát hành phải dừng dịch vụ và khôi phục backup database trước nâng cấp cùng image tương ứng; dữ liệu phát sinh sau backup cần được xử lý riêng. Kiểm thử restore trên database riêng trước khi thao tác dữ liệu chính.
