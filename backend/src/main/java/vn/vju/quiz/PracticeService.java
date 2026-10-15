@@ -16,7 +16,12 @@ public class PracticeService {
   }
 
   public record Start(
-      String quizId, List<String> chapterIds, int count, int timeLimitSeconds, String retryId) {}
+      String quizId,
+      List<String> chapterIds,
+      int count,
+      int timeLimitSeconds,
+      String retryId,
+      Boolean instantFeedback) {}
 
   @Transactional
   public Map<String, Object> start(Actor p, Start input) {
@@ -33,6 +38,7 @@ public class PracticeService {
                   .filter(q -> !Objects.equals(old.answers.get(q.id), q.correct))
                   .toList());
       a.title = "Luyện lại câu sai · " + old.title;
+      a.instantFeedback = true;
     } else if (input.quizId() != null && !input.quizId().isBlank()) {
       Quiz q = s.get("quizzes", input.quizId(), Quiz.class, false);
       Errors.require(q.status.equals("PUBLISHED"), "Bộ quiz không còn mở");
@@ -40,7 +46,8 @@ public class PracticeService {
       a.title = q.title;
       a.questions = new ArrayList<>(q.questions);
       seconds = q.timeLimitSeconds;
-      a.ranked = true;
+      a.instantFeedback = Boolean.TRUE.equals(input.instantFeedback());
+      a.ranked = !a.instantFeedback;
       if (q.shuffle) shuffle(a.questions);
     } else {
       Errors.require(
@@ -68,6 +75,7 @@ public class PracticeService {
       Collections.shuffle(pool);
       a.questions = new ArrayList<>(pool.subList(0, input.count()));
       a.title = "Bài luyện theo chương";
+      a.instantFeedback = !Boolean.FALSE.equals(input.instantFeedback());
       seconds = input.timeLimitSeconds();
       shuffle(a.questions);
     }
@@ -129,7 +137,8 @@ public class PracticeService {
         "Câu hỏi không thuộc bài này");
     if (in.answer() != null) {
       Errors.require(in.answer() >= 0 && in.answer() < 4, "Đáp án không hợp lệ");
-      a.answers.put(in.questionId(), in.answer());
+      if (!a.instantFeedback || !a.answers.containsKey(in.questionId()))
+        a.answers.put(in.questionId(), in.answer());
     }
     if (in.flagged() != null) {
       if (in.flagged()) a.flagged.add(in.questionId());
@@ -157,14 +166,32 @@ public class PracticeService {
     v.put("serverTime", System.currentTimeMillis());
     v.put("answers", a.answers);
     v.put("flagged", a.flagged);
+    v.put("instantFeedback", a.instantFeedback);
     v.put(
         "questions",
-        a.questions.stream().map(q -> content.question(q, a.status.equals("DONE"))).toList());
+        a.questions.stream()
+            .map(
+                q ->
+                    content.question(
+                        q,
+                        a.status.equals("DONE")
+                            || (a.instantFeedback && a.answers.containsKey(q.id))))
+            .toList());
     v.put("durationMs", a.durationMs);
     v.put("correct", a.correct);
     v.put("score", score(a.correct, a.questions.size()));
     v.put("ranked", a.ranked);
     return v;
+  }
+
+  @Transactional
+  public void integrity(Actor p, String id, Integrity.Event event) {
+    Attempt a = owned(p, id, true);
+    Errors.require(
+        a.status.equals("ACTIVE") && (a.deadline == 0 || System.currentTimeMillis() < a.deadline),
+        "Bài đã kết thúc");
+    Integrity.record(a.integrityEvents, event);
+    s.save("attempts", id, a);
   }
 
   public static double score(int correct, int count) {

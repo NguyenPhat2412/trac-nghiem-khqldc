@@ -17,7 +17,7 @@ function connect(client,csrf=client.actor.csrf){return new Promise((resolve,reje
  socket.on('message',raw=>{const frame=raw.toString();frames.push(frame);if(frame.startsWith('CONNECTED')){clearTimeout(timeout);resolve({socket,frames});}if(frame.startsWith('ERROR')){clearTimeout(timeout);reject(new Error('STOMP rejected'));}});socket.on('error',reject);
 });}
 const delay=ms=>new Promise(r=>setTimeout(r,ms));
-const admin=await session({username:'admin',password:process.env.ADMIN_PASSWORD},'/auth/login');const catalog=await call(admin,'/catalog');const room=await call(admin,'/admin/rooms',{quizId:catalog.quizzes[0].id});
+const admin=await session({username:process.env.ADMIN_USERNAME||'admin',password:process.env.ADMIN_PASSWORD},'/auth/login');const catalog=await call(admin,'/catalog');const room=await call(admin,'/admin/rooms',{quizId:catalog.quizzes[0].id});
 const players=[];for(let i=0;i<100;i++){const p=await session({name:`WS Load ${i+1}`});await call(p,`/rooms/${room.id}/join`,{});players.push(p);}
 const sockets=await Promise.all(players.map(p=>connect(p)));sockets.forEach((s,i)=>s.socket.send(`SUBSCRIBE\nid:p${i}\ndestination:/topic/rooms/${room.id}\nreceipt:sub${i}\n\n\0`));
 await delay(300);const start=performance.now();const opened=await call(admin,`/admin/rooms/${room.id}/start`,{});
@@ -29,7 +29,8 @@ await assert.rejects(()=>connect(players[0],'wrong'));console.log('PASS STOMP co
 const latencies=await Promise.all(players.map(async(p,i)=>{const start=performance.now();await call(p,`/rooms/${room.id}/answer`,{questionId:opened.question.id,answer:i%4});return performance.now()-start;}));
 const final=await call(admin,`/rooms/${room.id}`);assert.equal(final.answered,100);assert.equal(final.status,'REVEAL');assert.equal(final.ranking.length,100);console.log('PASS 100 connected players submit without lost answers');
 // Room and credentials intentionally persisted in ignored work/ for the restart check.
-const state={admin,player:players[0],roomId:room.id,questionId:opened.question.id,version:final.version};await writeFile('../work/restart-state.json',JSON.stringify(state),{mode:0o600});
+const ownView=await call(players[0],`/rooms/${room.id}`);
+const state={admin,player:players[0],roomId:room.id,questionId:opened.question.id,version:final.version,options:ownView.question.options,correct:ownView.question.correct};await writeFile('../work/restart-state.json',JSON.stringify(state),{mode:0o600});
 for(const s of [...sockets,denied,forged])s.socket.close();
 const sorted=latencies.sort((a,b)=>a-b);await writeFile('../work/realtime-results.json',JSON.stringify({connections:100,broadcast_all_ms:Math.round(broadcastMs),answer_p50_ms:Math.round(sorted[49]),answer_p95_ms:Math.round(sorted[94]),answer_max_ms:Math.round(sorted[99]),securityChecks:3,answered:100},null,2));
 console.log(JSON.stringify({broadcastMs:Math.round(broadcastMs),p95:Math.round(sorted[94])}));

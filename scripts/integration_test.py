@@ -18,7 +18,7 @@ class Client:
   if isinstance(data,dict) and 'csrf' in data:self.csrf=data['csrf'];self.actor=data
   return data
  def guest(self,name='Cùng tên'):return self.call('/session','POST',{'name':name})
- def login(self,name='admin',password=None):return self.call('/auth/login','POST',{'username':name,'password':password or os.environ['ADMIN_PASSWORD']})
+ def login(self,name=None,password=None):return self.call('/auth/login','POST',{'username':name or os.environ.get('ADMIN_USERNAME','admin'),'password':password or os.environ['ADMIN_PASSWORD']})
 checks=[]
 def check(name,condition):
  assert condition,name

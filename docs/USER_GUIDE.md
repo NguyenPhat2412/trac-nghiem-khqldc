@@ -4,12 +4,17 @@
 
 1. Mở trang chủ, nhập tên. Không cần mật khẩu hoặc email.
 2. Tự luyện: chọn một bộ quiz có xếp hạng, hoặc bấm một/nhiều chương để tạo bài luyện riêng.
-3. Chọn đáp án; đáp án được lưu khi hệ thống báo “Đã lưu”. Có thể đánh dấu và chuyển câu. Đừng đóng trang trong lúc đang lưu.
-4. Nộp bài, xem điểm và mở từng câu để đọc giải thích. Có thể luyện lại câu sai.
-5. Vào phòng: nhập tên và mã 6 số do người chủ trì cung cấp; chờ bắt đầu, mỗi câu chỉ gửi một đáp án.
-6. Khi mất mạng, kết nối lại trên cùng trình duyệt. Đồng hồ vẫn chạy theo máy chủ.
+3. Chọn “Học từng câu · Hiện đáp án ngay” để đọc đáp án đúng và lời giải ngay sau mỗi lựa chọn. Đáp án sai có màu đỏ và chữ; đáp án đúng có màu xanh. Lựa chọn đầu tiên được khóa và bài này không xếp hạng. Bài tự chọn chương mặc định bật chế độ này; có thể bỏ chọn trước khi bắt đầu.
+4. Chọn “Làm bài” ở bộ quiz để tham gia xếp hạng: có thể sửa lựa chọn trước khi nộp, chỉ xem đáp án sau khi kết thúc. Có thể đánh dấu và chuyển câu. Đừng đóng trang trong lúc đang lưu.
+5. Nộp bài, xem điểm và mở từng câu để đọc giải thích. Có thể luyện lại câu sai.
+6. Vào phòng: nhập tên và mã 6 số do người chủ trì cung cấp; chờ bắt đầu, mỗi câu chỉ gửi một đáp án.
+7. Khi mất mạng, kết nối lại trên cùng trình duyệt. Đồng hồ vẫn chạy theo máy chủ.
 
-Điểm bằng tỷ lệ câu đúng trên thang 100. Cùng số câu đúng thì thời gian ngắn hơn xếp trước; giống cả hai thì đồng hạng. Bảng tự luyện giữ lượt tốt nhất và ghi số lượt đã làm. Bài tự chọn chương/câu sai không tham gia bảng chung.
+Điểm bằng tỷ lệ câu đúng trên thang 100. Cùng số câu đúng thì thời gian ngắn hơn xếp trước; giống cả hai thì đồng hạng. Bảng tự luyện giữ lượt tốt nhất và ghi số lượt đã làm. Bài tự chọn chương, luyện câu sai và học có phản hồi tức thì không tham gia bảng chung.
+
+Bộ “Nhóm 7 · Lập kế hoạch · 50 câu” dùng câu hỏi và đáp án trong CSV bạn cung cấp. Có thể chọn chương 3 để lấy ngẫu nhiên từ cả 54 câu của chương.
+
+Khi làm bài có xếp hạng hoặc đang trả lời trong phòng, vùng câu hỏi hạn chế chọn/copy/in nội dung và có tên/mã người chơi. Hệ thống thông báo khi ghi nhận rời trang hoặc thao tác bị chặn; không tự trừ điểm. Đây chỉ là tín hiệu để người quản lý xem xét. Trong phòng, thứ tự A–D có thể khác nhau giữa người chơi; hãy đọc nội dung đáp án. Lời giải chỉ mở khi câu đã đóng cho cả phòng.
 
 ## Người quản lý
 
@@ -20,7 +25,8 @@
 5. Xuất bản quiz. Bộ câu hỏi được cố định; sửa tạo phiên bản mới để không ảnh hưởng bài cũ.
 6. Mở “Phòng chơi”, chọn quiz, bấm tạo phòng. Chia sẻ mã, đường dẫn hoặc QR. Bấm bắt đầu khi lớp đã vào đủ.
 7. Sau mỗi câu, xem phân bố câu trả lời và bấm câu tiếp theo. Có thể kết thúc sớm; báo cáo sẽ ghi rõ.
-8. Xem “Báo cáo”, lọc và xuất CSV. Biên tập viên chỉ xem các phòng mình tạo.
+8. Xem “Báo cáo”, lọc và xuất CSV. Biên tập viên chỉ xem các phòng mình tạo. Mục “Ghi nhận tập trung” trong phòng và cột tương ứng trong báo cáo hiển thị số lần rời trang/thao tác sao chép bị chặn. Không dùng số này để tự động kết luận gian lận. CSV kết quả hiện chưa có các cột tín hiệu này.
+9. Bật tùy chọn đảo câu/đáp án khi tạo quiz để phòng mới có thứ tự lựa chọn riêng cho từng người. Phòng cũ giữ bố cục đã lưu.
 
 ## Nhập Excel
 

@@ -7,6 +7,7 @@ if [ ! -f .env ]; then
   cat > .env <<ENV
 DATABASE_PASSWORD=$(openssl rand -hex 24)
 ADMIN_PASSWORD=$(openssl rand -hex 12)
+ADMIN_USERNAME=admin
 APP_ORIGIN=http://localhost:3000
 SECURE_COOKIE=false
 SEED_DEMO=true
@@ -15,4 +16,4 @@ ENV
 fi
 docker compose up -d --build
 docker compose restart gateway
-printf '%s\n' 'Mở http://localhost:3000 — quản trị tại /admin, tên đăng nhập admin.' 'Mật khẩu khởi tạo nằm ở ADMIN_PASSWORD trong .env.'
+printf '%s\n' 'Mở http://localhost:3000 — quản trị tại /admin.' 'Thông tin khởi tạo nằm ở ADMIN_USERNAME và ADMIN_PASSWORD trong .env.'

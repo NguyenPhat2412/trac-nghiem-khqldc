@@ -1,0 +1,1394 @@
+{
+  "chapters": [
+    "Nhập môn khoa học quản lý",
+    "Nguyên tắc và phương pháp quản lý",
+    "Chức năng lập kế hoạch và ra quyết định",
+    "Chức năng tổ chức",
+    "Chức năng lãnh đạo",
+    "Chức năng kiểm tra",
+    "Thông tin trong quản lý",
+    "Chọn lựa, đánh giá và phát triển cán bộ quản lý"
+  ],
+  "questions": [
+    {
+      "correct": 2,
+      "options": [
+        "Quản trị là khái niệm rộng hơn, bao hàm toàn bộ quản lý nhà nước",
+        "Quản trị chỉ áp dụng cho tổ chức phi lợi nhuận, quản lý áp dụng cho doanh nghiệp",
+        "Quản lý liên quan đến mọi lĩnh vực, mọi loại hình tổ chức và mọi cấp độ; còn quản trị thường tập trung theo hướng doanh nghiệp, kinh doanh",
+        "Không có bất kỳ điểm khác biệt nào, hai khái niệm hoàn toàn đồng nghĩa"
+      ],
+      "text": "Điểm khác biệt căn bản giữa khái niệm \"Quản lý\" và \"Quản trị\" là gì?",
+      "chapter": 1,
+      "explanation": "Quản lý được dùng với phạm vi rộng ở nhiều lĩnh vực và cấp độ. Trong cách phân biệt của bộ câu hỏi này, quản trị nhấn mạnh hoạt động doanh nghiệp, kinh doanh.\nNguồn: Blooket, VietHung17, bộ Khoa học Quản lý đại cương Chương 1&2, câu 1.",
+      "source": "blooket",
+      "sourceQuestion": 1,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "correct": 1,
+      "options": [
+        "Quản lý chọn đúng việc cần làm; lãnh đạo chỉ chú trọng làm việc đúng cách",
+        "Quản lý làm việc đúng cách (doing things right); lãnh đạo chọn đúng việc cần làm (doing the right things)",
+        "Quản lý tập trung đổi mới, Lãnh đạo tập trung duy trì",
+        "Quản lý có tầm nhìn rộng, Lãnh đạo có tầm nhìn hẹp"
+      ],
+      "text": "Theo Warren Bennis, sự khác biệt căn bản về phương châm hành động giữa Quản lý và Lãnh đạo là gì?",
+      "chapter": 1,
+      "explanation": "Phân biệt theo Bennis: quản lý chú trọng thực hiện công việc đúng cách (doing things right); lãnh đạo chú trọng chọn đúng việc cần làm (doing the right things). Cách dịch đã được biên tập để tránh đảo nghĩa hai vế.\nNguồn: Blooket, VietHung17, bộ Khoa học Quản lý đại cương Chương 1&2, câu 2.",
+      "source": "blooket",
+      "sourceQuestion": 2,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "correct": 2,
+      "options": [
+        "Khơi gợi sự tin tưởng và tập trung vào con người",
+        "Tầm nhìn chiến lược mở rộng ra phạm vi môi trường bên ngoài",
+        "Điều hành, duy trì, tập trung vào hệ thống và cấu trúc, dựa vào sự kiểm soát",
+        "Tìm kiếm sự đột phá và liên tục tái cấu trúc tổ chức"
+      ],
+      "text": "Theo quan niệm của Warren Bennis, người làm công tác QUẢN LÝ thường tập trung vào yếu tố nào?",
+      "chapter": 1,
+      "explanation": "Đặc trưng được nhấn mạnh là duy trì và điều hành hệ thống, cấu trúc, cơ chế kiểm soát; những lựa chọn về đổi mới và gây dựng niềm tin nghiêng về lãnh đạo.\nNguồn: Blooket, VietHung17, bộ Khoa học Quản lý đại cương Chương 1&2, câu 3.",
+      "source": "blooket",
+      "sourceQuestion": 3,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "correct": 0,
+      "options": [
+        "Kỹ năng bao quát (tư duy chiến lược, nhìn nhận toàn diện)",
+        "Kỹ năng chuyên môn (thao tác nghiệp vụ, kỹ thuật cụ thể)",
+        "Kỹ năng thừa hành tác nghiệp hàng ngày",
+        "Kỹ năng đàm phán hợp đồng kinh tế"
+      ],
+      "text": "Theo Khoa học Quản lý, nhà quản lý CẤP CAO đòi hỏi cao nhất nhóm kỹ năng nào?",
+      "chapter": 1,
+      "explanation": "Ở cấp cao, phạm vi quyết định rộng nên kỹ năng bao quát và tư duy chiến lược có yêu cầu nổi bật.\nNguồn: Blooket, VietHung17, bộ Khoa học Quản lý đại cương Chương 1&2, câu 4.",
+      "source": "blooket",
+      "sourceQuestion": 4,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "correct": 1,
+      "options": [
+        "Kỹ năng bao quát",
+        "Kỹ năng chuyên môn (nghiệp vụ, kỹ thuật)",
+        "Kỹ năng hoạch định chính sách vĩ mô",
+        "Kỹ năng phân tích kinh tế lượng"
+      ],
+      "text": "Theo Slide bài giảng, nhà quản lý CẤP THẤP cần thành thạo nhất nhóm kỹ năng nào?",
+      "chapter": 1,
+      "explanation": "Cấp thấp trực tiếp gắn với hoạt động tác nghiệp nên cần thành thạo chuyên môn, nghiệp vụ và kỹ thuật.\nNguồn: Blooket, VietHung17, bộ Khoa học Quản lý đại cương Chương 1&2, câu 5.",
+      "source": "blooket",
+      "sourceQuestion": 5,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "correct": 1,
+      "options": [
+        "Tiếp cận tâm lý - xã hội",
+        "Tiếp cận kinh tế - kỹ thuật: hoàn thành công việc qua người khác, biết chính xác họ hoàn thành tốt nhất, rẻ nhất",
+        "Tiếp cận văn hóa quản lý",
+        "Tiếp cận ngẫu nhiên theo tình huống"
+      ],
+      "text": "Frederick Winslow Taylor tiếp cận quản lý theo khoa học dựa trên quan điểm nào?",
+      "chapter": 1,
+      "explanation": "Taylor được gắn với cách tiếp cận kinh tế - kỹ thuật và việc tổ chức thực hiện công việc đạt hiệu quả cao.\nNguồn: Blooket, VietHung17, bộ Khoa học Quản lý đại cương Chương 1&2, câu 6.",
+      "source": "blooket",
+      "sourceQuestion": 6,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "correct": 2,
+      "options": [
+        "Henri Fayol",
+        "Chester Barnard",
+        "Mary Parker Follett",
+        "Harold Koontz"
+      ],
+      "text": "Ai là người đưa ra định nghĩa nổi tiếng coi quản lý là \"nghệ thuật hoàn thành công việc thông qua người khác\" từ góc độ tâm lý - xã hội?",
+      "chapter": 1,
+      "explanation": "Bộ nguồn xác định Mary Parker Follett là tác giả của cách diễn đạt nhấn mạnh hoàn thành công việc thông qua người khác.\nNguồn: Blooket, VietHung17, bộ Khoa học Quản lý đại cương Chương 1&2, câu 7.",
+      "source": "blooket",
+      "sourceQuestion": 7,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "correct": 1,
+      "options": [
+        "Tiếp cận hành chính quy trình; xem quản lý là 14 nguyên tắc",
+        "Tiếp cận hệ thống; xem quản lý là công việc chuyên môn nhằm duy trì tổ chức",
+        "Tiếp cận toán học; xem quản lý là giải các thuật toán tối ưu",
+        "Tiếp cận văn hóa; xem quản lý là xây dựng truyền thống gia đình"
+      ],
+      "text": "Chester Barnard tiếp cận quản lý theo lý thuyết nào và xem quản lý là gì?",
+      "chapter": 1,
+      "explanation": "Bộ nguồn xếp Chester Barnard vào tiếp cận hệ thống, nhấn mạnh công việc chuyên môn để duy trì tổ chức.\nNguồn: Blooket, VietHung17, bộ Khoa học Quản lý đại cương Chương 1&2, câu 8.",
+      "source": "blooket",
+      "sourceQuestion": 8,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "correct": 2,
+      "options": [
+        "Quản lý vĩ mô và Quản lý vi mô",
+        "Quản lý cấp cao, cấp trung và cấp thấp",
+        "Doanh nghiệp, tổ chức hành chính, tổ chức sự nghiệp, tổ chức xã hội, tổ chức phi lợi nhuận",
+        "Quản lý kinh tế, quản lý văn hóa, quản lý xã hội"
+      ],
+      "text": "Căn cứ vào \"Loại hình tổ chức\", hoạt động quản lý được phân loại thành các dạng nào?",
+      "chapter": 1,
+      "explanation": "Đề hỏi tiêu chí loại hình tổ chức, không phải quy mô, cấp quản lý hay lĩnh vực hoạt động.\nNguồn: Blooket, VietHung17, bộ Khoa học Quản lý đại cương Chương 1&2, câu 9.",
+      "source": "blooket",
+      "sourceQuestion": 9,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "correct": 1,
+      "options": [
+        "Nguồn nhân lực, tài lực và văn hóa tổ chức",
+        "Kinh tế, Kỹ thuật - Công nghệ, Tự nhiên, Văn hóa, Xã hội, Chính trị và Pháp luật",
+        "Cơ sở vật chất kỹ thuật và trang thiết bị của cơ quan",
+        "Phong cách lãnh đạo của thủ trưởng đơn vị"
+      ],
+      "text": "Nhóm yếu tố nào sau đây thuộc môi trường BÊN NGOÀI của quản lý?",
+      "chapter": 1,
+      "explanation": "Kinh tế, công nghệ, tự nhiên, văn hóa - xã hội, chính trị và pháp luật là những nhóm điều kiện bên ngoài tổ chức.\nNguồn: Blooket, VietHung17, bộ Khoa học Quản lý đại cương Chương 1&2, câu 10.",
+      "source": "blooket",
+      "sourceQuestion": 10,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "correct": 0,
+      "options": [
+        "Nguồn nhân lực, Tài lực, Cơ sở vật chất, Văn hóa tổ chức",
+        "Khách hàng, đối thủ cạnh tranh, nhà cung ứng, ngân hàng",
+        "Pháp luật, chính sách thuế, lạm phát, tỷ giá",
+        "Dân số, địa lý, khí hậu, tài nguyên thiên nhiên"
+      ],
+      "text": "Môi trường BÊN TRONG của tổ chức bao gồm 4 yếu tố cơ bản nào?",
+      "chapter": 1,
+      "explanation": "Nguồn nhân lực, tài lực, cơ sở vật chất và văn hóa tổ chức là các yếu tố thuộc bên trong.\nNguồn: Blooket, VietHung17, bộ Khoa học Quản lý đại cương Chương 1&2, câu 11.",
+      "source": "blooket",
+      "sourceQuestion": 11,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "correct": 1,
+      "options": [
+        "Khách thể hoàn toàn phụ thuộc vào chủ thể quản lý",
+        "Khách thể là bên đối diện, gồm đối tượng quản lý và các bên liên quan, nhiều yếu tố ngoài tầm kiểm soát và có tính độc lập tương đối",
+        "Khách thể không bao giờ ảnh hưởng đến sự thành bại của tổ chức",
+        "Khách thể chỉ xuất hiện trong các cơ quan nhà nước"
+      ],
+      "text": "Điểm khác biệt cốt lõi giữa \"Khách thể quản lý\" và \"Đối tượng quản lý\" là gì?",
+      "chapter": 1,
+      "explanation": "Theo cách phân biệt trong bộ nguồn, khách thể bao gồm đối tượng quản lý cùng các bên liên quan, có những yếu tố độc lập tương đối với chủ thể.\nNguồn: Blooket, VietHung17, bộ Khoa học Quản lý đại cương Chương 1&2, câu 12.",
+      "source": "blooket",
+      "sourceQuestion": 12,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "correct": 1,
+      "options": [
+        "Các quy định pháp luật bắt buộc do cơ quan quyền lực nhà nước ban hành",
+        "Các quy định có tính chuẩn mực, phản ánh quy luật khách quan, chỉ đạo hành vi của chủ thể quản lý nhằm đạt mục tiêu hiệu lực và hiệu quả",
+        "Lời khuyên mang tính tham khảo tuỳ ý, không bắt buộc chủ thể quản lý phải tuân thủ",
+        "Bản nội quy lao động và mô tả công việc của từng nhân viên"
+      ],
+      "text": "Theo Giáo trình Khoa học Quản lý Đại cương (tr.57), \"Nguyên tắc quản lý\" được định nghĩa là gì?",
+      "chapter": 2,
+      "explanation": "Nguyên tắc là những chuẩn mực chỉ đạo hành vi quản lý, dựa trên nhận thức quy luật và hướng đến mục tiêu. Đối chiếu giáo trình 2019, trang in 57.\nNguồn: Blooket, VietHung17, bộ Khoa học Quản lý đại cương Chương 1&2, câu 13.",
+      "source": "blooket",
+      "sourceQuestion": 13,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "correct": 1,
+      "options": [
+        "Quyền lực độc đoán tuyệt đối và sự tự do vô kỷ luật của cấp dưới",
+        "Chế độ thủ trưởng (tập trung) và sự tham gia, bàn bạc, giám sát của cấp dưới (dân chủ)",
+        "Tập trung quan liêu và dân chủ hình thức",
+        "Lợi ích cá nhân người đứng đầu và sự phục tùng của tập thể"
+      ],
+      "text": "Thực chất nội dung nguyên tắc \"Tập trung - dân chủ\" đòi hỏi sự kết hợp hài hòa giữa hai yếu tố nào?",
+      "chapter": 2,
+      "explanation": "Tập trung gắn với trách nhiệm cá nhân và sự thống nhất; dân chủ gắn với sự tham gia và giám sát của cấp dưới. Đối chiếu giáo trình 2019, trang in 66.\nNguồn: Blooket, VietHung17, bộ Khoa học Quản lý đại cương Chương 1&2, câu 14.",
+      "source": "blooket",
+      "sourceQuestion": 14,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "correct": 0,
+      "options": [
+        "Sự thống nhất về tư tưởng, ý chí và hành động trong toàn bộ tổ chức",
+        "Giảm bớt số lượng nhân sự trong cơ quan",
+        "Tối đa hóa lợi nhuận tài chính trong thời gian ngắn nhất",
+        "Bỏ qua việc lấy ý kiến đóng góp của các phòng ban"
+      ],
+      "text": "Việc thực hiện nguyên tắc \"Tập trung - dân chủ\" là cơ sở đảm bảo điều gì quan trọng nhất cho tổ chức?",
+      "chapter": 2,
+      "explanation": "Sự kết hợp tập trung và dân chủ góp phần thống nhất tư tưởng, ý chí và hành động. Đối chiếu giáo trình 2019, trang in 66.\nNguồn: Blooket, VietHung17, bộ Khoa học Quản lý đại cương Chương 1&2, câu 15.",
+      "source": "blooket",
+      "sourceQuestion": 15,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "correct": 1,
+      "options": [
+        "Giúp nhà quản lý toàn quyền hành động mà không bị cấp trên kiểm tra",
+        "Tạo sự cân bằng giữa quyền lực và trách nhiệm, đảm bảo quyền hạn vừa được kiểm soát, vừa được sử dụng đúng mục đích",
+        "Đùn đẩy toàn bộ trách nhiệm thực hiện cho nhân viên cấp dưới",
+        "Giảm bớt quyền hạn của cấp trên để giao cho cấp dưới tự quyết"
+      ],
+      "text": "Mục đích chính của nguyên tắc \"Quyền hạn tương xứng với trách nhiệm\" là gì?",
+      "chapter": 2,
+      "explanation": "Giao quyền phải gắn với trách nhiệm để vừa có khả năng thực hiện nhiệm vụ vừa có cơ sở kiểm soát. Đối chiếu giáo trình 2019, trang in 66–67.\nNguồn: Blooket, VietHung17, bộ Khoa học Quản lý đại cương Chương 1&2, câu 16.",
+      "source": "blooket",
+      "sourceQuestion": 16,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "correct": 1,
+      "options": [
+        "Căn cứ vào mối quan hệ thân quen và cảm xúc cá nhân",
+        "Căn cứ vào sự cân bằng giữa quyền hạn được giao và trách nhiệm phải gánh vác",
+        "Căn cứ vào thâm niên lâu năm nhất tại đơn vị",
+        "Căn cứ vào việc ai đòi hỏi quyền hạn cao hơn"
+      ],
+      "text": "Khi thiết kế tổ chức, phân công công việc và giao quyền, nhà quản lý phải căn cứ vào yếu tố nào?",
+      "chapter": 2,
+      "explanation": "Sự cân bằng quyền hạn và trách nhiệm là căn cứ khi thiết kế tổ chức, phân công và giao quyền. Đối chiếu giáo trình 2019, trang in 67.\nNguồn: Blooket, VietHung17, bộ Khoa học Quản lý đại cương Chương 1&2, câu 17.",
+      "source": "blooket",
+      "sourceQuestion": 17,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "correct": 3,
+      "options": [
+        "Cấp trung",
+        "Cấp cao",
+        "Cấp thấp",
+        "Tất cả các phương án"
+      ],
+      "text": "Kỹ năng quan hệ CON NGƯỜI cần cho cấp quản lý nào",
+      "chapter": 1,
+      "explanation": "Làm việc với con người xuất hiện ở mọi cấp quản lý, nên kỹ năng quan hệ con người cần cho cả cấp cao, cấp trung và cấp thấp.\nNguồn: Blooket, VietHung17, bộ Khoa học Quản lý đại cương Chương 1&2, câu 18.",
+      "source": "blooket",
+      "sourceQuestion": 18,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "chapter": 3,
+      "text": "Chức năng nào tạo nền tảng để triển khai tổ chức, lãnh đạo và kiểm tra?",
+      "options": [
+        "Lập kế hoạch",
+        "Chỉ kiểm tra kết quả cuối kỳ",
+        "Chỉ phân phối thông tin",
+        "Chỉ tuyển dụng nhân sự"
+      ],
+      "correct": 0,
+      "explanation": "Việc xác định mục tiêu và hướng thực hiện là cơ sở cho các chức năng quản lý tiếp theo.\nTự biên soạn theo Giáo trình Khoa học quản lý đại cương (2019), trang in 86. Không phải câu trích nguyên văn hoặc đáp án thi chính thức.",
+      "source": "textbook-authored",
+      "page": 86,
+      "difficulty": "EASY"
+    },
+    {
+      "chapter": 3,
+      "text": "Một bản kế hoạch đầy đủ cần làm rõ nội dung nào?",
+      "options": [
+        "Chỉ tên người phê duyệt",
+        "Chỉ kết quả đã xảy ra",
+        "Chỉ danh sách nhân viên",
+        "Mục tiêu, phương án, nguồn lực và khung thời gian"
+      ],
+      "correct": 3,
+      "explanation": "Kế hoạch nối mục tiêu tương lai với cách hành động, điều kiện thực hiện và các mốc thời gian; phần nguồn lực và thời gian tiếp tục ở trang 88.\nTự biên soạn theo Giáo trình Khoa học quản lý đại cương (2019), trang in 87. Không phải câu trích nguyên văn hoặc đáp án thi chính thức.",
+      "source": "textbook-authored",
+      "page": 87,
+      "difficulty": "EASY"
+    },
+    {
+      "chapter": 3,
+      "text": "Quan hệ giữa kế hoạch và lập kế hoạch được hiểu như thế nào?",
+      "options": [
+        "Kế hoạch chỉ xuất hiện sau khi kiểm tra xong",
+        "Lập kế hoạch là việc bỏ các mục tiêu đã xác định",
+        "Kế hoạch là sản phẩm của quá trình lập kế hoạch",
+        "Hai khái niệm không liên quan"
+      ],
+      "correct": 2,
+      "explanation": "Lập kế hoạch là quá trình; kế hoạch thể hiện kết quả cụ thể của quá trình đó.\nTự biên soạn theo Giáo trình Khoa học quản lý đại cương (2019), trang in 88. Không phải câu trích nguyên văn hoặc đáp án thi chính thức.",
+      "source": "textbook-authored",
+      "page": 88,
+      "difficulty": "EASY"
+    },
+    {
+      "chapter": 3,
+      "text": "Tính khách quan của kế hoạch yêu cầu điều gì?",
+      "options": [
+        "Không cần xem xét khả năng thực hiện",
+        "Dựa trên thông tin thực tế về tổ chức và nguồn lực",
+        "Chỉ dựa vào mong muốn của người đứng đầu",
+        "Loại bỏ thông tin trái với dự kiến"
+      ],
+      "correct": 1,
+      "explanation": "Kế hoạch cần phản ánh điều kiện thực tế, không thể chỉ là mong muốn chủ quan.\nTự biên soạn theo Giáo trình Khoa học quản lý đại cương (2019), trang in 89. Không phải câu trích nguyên văn hoặc đáp án thi chính thức.",
+      "source": "textbook-authored",
+      "page": 89,
+      "difficulty": "EASY"
+    },
+    {
+      "chapter": 4,
+      "text": "Nhóm hoạt động nào thuộc chức năng tổ chức?",
+      "options": [
+        "Thiết kế cơ cấu, phân công công việc và giao quyền",
+        "Chỉ đặt mục tiêu lợi nhuận",
+        "Chỉ kiểm tra sai sót sau thực hiện",
+        "Chỉ thông báo kết quả cuối tháng"
+      ],
+      "correct": 0,
+      "explanation": "Ba hoạt động liên hệ với nhau để bảo đảm nhiệm vụ có người thực hiện và có quyền hạn phù hợp.\nTự biên soạn theo Giáo trình Khoa học quản lý đại cương (2019), trang in 140. Không phải câu trích nguyên văn hoặc đáp án thi chính thức.",
+      "source": "textbook-authored",
+      "page": 140,
+      "difficulty": "EASY"
+    },
+    {
+      "chapter": 4,
+      "text": "Việc giao quyền trong tổ chức nhằm hỗ trợ điều gì?",
+      "options": [
+        "Xóa bỏ mọi trách nhiệm của cấp dưới",
+        "Tách nhiệm vụ khỏi người thực hiện",
+        "Để mọi bộ phận quyết định ngoài mục tiêu chung",
+        "Giúp người được phân công có quyền lực cần thiết để hoàn thành nhiệm vụ"
+      ],
+      "correct": 3,
+      "explanation": "Giao quyền đi cùng năng lực và mức độc lập phù hợp để thực hiện công việc được giao.\nTự biên soạn theo Giáo trình Khoa học quản lý đại cương (2019), trang in 139. Không phải câu trích nguyên văn hoặc đáp án thi chính thức.",
+      "source": "textbook-authored",
+      "page": 139,
+      "difficulty": "EASY"
+    },
+    {
+      "chapter": 4,
+      "text": "Chức năng tổ chức hỗ trợ việc thực hiện kế hoạch bằng cách nào?",
+      "options": [
+        "Không phân định trách nhiệm giữa các bộ phận",
+        "Chỉ yêu cầu báo cáo mà không bố trí nguồn lực",
+        "Thiết lập bộ máy, quan hệ phối hợp và phân công phù hợp với mục tiêu",
+        "Thay toàn bộ mục tiêu bằng cơ cấu hiện có"
+      ],
+      "correct": 2,
+      "explanation": "Từ mục tiêu đã xác định, tổ chức tạo điều kiện về bộ máy và trách nhiệm để biến kế hoạch thành kết quả.\nTự biên soạn theo Giáo trình Khoa học quản lý đại cương (2019), trang in 141. Không phải câu trích nguyên văn hoặc đáp án thi chính thức.",
+      "source": "textbook-authored",
+      "page": 141,
+      "difficulty": "EASY"
+    },
+    {
+      "chapter": 4,
+      "text": "Thiết kế cơ cấu tổ chức cần xuất phát từ căn cứ nào?",
+      "options": [
+        "Số người quen có thể bổ nhiệm",
+        "Mục tiêu và chức năng, nhiệm vụ của tổ chức",
+        "Sở thích về số phòng ban của một cá nhân",
+        "Mẫu cơ cấu bất kỳ không xét hoàn cảnh"
+      ],
+      "correct": 1,
+      "explanation": "Cơ cấu phục vụ mục tiêu và nhiệm vụ, vì vậy phải được thiết kế cho phù hợp với những yêu cầu này.\nTự biên soạn theo Giáo trình Khoa học quản lý đại cương (2019), trang in 140. Không phải câu trích nguyên văn hoặc đáp án thi chính thức.",
+      "source": "textbook-authored",
+      "page": 140,
+      "difficulty": "EASY"
+    },
+    {
+      "chapter": 5,
+      "text": "Trọng tâm của chức năng lãnh đạo là gì?",
+      "options": [
+        "Gây ảnh hưởng và tạo động lực để con người thực hiện mục tiêu chung",
+        "Chỉ ban hành sơ đồ tổ chức",
+        "Chỉ kiểm kê tài sản",
+        "Chỉ lập bảng dự toán chi phí"
+      ],
+      "correct": 0,
+      "explanation": "Lãnh đạo tác động đến hành vi và sự nỗ lực của con người trong quá trình thực hiện nhiệm vụ.\nTự biên soạn theo Giáo trình Khoa học quản lý đại cương (2019), trang in 174. Không phải câu trích nguyên văn hoặc đáp án thi chính thức.",
+      "source": "textbook-authored",
+      "page": 174,
+      "difficulty": "EASY"
+    },
+    {
+      "chapter": 5,
+      "text": "Ảnh hưởng không chính thức của một người có thể xuất phát từ đâu?",
+      "options": [
+        "Chỉ từ quyết định bổ nhiệm",
+        "Chỉ từ quyền ký văn bản pháp lý",
+        "Chỉ từ cấp bậc ghi trên sơ đồ",
+        "Uy tín của người đó đối với cá nhân hoặc nhóm"
+      ],
+      "correct": 3,
+      "explanation": "Giáo trình phân biệt ảnh hưởng theo vị trí chính thức và ảnh hưởng nhờ uy tín trong nhóm.\nTự biên soạn theo Giáo trình Khoa học quản lý đại cương (2019), trang in 175. Không phải câu trích nguyên văn hoặc đáp án thi chính thức.",
+      "source": "textbook-authored",
+      "page": 175,
+      "difficulty": "EASY"
+    },
+    {
+      "chapter": 5,
+      "text": "Nhận định nào phù hợp về quan hệ giữa lãnh đạo và quản lý?",
+      "options": [
+        "Lãnh đạo không liên quan mục tiêu tổ chức",
+        "Lãnh đạo chỉ có nghĩa là thúc ép từ phía sau",
+        "Lãnh đạo là một phần của công tác quản lý",
+        "Lãnh đạo là toàn bộ mọi công việc quản lý"
+      ],
+      "correct": 2,
+      "explanation": "Nhà quản lý còn thực hiện nhiều chức năng khác; lãnh đạo nhấn mạnh khơi dậy sự tự nguyện và nỗ lực.\nTự biên soạn theo Giáo trình Khoa học quản lý đại cương (2019), trang in 173. Không phải câu trích nguyên văn hoặc đáp án thi chính thức.",
+      "source": "textbook-authored",
+      "page": 173,
+      "difficulty": "EASY"
+    },
+    {
+      "chapter": 5,
+      "text": "Để tác động hiệu quả đến cấp dưới, nhà quản lý cần hiểu điều gì?",
+      "options": [
+        "Chỉ chức danh mà không xét nhu cầu",
+        "Động cơ, nhu cầu, hành vi và tâm lý của con người",
+        "Chỉ số lượng bàn ghế trong phòng",
+        "Chỉ hình thức của báo cáo"
+      ],
+      "correct": 1,
+      "explanation": "Chức năng lãnh đạo tác động trực tiếp đến con người, nên sự hiểu biết về con người là cơ sở quan trọng.\nTự biên soạn theo Giáo trình Khoa học quản lý đại cương (2019), trang in 175. Không phải câu trích nguyên văn hoặc đáp án thi chính thức.",
+      "source": "textbook-authored",
+      "page": 175,
+      "difficulty": "EASY"
+    },
+    {
+      "chapter": 6,
+      "text": "Chuỗi hoạt động cốt lõi của kiểm tra trong quản lý là gì?",
+      "options": [
+        "Đo lường, so sánh và điều chỉnh",
+        "Dự đoán, bỏ qua và chờ đợi",
+        "Chỉ ghi nhận số liệu rồi lưu trữ",
+        "Chỉ tuyên bố mục tiêu mà không đo kết quả"
+      ],
+      "correct": 0,
+      "explanation": "Kiểm tra sử dụng tiêu chuẩn để so sánh thực tế và lựa chọn biện pháp điều chỉnh phù hợp.\nTự biên soạn theo Giáo trình Khoa học quản lý đại cương (2019), trang in 205. Không phải câu trích nguyên văn hoặc đáp án thi chính thức.",
+      "source": "textbook-authored",
+      "page": 205,
+      "difficulty": "EASY"
+    },
+    {
+      "chapter": 6,
+      "text": "Kết quả thực hiện cần được so sánh với căn cứ nào khi kiểm tra?",
+      "options": [
+        "Cảm xúc nhất thời của người kiểm tra",
+        "Kết quả bất kỳ của một tổ chức không liên quan",
+        "Tin đồn chưa được kiểm chứng",
+        "Các tiêu chuẩn, mục tiêu và kế hoạch đã xác lập"
+      ],
+      "correct": 3,
+      "explanation": "Tiêu chuẩn đã xác lập tạo cơ sở nhận diện mức độ phù hợp và các sai lệch.\nTự biên soạn theo Giáo trình Khoa học quản lý đại cương (2019), trang in 205. Không phải câu trích nguyên văn hoặc đáp án thi chính thức.",
+      "source": "textbook-authored",
+      "page": 205,
+      "difficulty": "EASY"
+    },
+    {
+      "chapter": 6,
+      "text": "Sau khi phát hiện sai lệch, hoạt động kiểm tra cần hướng đến điều gì?",
+      "options": [
+        "Loại bỏ mọi tiêu chuẩn đánh giá",
+        "Tự động quy trách nhiệm mà không xem nguyên nhân",
+        "Đề xuất và thực thi giải pháp để hoạt động đi đúng mục tiêu",
+        "Chỉ lưu số liệu mà không phản hồi"
+      ],
+      "correct": 2,
+      "explanation": "Kiểm tra gắn với điều chỉnh, giúp tổ chức phát triển theo mục tiêu chứ không chỉ phát hiện sai sót.\nTự biên soạn theo Giáo trình Khoa học quản lý đại cương (2019), trang in 205. Không phải câu trích nguyên văn hoặc đáp án thi chính thức.",
+      "source": "textbook-authored",
+      "page": 205,
+      "difficulty": "EASY"
+    },
+    {
+      "chapter": 6,
+      "text": "Theo cách tiếp cận của Harold Koontz được dẫn trong giáo trình, kiểm tra gắn với việc gì?",
+      "options": [
+        "Chỉ mở rộng quan hệ bên ngoài",
+        "Đo lường và chấn chỉnh hoạt động của bộ phận cấp dưới",
+        "Chỉ phê duyệt sơ đồ tổ chức mới",
+        "Chỉ tuyển chọn lãnh đạo cấp cao"
+      ],
+      "correct": 1,
+      "explanation": "Cách tiếp cận này nhấn mạnh bảo đảm mục tiêu và kế hoạch thực hiện đang được hoàn thành.\nTự biên soạn theo Giáo trình Khoa học quản lý đại cương (2019), trang in 204. Không phải câu trích nguyên văn hoặc đáp án thi chính thức.",
+      "source": "textbook-authored",
+      "page": 204,
+      "difficulty": "EASY"
+    },
+    {
+      "chapter": 7,
+      "text": "Dữ liệu và thông tin khác nhau ở điểm nào theo phần trình bày của giáo trình?",
+      "options": [
+        "Thông tin là nội dung đã được tổ chức, sắp xếp phục vụ mục đích sử dụng",
+        "Mọi dữ liệu đều đã được xử lý đầy đủ",
+        "Thông tin không liên quan dữ liệu",
+        "Dữ liệu chỉ tồn tại dưới dạng chữ viết"
+      ],
+      "correct": 0,
+      "explanation": "Dữ liệu còn ở dạng thô có thể là đầu vào; quá trình tổ chức và xử lý làm cho nó có ý nghĩa đối với người dùng.\nTự biên soạn theo Giáo trình Khoa học quản lý đại cương (2019), trang in 237. Không phải câu trích nguyên văn hoặc đáp án thi chính thức.",
+      "source": "textbook-authored",
+      "page": 237,
+      "difficulty": "EASY"
+    },
+    {
+      "chapter": 7,
+      "text": "Theo quan niệm gắn thông tin với sự bất định, có thêm thông tin hữu ích sẽ giúp điều gì?",
+      "options": [
+        "Luôn làm người nhận hiểu ít hơn",
+        "Xóa bỏ nhu cầu đánh giá độ tin cậy",
+        "Bảo đảm mọi quyết định đều đúng tuyệt đối",
+        "Giảm mức không chắc chắn về đối tượng"
+      ],
+      "correct": 3,
+      "explanation": "Thông tin làm tăng hiểu biết, từ đó giảm bất định; điều này không đồng nghĩa bảo đảm quyết định luôn đúng.\nTự biên soạn theo Giáo trình Khoa học quản lý đại cương (2019), trang in 235. Không phải câu trích nguyên văn hoặc đáp án thi chính thức.",
+      "source": "textbook-authored",
+      "page": 235,
+      "difficulty": "EASY"
+    },
+    {
+      "chapter": 7,
+      "text": "Thông tin sau khi xử lý có thể đóng vai trò gì trong một quá trình tiếp theo?",
+      "options": [
+        "Luôn mất toàn bộ ý nghĩa",
+        "Chỉ là tài sản vật chất hữu hình",
+        "Trở thành dữ liệu đầu vào cho quá trình xử lý tiếp theo",
+        "Không bao giờ được sử dụng lại"
+      ],
+      "correct": 2,
+      "explanation": "Vai trò dữ liệu hay thông tin phụ thuộc vào vị trí của nội dung trong quá trình xử lý.\nTự biên soạn theo Giáo trình Khoa học quản lý đại cương (2019), trang in 237. Không phải câu trích nguyên văn hoặc đáp án thi chính thức.",
+      "source": "textbook-authored",
+      "page": 237,
+      "difficulty": "EASY"
+    },
+    {
+      "chapter": 7,
+      "text": "Vì sao cùng một sự việc có thể tạo ra thông tin khác nhau đối với những chủ thể khác nhau?",
+      "options": [
+        "Vì thông tin luôn tách rời người tiếp nhận",
+        "Cách tương tác và tổ chức sự phản ánh của mỗi chủ thể có thể khác nhau",
+        "Vì mọi chủ thể đều có mục đích và cách tiếp cận giống hệt nhau",
+        "Vì sự việc khách quan không chứa thông tin"
+      ],
+      "correct": 1,
+      "explanation": "Giáo trình lưu ý dấu ấn của chủ thể trong tương tác và hình thành thông tin; nội dung được tiếp tục ở trang 237.\nTự biên soạn theo Giáo trình Khoa học quản lý đại cương (2019), trang in 236. Không phải câu trích nguyên văn hoặc đáp án thi chính thức.",
+      "source": "textbook-authored",
+      "page": 236,
+      "difficulty": "EASY"
+    },
+    {
+      "chapter": 8,
+      "text": "Một cán bộ quản lý theo định nghĩa của giáo trình cần gắn với yếu tố nào?",
+      "options": [
+        "Chức năng, nhiệm vụ, quyền hạn và trách nhiệm trong một tổ chức",
+        "Chỉ tuổi tác cao hơn các thành viên khác",
+        "Chỉ có ảnh hưởng cá nhân mà không có nhiệm vụ quản lý",
+        "Chỉ sở hữu nhiều tài sản cá nhân"
+      ],
+      "correct": 0,
+      "explanation": "Cán bộ quản lý giữ vị trí thực hiện nhiệm vụ quản lý, có quyền hạn và trách nhiệm tương ứng.\nTự biên soạn theo Giáo trình Khoa học quản lý đại cương (2019), trang in 271. Không phải câu trích nguyên văn hoặc đáp án thi chính thức.",
+      "source": "textbook-authored",
+      "page": 271,
+      "difficulty": "EASY"
+    },
+    {
+      "chapter": 8,
+      "text": "Theo tiêu chí cấp quản lý, cán bộ quản lý thường được phân thành những cấp nào?",
+      "options": [
+        "Cấp doanh nghiệp và cấp phi lợi nhuận",
+        "Cấp kỹ thuật và cấp văn hóa",
+        "Cấp tài chính và cấp nhân sự",
+        "Cấp cao, cấp trung và cấp thấp/cơ sở"
+      ],
+      "correct": 3,
+      "explanation": "Đây là phân loại theo cấp bậc; loại hình tổ chức và lĩnh vực chuyên môn là những tiêu chí khác.\nTự biên soạn theo Giáo trình Khoa học quản lý đại cương (2019), trang in 271. Không phải câu trích nguyên văn hoặc đáp án thi chính thức.",
+      "source": "textbook-authored",
+      "page": 271,
+      "difficulty": "EASY"
+    },
+    {
+      "chapter": 8,
+      "text": "Trước khi chọn lựa cán bộ quản lý, tổ chức cần xác định điều gì?",
+      "options": [
+        "Chỉ mức lương thấp nhất có thể trả",
+        "Chỉ người nộp hồ sơ sớm nhất",
+        "Nhu cầu về số lượng, cơ cấu và chất lượng cán bộ",
+        "Chỉ danh sách người quen của lãnh đạo"
+      ],
+      "correct": 2,
+      "explanation": "Nhu cầu cán bộ cần dựa vào kế hoạch, sứ mệnh, chiến lược và những thay đổi của tổ chức.\nTự biên soạn theo Giáo trình Khoa học quản lý đại cương (2019), trang in 275. Không phải câu trích nguyên văn hoặc đáp án thi chính thức.",
+      "source": "textbook-authored",
+      "page": 275,
+      "difficulty": "EASY"
+    },
+    {
+      "chapter": 8,
+      "text": "Tiếp cận hệ thống mở trong chọn lựa cán bộ đòi hỏi xem xét yếu tố nào?",
+      "options": [
+        "Chỉ một tiêu chí cá nhân duy nhất",
+        "Cả yếu tố nội bộ và yếu tố bên ngoài tổ chức",
+        "Chỉ nội bộ và bỏ qua môi trường bên ngoài",
+        "Chỉ môi trường bên ngoài và bỏ qua nhu cầu nội bộ"
+      ],
+      "correct": 1,
+      "explanation": "Nhu cầu nhân sự quản lý chịu ảnh hưởng của điều kiện trong và ngoài tổ chức, không thể đánh giá tách rời.\nTự biên soạn theo Giáo trình Khoa học quản lý đại cương (2019), trang in 275. Không phải câu trích nguyên văn hoặc đáp án thi chính thức.",
+      "source": "textbook-authored",
+      "page": 275,
+      "difficulty": "EASY"
+    },
+    {
+      "text": "Trong chu trình 4 chức năng cơ bản của quy trình quản lý, chức năng giữ vai trò khởi đầu và định hướng cho các chức năng tiếp theo là gì?",
+      "options": [
+        "Lập kế hoạch",
+        "Tổ chức",
+        "Lãnh đạo",
+        "Kiểm tra"
+      ],
+      "correct": 0,
+      "chapter": 3,
+      "explanation": "Đáp án theo bộ câu hỏi Nhóm 7: Lập kế hoạch.\nNguồn: Nhom 7 - Quizz.csv, câu 1. Giữ đáp án từ tệp được cung cấp; tệp gốc không kèm lời giải chi tiết.",
+      "source": "csv-nhom7",
+      "sourceQuestion": 1,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "text": "Theo giáo trình, mối quan hệ biện chứng giữa \"lập kế hoạch\" và \"kế hoạch\" được xác định là:",
+      "options": [
+        "Quan hệ nhân quả (kế hoạch là sản phẩm của quá trình lập kế hoạch)",
+        "Quan hệ đối ứng song hành và độc lập về mặt kết quả",
+        "Quan hệ chi phối một chiều từ bản kế hoạch đến lập kế hoạch",
+        "Hai cách gọi đồng nghĩa của cùng một thao tác quản trị"
+      ],
+      "correct": 0,
+      "chapter": 3,
+      "explanation": "Đáp án theo bộ câu hỏi Nhóm 7: Quan hệ nhân quả (kế hoạch là sản phẩm của quá trình lập kế hoạch).\nNguồn: Nhom 7 - Quizz.csv, câu 2. Giữ đáp án từ tệp được cung cấp; tệp gốc không kèm lời giải chi tiết.",
+      "source": "csv-nhom7",
+      "sourceQuestion": 2,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "text": "Một bản kế hoạch đầy đủ theo giáo trình bắt buộc phải bao gồm đủ 4 yếu tố cấu thành cơ bản nào?",
+      "options": [
+        "Mục tiêu, phương án hành động, nguồn lực, khung thời gian",
+        "Mục tiêu, cơ cấu bộ máy, nhân sự, dự toán ngân sách",
+        "Tầm nhìn, chính sách nhân sự, hạn mức chi phí, chỉ số KPI",
+        "Phương án tối ưu, cơ chế kiểm tra, chế tài kỷ luật, quy chế"
+      ],
+      "correct": 0,
+      "chapter": 3,
+      "explanation": "Đáp án theo bộ câu hỏi Nhóm 7: Mục tiêu, phương án hành động, nguồn lực, khung thời gian.\nNguồn: Nhom 7 - Quizz.csv, câu 3. Giữ đáp án từ tệp được cung cấp; tệp gốc không kèm lời giải chi tiết.",
+      "source": "csv-nhom7",
+      "sourceQuestion": 3,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "text": "Quá trình lập kế hoạch được giản lược hóa nhằm tìm kiếm câu trả lời cho nhóm 5 câu hỏi cốt lõi nào?",
+      "options": [
+        "What, Who, Where, When, How",
+        "What, Why, Who, When, Where",
+        "Why, How, What, When, Which",
+        "Who, Whom, What, Where, Why"
+      ],
+      "correct": 0,
+      "chapter": 3,
+      "explanation": "Đáp án theo bộ câu hỏi Nhóm 7: What, Who, Where, When, How.\nNguồn: Nhom 7 - Quizz.csv, câu 4. Giữ đáp án từ tệp được cung cấp; tệp gốc không kèm lời giải chi tiết.",
+      "source": "csv-nhom7",
+      "sourceQuestion": 4,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "text": "Về mặt bản chất, hoạt động lập kế hoạch được định nghĩa là:",
+      "options": [
+        "Hoạt động chủ quan, có ý thức trên cơ sở nhận thức và vận dụng quy luật khách quan",
+        "Hoạt động mang tính khách quan tuyệt đối, không phụ thuộc vào ý chí con người",
+        "Hoạt động cảm tính dựa trên trực giác và thói quen của người lãnh đạo",
+        "Hoạt động hành chính nhằm thực thi cứng nhắc các mệnh lệnh từ cấp trên"
+      ],
+      "correct": 0,
+      "chapter": 3,
+      "explanation": "Đáp án theo bộ câu hỏi Nhóm 7: Hoạt động chủ quan, có ý thức trên cơ sở nhận thức và vận dụng quy luật khách quan.\nNguồn: Nhom 7 - Quizz.csv, câu 5. Giữ đáp án từ tệp được cung cấp; tệp gốc không kèm lời giải chi tiết.",
+      "source": "csv-nhom7",
+      "sourceQuestion": 5,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "text": "Theo slide bài giảng và giáo trình, kế hoạch có thể tồn tại dưới hình thức nào?",
+      "options": [
+        "Một văn bản hoặc một ý tưởng",
+        "Bắt buộc phải là văn bản pháp lý có chữ ký và con dấu",
+        "Bắt buộc phải là phần mềm được số hóa trong hệ thống",
+        "Chỉ tồn tại dưới dạng các chỉ tiêu tài chính và hạn mức"
+      ],
+      "correct": 0,
+      "chapter": 3,
+      "explanation": "Đáp án theo bộ câu hỏi Nhóm 7: Một văn bản hoặc một ý tưởng.\nNguồn: Nhom 7 - Quizz.csv, câu 6. Giữ đáp án từ tệp được cung cấp; tệp gốc không kèm lời giải chi tiết.",
+      "source": "csv-nhom7",
+      "sourceQuestion": 6,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "text": "Tác giả Henry Fayol trong cuốn \"Quản trị công nghiệp đại cương\" khẳng định chức năng lập kế hoạch:",
+      "options": [
+        "Là hoạt động không thể bỏ qua, nhằm kết hợp hài hòa hiệu quả mọi hoạt động",
+        "Là hoạt động thứ yếu, chỉ phát sinh sau khi đã hoàn thiện cơ cấu tổ chức",
+        "Là hoạt động mang tính hình thức chỉ áp dụng cho doanh nghiệp nhà nước",
+        "Có thể thay thế hoàn toàn cho công tác kiểm tra nếu làm chặt chẽ"
+      ],
+      "correct": 0,
+      "chapter": 3,
+      "explanation": "Đáp án theo bộ câu hỏi Nhóm 7: Là hoạt động không thể bỏ qua, nhằm kết hợp hài hòa hiệu quả mọi hoạt động.\nNguồn: Nhom 7 - Quizz.csv, câu 7. Giữ đáp án từ tệp được cung cấp; tệp gốc không kèm lời giải chi tiết.",
+      "source": "csv-nhom7",
+      "sourceQuestion": 7,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "text": "Đặc điểm \"tính khách quan\" của kế hoạch đòi hỏi nội dung của kế hoạch phải:",
+      "options": [
+        "Phản ánh thực trạng tổ chức và chắt lọc thông tin từ thực tế",
+        "Phản ánh nguyện vọng chủ quan và sở thích của nhà quản lý",
+        "Xây dựng dựa trên các kịch bản lý tưởng không bị ràng buộc bởi nguồn lực",
+        "Tuyệt đối tuân thủ theo các chỉ tiêu định mức do cấp trên áp đặt"
+      ],
+      "correct": 0,
+      "chapter": 3,
+      "explanation": "Đáp án theo bộ câu hỏi Nhóm 7: Phản ánh thực trạng tổ chức và chắt lọc thông tin từ thực tế.\nNguồn: Nhom 7 - Quizz.csv, câu 8. Giữ đáp án từ tệp được cung cấp; tệp gốc không kèm lời giải chi tiết.",
+      "source": "csv-nhom7",
+      "sourceQuestion": 8,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "text": "Đặc điểm \"tính bắt buộc\" của kế hoạch được thể hiện rõ nhất qua khía cạnh nào?",
+      "options": [
+        "Thể hiện tính chất pháp lệnh, đòi hỏi các chủ thể liên quan phải thực thi",
+        "Không cho phép bất kỳ sự điều chỉnh nào trong suốt quá trình triển khai",
+        "Chỉ áp dụng đối với nhân viên cấp dưới, miễn trừ cho nhà quản lý",
+        "Cho phép cấp dưới tùy ý lựa chọn công việc thuận lợi để làm trước"
+      ],
+      "correct": 0,
+      "chapter": 3,
+      "explanation": "Đáp án theo bộ câu hỏi Nhóm 7: Thể hiện tính chất pháp lệnh, đòi hỏi các chủ thể liên quan phải thực thi.\nNguồn: Nhom 7 - Quizz.csv, câu 9. Giữ đáp án từ tệp được cung cấp; tệp gốc không kèm lời giải chi tiết.",
+      "source": "csv-nhom7",
+      "sourceQuestion": 9,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "text": "Điều kiện bảo đảm để các nội dung của kế hoạch được các chủ thể thực thi nghiêm túc là:",
+      "options": [
+        "Quyền khen thưởng và kỷ luật của nhà quản lý mỗi cấp",
+        "Sự cam kết tự nguyện mà không cần bất kỳ chế tài kiểm soát nào",
+        "Việc giám sát bí mật không thông báo trước cho người lao động",
+        "Việc áp dụng định mức khoán sản phẩm tối đa cho mọi vị trí việc làm"
+      ],
+      "correct": 0,
+      "chapter": 3,
+      "explanation": "Đáp án theo bộ câu hỏi Nhóm 7: Quyền khen thưởng và kỷ luật của nhà quản lý mỗi cấp.\nNguồn: Nhom 7 - Quizz.csv, câu 10. Giữ đáp án từ tệp được cung cấp; tệp gốc không kèm lời giải chi tiết.",
+      "source": "csv-nhom7",
+      "sourceQuestion": 10,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "text": "Đặc điểm \"tính ổn định\" của bản kế hoạch có ý nghĩa cốt lõi là gì?",
+      "options": [
+        "Giữ sự ổn định tương đối để tạo điều kiện cần thiết thực hiện mục tiêu",
+        "Giữ nguyên vẹn toàn bộ kế hoạch bất chấp mọi biến động của môi trường",
+        "Không cho phép thay đổi tiến độ và phương án dự phòng đã thông qua",
+        "Ngăn chặn mọi sáng kiến điều chỉnh từ các bộ phận thực thi cấp dưới"
+      ],
+      "correct": 0,
+      "chapter": 3,
+      "explanation": "Đáp án theo bộ câu hỏi Nhóm 7: Giữ sự ổn định tương đối để tạo điều kiện cần thiết thực hiện mục tiêu.\nNguồn: Nhom 7 - Quizz.csv, câu 11. Giữ đáp án từ tệp được cung cấp; tệp gốc không kèm lời giải chi tiết.",
+      "source": "csv-nhom7",
+      "sourceQuestion": 11,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "text": "Nhận định nào sau đây ĐÚNG về mối quan hệ giữa tính ổn định và tính linh hoạt của kế hoạch?",
+      "options": [
+        "Cần cân bằng hợp lý, bởi vì kế hoạch càng linh hoạt thì càng tốn kém",
+        "Tính linh hoạt luôn triệt tiêu và phủ định hoàn toàn tính ổn định",
+        "Kế hoạch càng ổn định tuyệt đối thì chi phí vận hành càng được tối ưu hóa",
+        "Tính ổn định chỉ áp dụng cho kế hoạch tác nghiệp, không dùng cho chiến lược"
+      ],
+      "correct": 0,
+      "chapter": 3,
+      "explanation": "Đáp án theo bộ câu hỏi Nhóm 7: Cần cân bằng hợp lý, bởi vì kế hoạch càng linh hoạt thì càng tốn kém.\nNguồn: Nhom 7 - Quizz.csv, câu 12. Giữ đáp án từ tệp được cung cấp; tệp gốc không kèm lời giải chi tiết.",
+      "source": "csv-nhom7",
+      "sourceQuestion": 12,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "text": "\"Tính khả thi\" của bản kế hoạch đòi hỏi sự cân bằng trực tiếp giữa:",
+      "options": [
+        "Mục tiêu đặt ra với nguồn lực thực tế của tổ chức",
+        "Mong muốn của nhà quản lý với xu thế phát triển của xã hội",
+        "Chi phí xây dựng kế hoạch với chi phí tổ chức kiểm tra",
+        "Ý kiến đóng góp của chuyên gia với thẩm quyền của người đứng đầu"
+      ],
+      "correct": 0,
+      "chapter": 3,
+      "explanation": "Đáp án theo bộ câu hỏi Nhóm 7: Mục tiêu đặt ra với nguồn lực thực tế của tổ chức.\nNguồn: Nhom 7 - Quizz.csv, câu 13. Giữ đáp án từ tệp được cung cấp; tệp gốc không kèm lời giải chi tiết.",
+      "source": "csv-nhom7",
+      "sourceQuestion": 13,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "text": "Đặc điểm \"tính rõ ràng\" của bản kế hoạch yêu cầu phải xác định minh bạch nội dung nào?",
+      "options": [
+        "Ai làm gì, ở đâu, phối hợp với ai, thẩm quyền và tiêu chuẩn đánh giá là gì",
+        "Dự báo biến động chính trị toàn cầu và chiến lược của đối thủ cạnh tranh",
+        "Bí mật kinh doanh cốt lõi và các phương án ứng phó khủng hoảng truyền thông",
+        "Toàn bộ danh mục lý lịch trích ngang của các thành viên ban điều hành"
+      ],
+      "correct": 0,
+      "chapter": 3,
+      "explanation": "Đáp án theo bộ câu hỏi Nhóm 7: Ai làm gì, ở đâu, phối hợp với ai, thẩm quyền và tiêu chuẩn đánh giá là gì.\nNguồn: Nhom 7 - Quizz.csv, câu 14. Giữ đáp án từ tệp được cung cấp; tệp gốc không kèm lời giải chi tiết.",
+      "source": "csv-nhom7",
+      "sourceQuestion": 14,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "text": "Vai trò \"Chỉ ra con đường đi tới mục tiêu tương đối chính xác\" giúp tổ chức tránh được tình trạng nào?",
+      "options": [
+        "Tránh tình trạng hoạt động ngẫu nhiên, tự phát, vô tổ chức",
+        "Tránh sự cạnh tranh trực tiếp từ các đối thủ cùng ngành",
+        "Loại bỏ hoàn toàn sự can thiệp của các cơ quan quản lý nhà nước",
+        "Tránh việc phải phân bổ ngân sách cho các phòng ban chức năng"
+      ],
+      "correct": 0,
+      "chapter": 3,
+      "explanation": "Đáp án theo bộ câu hỏi Nhóm 7: Tránh tình trạng hoạt động ngẫu nhiên, tự phát, vô tổ chức.\nNguồn: Nhom 7 - Quizz.csv, câu 15. Giữ đáp án từ tệp được cung cấp; tệp gốc không kèm lời giải chi tiết.",
+      "source": "csv-nhom7",
+      "sourceQuestion": 15,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "text": "Kế hoạch giúp làm tăng hiệu quả công việc thông qua cơ chế nào sau đây?",
+      "options": [
+        "Đưa ra phương án tối ưu để phối hợp nguồn lực và làm cơ sở cho các chức năng khác",
+        "Buộc nhân viên làm thêm giờ với định mức kỹ thuật khắt khe hơn",
+        "Cắt giảm tối đa số lượng nhân sự gián tiếp trong bộ máy quản lý",
+        "Giảm thiểu tối đa các cuộc họp giao ban định kỳ giữa các bộ phận"
+      ],
+      "correct": 0,
+      "chapter": 3,
+      "explanation": "Đáp án theo bộ câu hỏi Nhóm 7: Đưa ra phương án tối ưu để phối hợp nguồn lực và làm cơ sở cho các chức năng khác.\nNguồn: Nhom 7 - Quizz.csv, câu 16. Giữ đáp án từ tệp được cung cấp; tệp gốc không kèm lời giải chi tiết.",
+      "source": "csv-nhom7",
+      "sourceQuestion": 16,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "text": "Kế hoạch giúp tổ chức tiết kiệm chi phí, thời gian và nguồn lực bằng cách nào?",
+      "options": [
+        "Làm các hoạt động trở nên rõ ràng, không chồng chéo, hạn chế lãng phí",
+        "Loại bỏ hoàn toàn các khâu kiểm tra và đánh giá kết quả trung gian",
+        "Chỉ thuê mướn lao động thời vụ để giảm bớt chi phí tiền lương cố định",
+        "Cắt giảm ngân sách dự phòng rủi ro trong tất cả các giai đoạn thực hiện"
+      ],
+      "correct": 0,
+      "chapter": 3,
+      "explanation": "Đáp án theo bộ câu hỏi Nhóm 7: Làm các hoạt động trở nên rõ ràng, không chồng chéo, hạn chế lãng phí.\nNguồn: Nhom 7 - Quizz.csv, câu 17. Giữ đáp án từ tệp được cung cấp; tệp gốc không kèm lời giải chi tiết.",
+      "source": "csv-nhom7",
+      "sourceQuestion": 17,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "text": "Theo giáo trình, ngay cả khi tương lai có độ chắc chắn cao thì việc lập kế hoạch vẫn rất cần thiết vì:",
+      "options": [
+        "Giúp tìm ra cách tối ưu nhất để đạt mục tiêu và thuận lợi cho việc triển khai",
+        "Đây là thủ tục hành chính bắt buộc để báo cáo lên cơ quan cấp trên",
+        "Giúp nhà quản lý trốn tránh trách nhiệm cá nhân nếu xảy ra thất bại",
+        "Nhằm hợp thức hóa các chi phí phát sinh trước cơ quan thuế"
+      ],
+      "correct": 0,
+      "chapter": 3,
+      "explanation": "Đáp án theo bộ câu hỏi Nhóm 7: Giúp tìm ra cách tối ưu nhất để đạt mục tiêu và thuận lợi cho việc triển khai.\nNguồn: Nhom 7 - Quizz.csv, câu 18. Giữ đáp án từ tệp được cung cấp; tệp gốc không kèm lời giải chi tiết.",
+      "source": "csv-nhom7",
+      "sourceQuestion": 18,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "text": "Nhận định nào sau đây ĐÚNG về vai trò của kế hoạch đối với chức năng kiểm tra?",
+      "options": [
+        "Kế hoạch là căn cứ và tiêu chuẩn để thực hiện công tác kiểm tra, đánh giá",
+        "Hoạt động kiểm tra hoàn toàn độc lập và không cần dựa vào bản kế hoạch",
+        "Kế hoạch là kết quả cuối cùng được đúc kết sau khi hoàn thành kiểm tra",
+        "Kế hoạch chỉ phục vụ kiểm tra khi phát sinh sai lệch rất nghiêm trọng"
+      ],
+      "correct": 0,
+      "chapter": 3,
+      "explanation": "Đáp án theo bộ câu hỏi Nhóm 7: Kế hoạch là căn cứ và tiêu chuẩn để thực hiện công tác kiểm tra, đánh giá.\nNguồn: Nhom 7 - Quizz.csv, câu 19. Giữ đáp án từ tệp được cung cấp; tệp gốc không kèm lời giải chi tiết.",
+      "source": "csv-nhom7",
+      "sourceQuestion": 19,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "text": "Căn cứ vào thời gian thực hiện, kế hoạch dài hạn được xác định là loại kế hoạch:",
+      "options": [
+        "Có thời gian thực hiện dài hơn 5 năm",
+        "Có thời gian thực hiện từ 1 năm đến 3 năm",
+        "Có thời gian thực hiện từ 3 năm đến 5 năm",
+        "Có thời gian thực hiện kéo dài đúng 1 chu kỳ kinh doanh"
+      ],
+      "correct": 0,
+      "chapter": 3,
+      "explanation": "Đáp án theo bộ câu hỏi Nhóm 7: Có thời gian thực hiện dài hơn 5 năm.\nNguồn: Nhom 7 - Quizz.csv, câu 20. Giữ đáp án từ tệp được cung cấp; tệp gốc không kèm lời giải chi tiết.",
+      "source": "csv-nhom7",
+      "sourceQuestion": 20,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "text": "Đặc trưng cốt lõi của \"kế hoạch trung hạn\" theo giáo trình là gì?",
+      "options": [
+        "Thời gian từ 1 đến 5 năm, mang tính chất thực hành và cân đối các nguồn lực",
+        "Thời gian dưới 1 năm, tập trung vào các kết quả hành động trực tiếp",
+        "Thời gian trên 10 năm, xác định sứ mệnh và mục tiêu tối cao của tổ chức",
+        "Thời gian linh hoạt tùy ý, chỉ phục vụ giải quyết sự cố phát sinh"
+      ],
+      "correct": 0,
+      "chapter": 3,
+      "explanation": "Đáp án theo bộ câu hỏi Nhóm 7: Thời gian từ 1 đến 5 năm, mang tính chất thực hành và cân đối các nguồn lực.\nNguồn: Nhom 7 - Quizz.csv, câu 21. Giữ đáp án từ tệp được cung cấp; tệp gốc không kèm lời giải chi tiết.",
+      "source": "csv-nhom7",
+      "sourceQuestion": 21,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "text": "Kế hoạch ngắn hạn được định nghĩa là loại kế hoạch:",
+      "options": [
+        "Có thời gian thực hiện dưới 1 năm, xác định các hành động cụ thể trực tiếp",
+        "Có thời gian từ 1 đến 2 năm, xác định định hướng chiến lược tổng thể",
+        "Có thời gian từ 6 tháng đến 3 năm, tập trung vào việc nghiên cứu thị trường",
+        "Không giới hạn thời gian, chỉ nhằm phân công công việc hàng ngày"
+      ],
+      "correct": 0,
+      "chapter": 3,
+      "explanation": "Đáp án theo bộ câu hỏi Nhóm 7: Có thời gian thực hiện dưới 1 năm, xác định các hành động cụ thể trực tiếp.\nNguồn: Nhom 7 - Quizz.csv, câu 22. Giữ đáp án từ tệp được cung cấp; tệp gốc không kèm lời giải chi tiết.",
+      "source": "csv-nhom7",
+      "sourceQuestion": 22,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "text": "Mối quan hệ nguyên tắc giữa kế hoạch ngắn hạn, trung hạn và dài hạn là:",
+      "options": [
+        "Kế hoạch ngắn hạn và trung hạn phải hướng tới phục vụ cho kế hoạch dài hạn",
+        "Kế hoạch dài hạn phải liên tục thay đổi theo kết quả của từng kế hoạch ngắn hạn",
+        "Kế hoạch ngắn hạn hoàn toàn độc lập và không chịu ràng buộc bởi kế hoạch dài hạn",
+        "Kế hoạch trung hạn giữ vai trò quyết định, chi phối cả ngắn hạn và dài hạn"
+      ],
+      "correct": 0,
+      "chapter": 3,
+      "explanation": "Đáp án theo bộ câu hỏi Nhóm 7: Kế hoạch ngắn hạn và trung hạn phải hướng tới phục vụ cho kế hoạch dài hạn.\nNguồn: Nhom 7 - Quizz.csv, câu 23. Giữ đáp án từ tệp được cung cấp; tệp gốc không kèm lời giải chi tiết.",
+      "source": "csv-nhom7",
+      "sourceQuestion": 23,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "text": "Căn cứ vào hình thức thể hiện, loại hình kế hoạch nào được định nghĩa là \"kế hoạch lớn, xác định các mục tiêu tổng thể và giải pháp cơ bản dài hạn\"?",
+      "options": [
+        "Chiến lược",
+        "Tác nghiệp",
+        "Quy hoạch",
+        "Dự án"
+      ],
+      "correct": 0,
+      "chapter": 3,
+      "explanation": "Đáp án theo bộ câu hỏi Nhóm 7: Chiến lược.\nNguồn: Nhom 7 - Quizz.csv, câu 24. Giữ đáp án từ tệp được cung cấp; tệp gốc không kèm lời giải chi tiết.",
+      "source": "csv-nhom7",
+      "sourceQuestion": 24,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "text": "\"Sự bố trí chiến lược về không gian lãnh thổ và thời gian cùng các giải pháp cụ thể\" là định nghĩa của:",
+      "options": [
+        "Quy hoạch",
+        "Chính sách",
+        "Thủ tục",
+        "Quy tắc"
+      ],
+      "correct": 0,
+      "chapter": 3,
+      "explanation": "Đáp án theo bộ câu hỏi Nhóm 7: Quy hoạch.\nNguồn: Nhom 7 - Quizz.csv, câu 25. Giữ đáp án từ tệp được cung cấp; tệp gốc không kèm lời giải chi tiết.",
+      "source": "csv-nhom7",
+      "sourceQuestion": 25,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "text": "\"Chính sách\" trong phân loại hình thức thể hiện kế hoạch được hiểu là:",
+      "options": [
+        "Quan điểm, phương hướng và cách thức chung định hướng giải quyết vấn đề lặp đi lặp lại",
+        "Chuỗi hành động chi tiết bắt buộc phải thực hiện tuần tự theo thời gian",
+        "Loại hình kế hoạch đơn giản nhất chỉ rõ điều được làm và không được làm",
+        "Bản dự toán tài chính phân bổ cho các phòng ban trong một quý"
+      ],
+      "correct": 0,
+      "chapter": 3,
+      "explanation": "Đáp án theo bộ câu hỏi Nhóm 7: Quan điểm, phương hướng và cách thức chung định hướng giải quyết vấn đề lặp đi lặp lại.\nNguồn: Nhom 7 - Quizz.csv, câu 26. Giữ đáp án từ tệp được cung cấp; tệp gốc không kèm lời giải chi tiết.",
+      "source": "csv-nhom7",
+      "sourceQuestion": 26,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "text": "Căn cứ vào hình thức thể hiện, loại hình kế hoạch nào \"chỉ ra chính xác và chi tiết chuỗi hành động cần thiết theo trình tự thời gian hoặc cấp bậc\"?",
+      "options": [
+        "Thủ tục",
+        "Chính sách",
+        "Quy tắc",
+        "Chiến lược"
+      ],
+      "correct": 0,
+      "chapter": 3,
+      "explanation": "Đáp án theo bộ câu hỏi Nhóm 7: Thủ tục.\nNguồn: Nhom 7 - Quizz.csv, câu 27. Giữ đáp án từ tệp được cung cấp; tệp gốc không kèm lời giải chi tiết.",
+      "source": "csv-nhom7",
+      "sourceQuestion": 27,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "text": "\"Quy tắc\" được phân biệt với các loại kế hoạch khác bởi đặc điểm nào?",
+      "options": [
+        "Là kế hoạch đơn giản nhất, chỉ rõ hành động nào được làm và không được làm",
+        "Là kế hoạch có tính định hướng chung cho phép cấp dưới linh hoạt vận dụng",
+        "Là tập hợp các giải pháp mang tính không gian lãnh thổ dài hạn",
+        "Bắt buộc phải gắn liền với một bảng dự toán ngân sách chi tiết"
+      ],
+      "correct": 0,
+      "chapter": 3,
+      "explanation": "Đáp án theo bộ câu hỏi Nhóm 7: Là kế hoạch đơn giản nhất, chỉ rõ hành động nào được làm và không được làm.\nNguồn: Nhom 7 - Quizz.csv, câu 28. Giữ đáp án từ tệp được cung cấp; tệp gốc không kèm lời giải chi tiết.",
+      "source": "csv-nhom7",
+      "sourceQuestion": 28,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "text": "Điểm khác biệt căn bản giữa \"Thủ tục\" và \"Quy tắc\" là gì?",
+      "options": [
+        "Thủ tục quy định trình tự các bước theo thời gian, quy tắc không có tính nối tiếp thời gian",
+        "Thủ tục mang tính bắt buộc thi hành, còn quy tắc chỉ mang tính khuyến nghị",
+        "Thủ tục áp dụng cho cấp cao, còn quy tắc chỉ áp dụng cho cấp cơ sở",
+        "Thủ tục có giá trị vĩnh viễn, còn quy tắc thay đổi theo từng tuần"
+      ],
+      "correct": 0,
+      "chapter": 3,
+      "explanation": "Đáp án theo bộ câu hỏi Nhóm 7: Thủ tục quy định trình tự các bước theo thời gian, quy tắc không có tính nối tiếp thời gian.\nNguồn: Nhom 7 - Quizz.csv, câu 29. Giữ đáp án từ tệp được cung cấp; tệp gốc không kèm lời giải chi tiết.",
+      "source": "csv-nhom7",
+      "sourceQuestion": 29,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "text": "\"Chương trình\" trong quản lý được hiểu là:",
+      "options": [
+        "Tổ hợp các chính sách, thủ tục, quy tắc và nguồn lực mang tính độc lập tương đối",
+        "Kế hoạch tác nghiệp đơn lẻ diễn ra trong thời gian dưới 1 tháng",
+        "Tập hợp các chỉ số định mức tài chính độc lập nhằm kiểm soát chi phí",
+        "Biểu đồ theo dõi tiến độ công việc của từng cá nhân hàng tuần"
+      ],
+      "correct": 0,
+      "chapter": 3,
+      "explanation": "Đáp án theo bộ câu hỏi Nhóm 7: Tổ hợp các chính sách, thủ tục, quy tắc và nguồn lực mang tính độc lập tương đối.\nNguồn: Nhom 7 - Quizz.csv, câu 30. Giữ đáp án từ tệp được cung cấp; tệp gốc không kèm lời giải chi tiết.",
+      "source": "csv-nhom7",
+      "sourceQuestion": 30,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "text": "Khái niệm \"Dự án\" được phân biệt với \"Chương trình\" ở đặc điểm nổi bật nào?",
+      "options": [
+        "Thực hiện trong thời gian xác định, với nguồn lực giới hạn cho mục tiêu cụ thể",
+        "Dự án không bị khống chế về mặt quỹ thời gian và chi phí thực hiện",
+        "Dự án luôn có quy mô lớn hơn và bao hàm nhiều chương trình thành phần",
+        "Dự án là kế hoạch vô thời hạn được lặp đi lặp lại định kỳ mỗi năm"
+      ],
+      "correct": 0,
+      "chapter": 3,
+      "explanation": "Đáp án theo bộ câu hỏi Nhóm 7: Thực hiện trong thời gian xác định, với nguồn lực giới hạn cho mục tiêu cụ thể.\nNguồn: Nhom 7 - Quizz.csv, câu 31. Giữ đáp án từ tệp được cung cấp; tệp gốc không kèm lời giải chi tiết.",
+      "source": "csv-nhom7",
+      "sourceQuestion": 31,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "text": "Căn cứ vào cấp kế hoạch, \"Kế hoạch chiến lược\" có đặc trưng nào sau đây?",
+      "options": [
+        "Thời gian từ 5 năm trở lên, tác động đến mảng lớn và tương lai toàn bộ tổ chức",
+        "Thời gian dưới 1 năm, tác động đến từng thao tác cụ thể của nhân viên",
+        "Chỉ do các nhà quản lý cấp cơ sở tự xây dựng và ban hành nội bộ",
+        "Chỉ tập trung giải quyết các biến động kỹ thuật phát sinh tức thời"
+      ],
+      "correct": 0,
+      "chapter": 3,
+      "explanation": "Đáp án theo bộ câu hỏi Nhóm 7: Thời gian từ 5 năm trở lên, tác động đến mảng lớn và tương lai toàn bộ tổ chức.\nNguồn: Nhom 7 - Quizz.csv, câu 32. Giữ đáp án từ tệp được cung cấp; tệp gốc không kèm lời giải chi tiết.",
+      "source": "csv-nhom7",
+      "sourceQuestion": 32,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "text": "\"Kế hoạch tác nghiệp\" có đặc điểm nào sau đây theo giáo trình?",
+      "options": [
+        "Thời gian từ 1 năm trở xuống, tác động vi mô, chỉ rõ việc cần làm và cách tiến hành",
+        "Thời gian trên 5 năm, xác định các định hướng vĩ mô của toàn hệ thống",
+        "Do hội đồng quản trị trực tiếp xây dựng và mang tính định hướng khung",
+        "Không quy định cụ thể về thời gian bắt đầu và kết thúc công việc"
+      ],
+      "correct": 0,
+      "chapter": 3,
+      "explanation": "Đáp án theo bộ câu hỏi Nhóm 7: Thời gian từ 1 năm trở xuống, tác động vi mô, chỉ rõ việc cần làm và cách tiến hành.\nNguồn: Nhom 7 - Quizz.csv, câu 33. Giữ đáp án từ tệp được cung cấp; tệp gốc không kèm lời giải chi tiết.",
+      "source": "csv-nhom7",
+      "sourceQuestion": 33,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "text": "Căn cứ vào tính chất nội dung của kế hoạch, người ta phân chia thành:",
+      "options": [
+        "Kế hoạch tổ chức, kế hoạch nhân lực, kế hoạch kiểm tra - đánh giá",
+        "Kế hoạch dài hạn, kế hoạch trung hạn, kế hoạch ngắn hạn",
+        "Kế hoạch chiến lược, kế hoạch tác nghiệp, kế hoạch dự phòng",
+        "Kế hoạch bằng văn bản, kế hoạch ý tưởng, kế hoạch số hóa"
+      ],
+      "correct": 0,
+      "chapter": 3,
+      "explanation": "Đáp án theo bộ câu hỏi Nhóm 7: Kế hoạch tổ chức, kế hoạch nhân lực, kế hoạch kiểm tra - đánh giá.\nNguồn: Nhom 7 - Quizz.csv, câu 34. Giữ đáp án từ tệp được cung cấp; tệp gốc không kèm lời giải chi tiết.",
+      "source": "csv-nhom7",
+      "sourceQuestion": 34,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "text": "Theo tác giả Harold Koontz, bước đầu tiên trong quy trình lập kế hoạch 8 bước là:",
+      "options": [
+        "Nhận thức cơ hội",
+        "Xác định mục tiêu",
+        "Kế thừa các tiền đề",
+        "Dự báo môi trường"
+      ],
+      "correct": 0,
+      "chapter": 3,
+      "explanation": "Đáp án theo bộ câu hỏi Nhóm 7: Nhận thức cơ hội.\nNguồn: Nhom 7 - Quizz.csv, câu 35. Giữ đáp án từ tệp được cung cấp; tệp gốc không kèm lời giải chi tiết.",
+      "source": "csv-nhom7",
+      "sourceQuestion": 35,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "text": "Trong quy trình lập kế hoạch 8 bước của Harold Koontz, bước cuối cùng (Bước 8) là:",
+      "options": [
+        "Lượng hoá kế hoạch dưới dạng ngân quỹ",
+        "Xác định các tiêu chuẩn kiểm tra",
+        "Xây dựng các kế hoạch bổ trợ",
+        "Triển khai kế hoạch tác nghiệp"
+      ],
+      "correct": 0,
+      "chapter": 3,
+      "explanation": "Đáp án theo bộ câu hỏi Nhóm 7: Lượng hoá kế hoạch dưới dạng ngân quỹ.\nNguồn: Nhom 7 - Quizz.csv, câu 36. Giữ đáp án từ tệp được cung cấp; tệp gốc không kèm lời giải chi tiết.",
+      "source": "csv-nhom7",
+      "sourceQuestion": 36,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "text": "Câu 37: Theo James H. Donnelly và cộng sự trong cuốn \"Quản trị học căn bản\", quy trình lập kế hoạch gồm mấy bước?",
+      "options": [
+        "5 bước",
+        "6 bước",
+        "7 bước",
+        "8 bước"
+      ],
+      "correct": 0,
+      "chapter": 3,
+      "explanation": "Đáp án theo bộ câu hỏi Nhóm 7: 5 bước.\nNguồn: Nhom 7 - Quizz.csv, câu 37. Giữ đáp án từ tệp được cung cấp; tệp gốc không kèm lời giải chi tiết.",
+      "source": "csv-nhom7",
+      "sourceQuestion": 37,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "text": "Trong quy trình chuẩn 7 bước của giáo trình, thứ tự chuẩn xác của 3 bước đầu tiên là:",
+      "options": [
+        "1. Phân tích bối cảnh; 2. Xác định mục tiêu; 3. Xây dựng phương án",
+        "1. Xác định mục tiêu; 2. Phân tích bối cảnh; 3. Lựa chọn phương án",
+        "1. Phân tích bối cảnh; 2. Xây dựng phương án; 3. Xác định mục tiêu",
+        "1. Dự toán ngân sách; 2. Xác định mục tiêu; 3. Xây dựng lịch trình"
+      ],
+      "correct": 0,
+      "chapter": 3,
+      "explanation": "Đáp án theo bộ câu hỏi Nhóm 7: 1. Phân tích bối cảnh; 2. Xác định mục tiêu; 3. Xây dựng phương án.\nNguồn: Nhom 7 - Quizz.csv, câu 38. Giữ đáp án từ tệp được cung cấp; tệp gốc không kèm lời giải chi tiết.",
+      "source": "csv-nhom7",
+      "sourceQuestion": 38,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "text": "Mục đích chính của bước 1 \"Phân tích và dự báo bối cảnh môi trường\" là:",
+      "options": [
+        "Xác định hạn chế/thách thức, cơ hội tương lai và thiết lập quan hệ nhân quả",
+        "Lựa chọn ngay phương án tối ưu để triển khai thực hiện trên thực tế",
+        "Phân bổ cụ thể hạn mức kinh phí cho từng phòng ban chức năng",
+        "Xây dựng bảng tiêu chí đánh giá thi đua khen thưởng cuối năm"
+      ],
+      "correct": 0,
+      "chapter": 3,
+      "explanation": "Đáp án theo bộ câu hỏi Nhóm 7: Xác định hạn chế/thách thức, cơ hội tương lai và thiết lập quan hệ nhân quả.\nNguồn: Nhom 7 - Quizz.csv, câu 39. Giữ đáp án từ tệp được cung cấp; tệp gốc không kèm lời giải chi tiết.",
+      "source": "csv-nhom7",
+      "sourceQuestion": 39,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "text": "Trong mô hình tiêu chuẩn SMART dùng để xác định mục tiêu (Bước 2), chữ \"A\" đại diện cho từ nào?",
+      "options": [
+        "Achievable (Có thể đạt được)",
+        "Action-oriented (Hướng tới hành động)",
+        "Accurate (Chính xác tuyệt đối)",
+        "Ambitious (Đầy tham vọng)"
+      ],
+      "correct": 0,
+      "chapter": 3,
+      "explanation": "Đáp án theo bộ câu hỏi Nhóm 7: Achievable (Có thể đạt được).\nNguồn: Nhom 7 - Quizz.csv, câu 40. Giữ đáp án từ tệp được cung cấp; tệp gốc không kèm lời giải chi tiết.",
+      "source": "csv-nhom7",
+      "sourceQuestion": 40,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "text": "Theo giáo trình, chữ \"R\" trong mô hình SMART dùng để xác định mục tiêu là viết tắt của từ nào?",
+      "options": [
+        "Realistic (Tính thực tế)",
+        "Reasonable (Hợp lý)",
+        "Reliable (Đáng tin cậy)",
+        "Relevant (Có liên quan mật thiết)"
+      ],
+      "correct": 0,
+      "chapter": 3,
+      "explanation": "Đáp án theo bộ câu hỏi Nhóm 7: Realistic (Tính thực tế).\nNguồn: Nhom 7 - Quizz.csv, câu 41. Giữ đáp án từ tệp được cung cấp; tệp gốc không kèm lời giải chi tiết.",
+      "source": "csv-nhom7",
+      "sourceQuestion": 41,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "text": "Khi xác định mục tiêu, các mục tiêu cần được sắp xếp theo thứ tự ưu tiên dựa vào tiêu chí nào?",
+      "options": [
+        "Mức độ ảnh hưởng tới sứ mệnh, tính cấp bách thời gian và độ phụ thuộc của hoạt động tiếp theo",
+        "Sở thích cá nhân của người lập kế hoạch, thâm niên công tác và nguồn vốn",
+        "Mức độ đồng thuận của nhân viên thừa hành và quy mô ngân sách được cấp",
+        "Tỷ lệ hoàn vốn nội bộ và mức độ an toàn pháp lý tuyệt đối"
+      ],
+      "correct": 0,
+      "chapter": 3,
+      "explanation": "Đáp án theo bộ câu hỏi Nhóm 7: Mức độ ảnh hưởng tới sứ mệnh, tính cấp bách thời gian và độ phụ thuộc của hoạt động tiếp theo.\nNguồn: Nhom 7 - Quizz.csv, câu 42. Giữ đáp án từ tệp được cung cấp; tệp gốc không kèm lời giải chi tiết.",
+      "source": "csv-nhom7",
+      "sourceQuestion": 42,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "text": "Một nguyên tắc bắt buộc khi tiến hành Bước 3 \"Xây dựng các phương án\" là gì?",
+      "options": [
+        "Không bao giờ chỉ đưa ra một phương án duy nhất",
+        "Chỉ tập trung nghiên cứu phương án có chi phí thấp nhất",
+        "Luôn chọn phương án giống với tiền lệ đã thành công trong quá khứ",
+        "Tuyệt đối giữ kín thông tin phương án không cho các bộ phận biết"
+      ],
+      "correct": 0,
+      "chapter": 3,
+      "explanation": "Đáp án theo bộ câu hỏi Nhóm 7: Không bao giờ chỉ đưa ra một phương án duy nhất.\nNguồn: Nhom 7 - Quizz.csv, câu 43. Giữ đáp án từ tệp được cung cấp; tệp gốc không kèm lời giải chi tiết.",
+      "source": "csv-nhom7",
+      "sourceQuestion": 43,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "text": "Nhận định nào sau đây ĐÚNG về việc ra quyết định ở Bước 4 \"Đánh giá và lựa chọn phương án\"?",
+      "options": [
+        "Nhà quản lý có thể quyết định chọn một số phương án thích hợp thay vì chỉ một phương án",
+        "Bắt buộc chỉ được phép chọn duy nhất một phương án hành động duy nhất",
+        "Việc lựa chọn phương án hoàn toàn dựa vào thuật toán máy tính",
+        "Phải đạt được sự đồng thuận 100% của toàn bộ nhân viên mới được chọn"
+      ],
+      "correct": 0,
+      "chapter": 3,
+      "explanation": "Đáp án theo bộ câu hỏi Nhóm 7: Nhà quản lý có thể quyết định chọn một số phương án thích hợp thay vì chỉ một phương án.\nNguồn: Nhom 7 - Quizz.csv, câu 44. Giữ đáp án từ tệp được cung cấp; tệp gốc không kèm lời giải chi tiết.",
+      "source": "csv-nhom7",
+      "sourceQuestion": 44,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "text": "Hoạt động nào sau đây thuộc nội dung của Bước 5 \"Xây dựng lịch trình tổ chức thực hiện\"?",
+      "options": [
+        "Xác định khung thời gian, dự kiến rủi ro và thống nhất cơ chế điều phối",
+        "Khảo sát các biến số kinh tế vĩ mô bên ngoài thị trường",
+        "Đặt ra các chỉ tiêu tăng trưởng doanh thu SMART cho năm tới",
+        "Lựa chọn các thành viên tham gia nhóm chuyên gia tư vấn ẩn danh"
+      ],
+      "correct": 0,
+      "chapter": 3,
+      "explanation": "Đáp án theo bộ câu hỏi Nhóm 7: Xác định khung thời gian, dự kiến rủi ro và thống nhất cơ chế điều phối.\nNguồn: Nhom 7 - Quizz.csv, câu 45. Giữ đáp án từ tệp được cung cấp; tệp gốc không kèm lời giải chi tiết.",
+      "source": "csv-nhom7",
+      "sourceQuestion": 45,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "text": "Mục đích cốt lõi của bước \"Lập dự toán ngân sách\" trong quy trình lập kế hoạch là gì?",
+      "options": [
+        "Đảm bảo tính khả thi bằng cách lượng hóa các chương trình hành động sang dạng ngân quỹ",
+        "Phân định ranh giới thẩm quyền chỉ huy giữa các nhà quản lý cấp cao",
+        "Thay thế hoàn toàn cho bước xây dựng lịch trình tổ chức thực hiện",
+        "Đưa ra các kịch bản tương lai trái ngược nhau để đối phó rủi ro"
+      ],
+      "correct": 0,
+      "chapter": 3,
+      "explanation": "Đáp án theo bộ câu hỏi Nhóm 7: Đảm bảo tính khả thi bằng cách lượng hóa các chương trình hành động sang dạng ngân quỹ.\nNguồn: Nhom 7 - Quizz.csv, câu 46. Giữ đáp án từ tệp được cung cấp; tệp gốc không kèm lời giải chi tiết.",
+      "source": "csv-nhom7",
+      "sourceQuestion": 46,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "text": "Đặc điểm nổi bật nhất của kỹ thuật dự báo Delphi trong lập kế hoạch là gì?",
+      "options": [
+        "Thu thập ý kiến của nhóm chuyên gia qua bảng hỏi nhiều vòng mà không khai báo tên",
+        "Tập hợp các chuyên gia ngồi tranh luận trực tiếp mặt đối mặt trong phòng họp",
+        "Lấy ý kiến ngẫu nhiên từ khách hàng đại trà qua khảo sát trực tuyến",
+        "Giao quyền cho một cá nhân chuyên gia xuất sắc nhất tự đưa ra dự báo"
+      ],
+      "correct": 0,
+      "chapter": 3,
+      "explanation": "Đáp án theo bộ câu hỏi Nhóm 7: Thu thập ý kiến của nhóm chuyên gia qua bảng hỏi nhiều vòng mà không khai báo tên.\nNguồn: Nhom 7 - Quizz.csv, câu 47. Giữ đáp án từ tệp được cung cấp; tệp gốc không kèm lời giải chi tiết.",
+      "source": "csv-nhom7",
+      "sourceQuestion": 47,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "text": "Phân tích PEST tập trung đánh giá ảnh hưởng của 4 nhóm nhân tố môi trường vĩ mô nào?",
+      "options": [
+        "Chính trị, Kinh tế, Xã hội, Công nghệ",
+        "Chính sách, Kinh doanh, Xã hội, Tiền tệ",
+        "Pháp luật, Kinh tế, Dân số, Kỹ thuật số",
+        "Triết học, Đạo đức, Khoa học, Công nghệ"
+      ],
+      "correct": 0,
+      "chapter": 3,
+      "explanation": "Đáp án theo bộ câu hỏi Nhóm 7: Chính trị, Kinh tế, Xã hội, Công nghệ.\nNguồn: Nhom 7 - Quizz.csv, câu 48. Giữ đáp án từ tệp được cung cấp; tệp gốc không kèm lời giải chi tiết.",
+      "source": "csv-nhom7",
+      "sourceQuestion": 48,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "text": "Trong ma trận SWOT, hai yếu tố nào thuộc về việc phân tích môi trường nội bộ của tổ chức?",
+      "options": [
+        "Điểm mạnh (Strengths) và Điểm yếu (Weaknesses)",
+        "Cơ hội (Opportunities) và Thách thức (Threats)",
+        "Điểm mạnh (Strengths) và Cơ hội (Opportunities)",
+        "Điểm yếu (Weaknesses) và Thách thức (Threats)"
+      ],
+      "correct": 0,
+      "chapter": 3,
+      "explanation": "Đáp án theo bộ câu hỏi Nhóm 7: Điểm mạnh (Strengths) và Điểm yếu (Weaknesses).\nNguồn: Nhom 7 - Quizz.csv, câu 49. Giữ đáp án từ tệp được cung cấp; tệp gốc không kèm lời giải chi tiết.",
+      "source": "csv-nhom7",
+      "sourceQuestion": 49,
+      "difficulty": "MEDIUM"
+    },
+    {
+      "text": "Trong ma trận BCG, sản phẩm thuộc ô \"Ngôi sao\" (Star) có đặc trưng nào sau đây?",
+      "options": [
+        "Thị phần cao và thị trường có tốc độ tăng trưởng cao",
+        "Thị phần cao nhưng thị trường có tốc độ tăng trưởng thấp",
+        "Thị phần thấp nhưng thị trường có tốc độ tăng trưởng cao",
+        "Thị phần thấp và thị trường có tốc độ tăng trưởng thấp"
+      ],
+      "correct": 0,
+      "chapter": 3,
+      "explanation": "Đáp án theo bộ câu hỏi Nhóm 7: Thị phần cao và thị trường có tốc độ tăng trưởng cao.\nNguồn: Nhom 7 - Quizz.csv, câu 50. Giữ đáp án từ tệp được cung cấp; tệp gốc không kèm lời giải chi tiết.",
+      "source": "csv-nhom7",
+      "sourceQuestion": 50,
+      "difficulty": "MEDIUM"
+    }
+  ]
+}

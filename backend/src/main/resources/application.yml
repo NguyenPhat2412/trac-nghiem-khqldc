@@ -25,4 +25,5 @@ app:
   origin: ${APP_ORIGIN:http://localhost:3000}
   secure-cookie: ${SECURE_COOKIE:false}
   admin-password: ${ADMIN_PASSWORD}
+  admin-username: ${ADMIN_USERNAME:admin}
   seed: ${SEED_DEMO:true}

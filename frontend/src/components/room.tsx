@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { api } from "@/lib/api";
 import { Room } from "@/lib/types";
+import { FairPlay } from "./fair-play";
 import {
   Answers,
   ErrorNote,
@@ -140,6 +141,34 @@ export function RoomPage({ code }: { code: string }) {
         </span>
       </PageTitle>
       <ErrorNote error={error} />
+      {data.shuffleAnswers && data.status !== "FINISHED" && (
+        <p className="muted">
+          Vị trí A/B/C/D được đảo riêng cho mỗi người. Hãy trả lời theo nội
+          dung.
+        </p>
+      )}
+      {data.host && data.integrity && data.status !== "LOBBY" && (
+        <details className="integrity-panel">
+          <summary>Ghi nhận tập trung · Chỉ chủ trì thấy</summary>
+          <p>
+            Rời trang hoặc thao tác sao chép không đủ để kết luận gian lận. Dữ
+            liệu do trình duyệt gửi, có thể thiếu khi mất mạng; không tự trừ
+            điểm.
+          </p>
+          <ul>
+            {data.integrity.map((x) => (
+              <li key={x.playerId}>
+                <b>
+                  {x.name} · #{x.playerId.slice(0, 6)}
+                </b>
+                : {x.signals.tabHidden} lần rời trang, {x.signals.copyBlocked}{" "}
+                thao tác sao chép
+                {x.signals.capped ? " (đã đạt giới hạn ghi nhận)" : ""}
+              </li>
+            ))}
+          </ul>
+        </details>
+      )}
       {data.status === "LOBBY" ? (
         <>
           <div className="lobby-grid">
@@ -282,37 +311,42 @@ export function RoomPage({ code }: { code: string }) {
             </span>
           </div>
           <section className="question-panel live-question">
-            <h2>{data.question?.text}</h2>
-            {data.question?.imageUrl && (
-              <img
-                className="question-image"
-                src={data.question.imageUrl}
-                alt="Hình minh họa câu hỏi"
-              />
-            )}
-            {data.question && (
-              <Answers
-                question={data.question}
-                selected={data.myAnswer}
-                reveal={data.status === "REVEAL"}
-                disabled={busy || data.myAnswer >= 0 || data.host}
-                onSelect={async (answer) => {
-                  setBusy(true);
-                  try {
-                    apply(
-                      await api<Room>(`/rooms/${code}/answer`, "POST", {
-                        questionId: data.question!.id,
-                        answer,
-                      }),
-                    );
-                  } catch (e) {
-                    setError((e as Error).message);
-                  } finally {
-                    setBusy(false);
-                  }
-                }}
-              />
-            )}
+            <FairPlay
+              endpoint={`/rooms/${code}/integrity`}
+              active={data.status === "QUESTION" && !data.host}
+            >
+              <h2>{data.question?.text}</h2>
+              {data.question?.imageUrl && (
+                <img
+                  className="question-image"
+                  src={data.question.imageUrl}
+                  alt="Hình minh họa câu hỏi"
+                />
+              )}
+              {data.question && (
+                <Answers
+                  question={data.question}
+                  selected={data.myAnswer}
+                  reveal={data.status === "REVEAL"}
+                  disabled={busy || data.myAnswer >= 0 || data.host}
+                  onSelect={async (answer) => {
+                    setBusy(true);
+                    try {
+                      apply(
+                        await api<Room>(`/rooms/${code}/answer`, "POST", {
+                          questionId: data.question!.id,
+                          answer,
+                        }),
+                      );
+                    } catch (e) {
+                      setError((e as Error).message);
+                    } finally {
+                      setBusy(false);
+                    }
+                  }}
+                />
+              )}
+            </FairPlay>
             {data.myAnswer >= 0 && data.status === "QUESTION" && (
               <p className="saved">
                 <Check size={18} />

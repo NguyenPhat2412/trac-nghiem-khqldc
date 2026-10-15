@@ -184,6 +184,7 @@ export function ReportAdmin({ overview }: { overview: boolean }) {
                     <th>Điểm</th>
                     <th>Thời gian</th>
                     <th>Hoàn thành</th>
+                    <th>Ghi nhận tập trung</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -205,6 +206,17 @@ export function ReportAdmin({ overview }: { overview: boolean }) {
                       </td>
                       <td>{duration(r.durationMs)}</td>
                       <td>{date(r.date)}</td>
+                      <td>
+                        {r.integrity ? (
+                          <small>
+                            {r.integrity.tabHidden} lần rời trang ·{" "}
+                            {r.integrity.copyBlocked} thao tác sao chép
+                            {r.integrity.capped ? " · ≥100 sự kiện" : ""}
+                          </small>
+                        ) : (
+                          "—"
+                        )}
+                      </td>
                     </tr>
                   ))}
                 </tbody>

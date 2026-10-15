@@ -61,6 +61,22 @@ public class Api {
     return p.submit(Auth.actor(), id);
   }
 
+  @PostMapping("/attempts/{id}/integrity")
+  Object attemptIntegrity(@PathVariable String id, @RequestBody Integrity.Event event) {
+    var a = Auth.actor();
+    auth.limit("integrity:" + a.id(), 120);
+    p.integrity(a, id, event);
+    return Map.of("ok", true);
+  }
+
+  @PostMapping("/rooms/{code}/integrity")
+  Object roomIntegrity(@PathVariable String code, @RequestBody Integrity.Event event) {
+    var a = Auth.actor();
+    auth.limit("integrity:" + a.id(), 120);
+    r.integrity(a, code, event);
+    return Map.of("ok", true);
+  }
+
   @GetMapping("/history")
   Object history() {
     return p.history(Auth.actor());

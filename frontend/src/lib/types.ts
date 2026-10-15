@@ -52,6 +52,7 @@ export type Attempt = {
   correct: number;
   score: number;
   ranked: boolean;
+  instantFeedback: boolean;
 };
 export type Rank = {
   rank: number;
@@ -97,6 +98,13 @@ export type Room = {
   answered: number;
   distribution?: number[];
   details?: Detail[];
+  shuffleAnswers: boolean;
+  integrity?: { playerId: string; name: string; signals: IntegritySignals }[];
+};
+export type IntegritySignals = {
+  tabHidden: number;
+  copyBlocked: number;
+  capped: boolean;
 };
 export type Staff = {
   id: string;
@@ -118,6 +126,7 @@ export type Report = {
     mode: string;
     date: number;
     roomId: string;
+    integrity?: IntegritySignals;
   })[];
   total: number;
   players: number;

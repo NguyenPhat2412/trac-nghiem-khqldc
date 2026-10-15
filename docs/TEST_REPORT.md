@@ -2,7 +2,21 @@
 
 Ngày: 15/10/2026. Bản chạy tại http://localhost:3000; quản trị tại http://localhost:3000/admin.
 
-## Kết quả
+## Cập nhật học liệu và làm bài công bằng
+
+Đợt cập nhật ngày 15/10/2026 sau bản bàn giao đầu tiên:
+
+- **9 unit test đạt**: thêm phản hồi tức thì, khóa lựa chọn đầu, không lộ câu chưa trả lời, ánh xạ đáp án/phân bố sau đảo, dữ liệu phòng cũ và giới hạn/sự kiện trùng.
+- **34 kiểm tra API hồi quy và 10 kiểm tra API mới đạt** trên database riêng. Kiểm tra mới bao gồm quyền sở hữu phản hồi/sự kiện, không đưa bài học vào xếp hạng, bố cục A–D riêng và chấm đúng cho tám người có bố cục khác nhau.
+- **3 kịch bản trình duyệt đạt**: sinh viên, quản trị/chủ trì và học từng câu. Kiểm tra phản hồi khi sai, hiển thị đúng/sai, khóa đáp án, tải lại, thông báo hạn chế sao chép và không tràn ngang ở 390 px. Locator chương mẫu và số câu cố định trong test cũ được sửa để dùng dữ liệu thực tế; kịch bản chủ trì được chạy lại thành công với bộ Nhóm 7 50 câu.
+- TypeScript và build Docker production thành công. Các bài test này không thay thế một kiểm toán bảo mật độc lập.
+- **100 kết nối STOMP**, ba kiểm tra quyền kênh và **100/100 đáp án** đạt; cập nhật đến đủ người trong 36 ms. Đáp án p50 **259 ms**, p95 **411 ms**, lớn nhất **428 ms**. HTTP đồng thời p50 173,91 ms, p95 304,14 ms, lớn nhất 319,17 ms. Cấu hình máy và giới hạn đo như phần bên dưới.
+- Khởi động lại backend test: giữ 100 thành viên, đáp án, xếp hạng, phiên khách, **thứ tự lựa chọn và đáp án hiển thị riêng của người chơi**.
+- Học liệu hiện tại **92 câu / 8 chương / 9 quiz**: 18 Blooket, 50 CSV Nhóm 7, 24 câu tự biên soạn theo giáo trình. Đã kiểm tra cấu trúc cả 50 dòng CSV, nhập đủ và chạy lại script không tạo trùng. Không nhập Azota theo yêu cầu người dùng. Kiểm tra cấu trúc dữ liệu không đồng nghĩa thẩm định học thuật tất cả đáp án nguồn.
+
+Bằng chứng mới gồm `fair-play-api-results.json`, `course-import.json`, `restart-results.json`, `realtime-results.json`, log `update-*`, `content-validation.json` đối chiếu đủ 92 câu lưu trong database với nguồn chuẩn hóa và ảnh phản hồi. Phản hồi trên desktop và điện thoại được xem lại trực tiếp trong trình duyệt tích hợp; ảnh `instant-feedback-mobile.png` và `instant-feedback-desktop.png` được chụp theo viewport để tránh lỗi ghép ảnh toàn trang của Chrome. Không đóng gói cookie/phiên đăng nhập trong bằng chứng. Giới hạn: chưa kiểm thử điện thoại thật, Safari/Firefox, mất sự kiện tập trung khi offline hay khả năng ngăn người dùng cố tình vượt chặn copy. Tín hiệu tập trung không dùng để tự phạt.
+
+## Kết quả bản đầu (trước cập nhật học liệu)
 
 | Nhóm | Kết quả thực tế |
 |---|---|
@@ -55,6 +69,6 @@ Khác biệt có chủ đích so với ảnh ý tưởng: hiển thị số câu
 
 Đã có tự luyện, phòng nhiều người, quản lý nội dung/Excel, phân quyền, xếp hạng, thống kê/CSV, Docker Compose, script chạy và sao lưu. Database chính giữ trên ổ D. Bản mã nguồn không chứa mật khẩu, phiên đăng nhập hay database. File tài khoản quản trị bàn giao riêng tại máy này, chỉ chủ sở hữu đọc/ghi.
 
-Học liệu gồm 3 chương, 12 câu minh họa; cần nhập giáo trình thật trước khi dùng chính thức. Tên là tự khai, danh tính theo cookie trình duyệt. Màu chưa được xác nhận là mã nhận diện chính thức VJU. Bản hiện tại chạy một backend và tối đa 100 người/phòng. Chưa triển khai tên miền công khai; localhost chỉ truy cập từ máy này. Hướng dẫn cấu hình HTTPS, origin, cookie và sao lưu nằm trong README.
+Học liệu hiện tại gồm 92 câu với nguồn và giới hạn như phần cập nhật ở đầu báo cáo; các ảnh và số liệu trong phần bản đầu có thể còn nội dung minh họa. Tên là tự khai, danh tính theo cookie trình duyệt. Màu chưa được xác nhận là mã nhận diện chính thức VJU. Bản hiện tại chạy một backend và tối đa 100 người/phòng. Chưa triển khai tên miền công khai; localhost chỉ truy cập từ máy này. Hướng dẫn cấu hình HTTPS, origin, cookie và sao lưu nằm trong README.
 
 Kiểm thử tự động tập trung Chrome và kích thước điện thoại giả lập; chưa chứng nhận trên Safari/Firefox hoặc điện thoại vật lý. Kiểm tra dependency frontend không thay thế một cuộc kiểm toán bảo mật toàn diện.

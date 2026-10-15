@@ -12,8 +12,8 @@ Yêu cầu Docker Desktop/Engine có Docker Compose. Tại thư mục dự án:
 
 - Website: http://localhost:3000
 - Quản trị: http://localhost:3000/admin
-- Tài khoản ban đầu: `admin`. Mật khẩu được tạo riêng trong `.env`, trường `ADMIN_PASSWORD`.
-- `ADMIN_PASSWORD` chỉ được dùng khi cơ sở dữ liệu chưa có nhân sự. Sau đó đổi mật khẩu trong giao diện Quản trị → Đổi mật khẩu.
+- Tài khoản ban đầu lấy từ `ADMIN_USERNAME` (mặc định `admin`). Mật khẩu được tạo riêng trong `.env`, trường `ADMIN_PASSWORD`.
+- `ADMIN_USERNAME` và `ADMIN_PASSWORD` chỉ được dùng khi cơ sở dữ liệu chưa có nhân sự. Sau đó đổi mật khẩu trong giao diện Quản trị → Đổi mật khẩu.
 - Dừng: `docker compose stop`. Chạy lại: `docker compose up -d`.
 - Dữ liệu PostgreSQL nằm trong `data/postgres/` của dự án trên ổ D. Không cần đăng ký dịch vụ ngoài.
 - Chạy `./scripts/backup.sh` để tạo bản sao vào `backups/`.
@@ -26,15 +26,22 @@ Bản local chỉ mở cổng trên `127.0.0.1`. Thiết bị khác chưa truy c
 - Chương, ngân hàng câu hỏi, độ khó, hình ảnh bằng liên kết HTTPS, lời giải; nháp/xuất bản/lưu trữ.
 - Bộ quiz có phiên bản và danh sách câu hỏi cố định; sửa bản đã xuất bản tạo bản mới. Lưu nháp bản mới giữ bản đang công khai; xuất bản bản mới lưu trữ bản cũ.
 - Tự luyện bộ quiz hoặc chọn chương/số câu/thời gian; đảo câu và đáp án; đánh dấu, tự lưu, tiếp tục sau tải lại, tự nộp khi hết giờ.
+- Học từng câu: hiện đáp án và lời giải ngay sau lựa chọn đầu tiên, khóa sửa đáp án, không xếp hạng. Chế độ có xếp hạng chỉ hiện lời giải sau khi nộp.
 - Kết quả, lời giải, lịch sử tự luyện, luyện lại câu sai, bảng xếp hạng theo phiên bản quiz.
 - Phòng 6 số, liên kết/QR, phòng chờ, khóa/loại người chơi, chủ trì mở từng câu, khóa lựa chọn, đóng câu khi hết giờ hoặc mọi người trả lời.
+- Khi bật đảo câu/đáp án ở quiz, phòng dùng cùng câu hỏi nhưng mỗi người có thứ tự A–D riêng, được giữ khi kết nối lại.
+- Hạn chế thao tác sao chép, ghi tên/mã trên vùng câu hỏi và ghi nhận rời trang khi làm bài có xếp hạng hoặc chơi phòng. Người có quyền xem tín hiệu trong phòng/báo cáo; không tự trừ điểm hay kết luận gian lận.
 - Xếp hạng sau từng câu, phân bố lựa chọn, top 3, kết thúc sớm và báo cáo chi tiết; khôi phục sau mất mạng và khởi động lại backend.
 - Nhập Excel có mẫu, xem trước, chỉnh sửa lỗi theo dòng, giao dịch nhập toàn bộ hoặc không nhập.
 - Báo cáo theo ngày/chương/quiz/phòng; xuất CSV; nhân sự ADMIN/EDITOR và khóa tài khoản.
 
 ## Học liệu
 
-Có 3 chương và 12 câu **minh họa**, không phải ngân hàng câu hỏi chính thức của VJU. Dùng trang quản trị hoặc mẫu Excel để thay nội dung bằng giáo trình thật. Màu xanh/đỏ và chữ VJU được dùng theo yêu cầu thiết kế; chưa xác nhận là bộ nhận diện chính thức.
+Bản local hiện có **8 chương, 92 câu và 9 bộ quiz**: 18 câu Blooket, 50 câu CSV Nhóm 7 và 24 câu ôn tập cơ bản tự biên soạn theo giáo trình 2019. Nguồn được ghi trong lời giải. Bộ Nhóm 7 nằm ở chương 3 và có quiz riêng. Đây chưa phải ngân hàng đề thi chính thức hoặc bao quát toàn bộ giáo trình. Xem [học liệu và chế độ tập trung](docs/MATERIALS_AND_FAIR_PLAY.md).
+
+Database mới vẫn có dữ liệu minh họa nếu `SEED_DEMO=true`. Để nạp ngân hàng 92 câu đã bàn giao sau khi ứng dụng chạy, đặt thông tin quản trị hiện hành trong `.env` rồi chạy `python3 scripts/import-course.py`. Script dùng API quản trị, có thể chạy lại mà không tạo trùng; lưu trữ các chương/quiz minh họa ban đầu và giữ lịch sử. Dữ liệu nguồn chuẩn hóa nằm tại `content/course-2019.json`.
+
+Màu xanh/đỏ và chữ VJU được dùng theo yêu cầu thiết kế; chưa xác nhận là bộ nhận diện chính thức.
 
 ## Công nghệ
 
@@ -57,6 +64,7 @@ Một số Node được đóng gói trong ứng dụng macOS không nạp đư�
 - Unit: `mvn -f backend/pom.xml test`.
 - Kiểm tra TypeScript: `cd frontend && pnpm typecheck`.
 - API, phân quyền và tải 100 người: `./scripts/test-integration.sh` (chỉ xóa/tạo lại database **vju_quiz_test**).
+- Kiểm tra phản hồi và thứ tự đáp án riêng: khi test-backend đang chạy, `python3 scripts/fair-play_test.py`.
 - Trình duyệt: nạp `.env`, `cd frontend && pnpm exec playwright test`. Cấu hình dùng Chrome; cài Google Chrome hoặc đổi channel theo môi trường. Các bài test tạo dữ liệu minh họa trong bản local.
 - WebSocket: sau khi test-backend sẵn sàng, nạp `.env`, `cd frontend && node tests/realtime-check.mjs`. Tránh chạy liên tục vượt 150 phiên khách/phút trên cùng IP.
 - Phục hồi: sau WebSocket test, `docker compose --profile test restart test-backend`, chờ health sẵn sàng, rồi `cd frontend && node tests/restart-check.mjs`.

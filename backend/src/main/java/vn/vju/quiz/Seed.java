@@ -11,16 +11,19 @@ public class Seed implements CommandLineRunner {
   final Store s;
   final Auth auth;
   final String password;
+  final String username;
   final boolean demo;
 
   Seed(
       Store s,
       Auth a,
+      @Value("${app.admin-username}") String username,
       @Value("${app.admin-password}") String password,
       @Value("${app.seed}") boolean demo) {
     this.s = s;
     auth = a;
     this.password = password;
+    this.username = username;
     this.demo = demo;
   }
 
@@ -30,7 +33,7 @@ public class Seed implements CommandLineRunner {
       s.db.update(
           "insert into staff values(?,?,?,?,?,true)",
           UUID.randomUUID().toString(),
-          "admin",
+          username,
           auth.passwords.encode(password),
           "Quản trị VJU",
           "ADMIN");

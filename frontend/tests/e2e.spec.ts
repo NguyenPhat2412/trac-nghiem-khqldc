@@ -68,7 +68,7 @@ test("student practice, saved progress, result, leaderboard and mobile layout", 
     path: path.join(evidence, "mobile-home.png"),
     fullPage: true,
   });
-  await page.getByRole("button", { name: /01 Tổng quan/ }).click();
+  await page.locator("button.chapter").first().click();
   await page.getByRole("button", { name: "Luyện ngay" }).click();
   await expect(page.locator(".answers")).toBeVisible();
   expect(
@@ -89,7 +89,9 @@ test("admin content screens and synchronous multiplayer", async ({
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
   await page.goto("/admin");
-  await page.getByLabel("Tên đăng nhập", { exact: true }).fill("admin");
+  await page
+    .getByLabel("Tên đăng nhập", { exact: true })
+    .fill(process.env.ADMIN_USERNAME || "admin");
   await page
     .getByLabel("Mật khẩu", { exact: true })
     .fill(process.env.ADMIN_PASSWORD!);
@@ -122,18 +124,14 @@ test("admin content screens and synchronous multiplayer", async ({
     .locator(".admin-sidebar")
     .getByRole("link", { name: "Chương học", exact: true })
     .click();
-  const chapterTitle="Chương thử giao diện " + Date.now();
+  const chapterTitle = "Chương thử giao diện " + Date.now();
   await page.getByRole("button", { name: "Thêm chương" }).click();
-  await page
-    .getByLabel("Tên chương", { exact: true })
-    .fill(chapterTitle);
+  await page.getByLabel("Tên chương", { exact: true }).fill(chapterTitle);
   await page
     .getByLabel("Mô tả", { exact: true })
     .fill("Dữ liệu kiểm thử giao diện");
   await page.getByRole("button", { name: "Lưu chương" }).click();
-  await expect(
-    page.getByText(chapterTitle, { exact: true }),
-  ).toBeVisible();
+  await expect(page.getByText(chapterTitle, { exact: true })).toBeVisible();
   await page
     .locator(".admin-sidebar")
     .getByRole("link", { name: "Nhập Excel", exact: true })
@@ -152,10 +150,13 @@ test("admin content screens and synchronous multiplayer", async ({
     .locator(".admin-sidebar")
     .getByRole("link", { name: "Phòng chơi", exact: true })
     .click();
-  await page.getByRole("combobox", { name: "Bộ quiz", exact: true }).selectOption({ index: 1 });
+  await page
+    .getByRole("combobox", { name: "Bộ quiz", exact: true })
+    .selectOption({ index: 1 });
   await page.getByRole("button", { name: "Tạo phòng mới" }).click();
   await expect(page).toHaveURL(/\/room\//);
   const code = page.url().split("/").pop()!;
+  const room = await (await page.request.get(`/api/rooms/${code}`)).json();
   const studentContext = await browser.newContext({
     viewport: { width: 390, height: 844 },
   });
@@ -190,7 +191,9 @@ test("admin content screens and synchronous multiplayer", async ({
     fullPage: true,
   });
   await page.getByRole("button", { name: "Câu tiếp theo" }).click();
-  await expect(student.getByText("Câu 2 / 4", { exact: true })).toBeVisible();
+  await expect(
+    student.getByText(`Câu 2 / ${room.count}`, { exact: true }),
+  ).toBeVisible();
   await page.getByRole("button", { name: "Kết thúc sớm" }).click();
   await page
     .getByRole("button", { name: "Kết thúc phòng", exact: true })

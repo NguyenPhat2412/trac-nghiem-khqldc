@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { api, duration } from "@/lib/api";
 import { Attempt, History, Catalog, Rank } from "@/lib/types";
+import { FairPlay } from "./fair-play";
 import {
   Answers,
   Empty,
@@ -142,6 +143,51 @@ export function Practice({ id }: { id: string }) {
       </>
     );
   const q = data.questions[index];
+  const answered = data.answers[q.id] !== undefined;
+  const questionContent = (
+    <>
+      <h2>{q.text}</h2>
+      {q.imageUrl && (
+        <img
+          className="question-image"
+          src={q.imageUrl}
+          alt="Hình minh họa câu hỏi"
+        />
+      )}
+      <Answers
+        question={q}
+        selected={data.answers[q.id]}
+        disabled={busy || (data.instantFeedback && answered)}
+        reveal={data.instantFeedback && answered}
+        onSelect={(answer) => save({ questionId: q.id, answer })}
+      />
+      {data.instantFeedback && answered && (
+        <div className="instant-feedback" role="status">
+          <strong
+            className={
+              data.answers[q.id] === q.correct ? "text-green" : "text-red"
+            }
+          >
+            {data.answers[q.id] === q.correct
+              ? "Chính xác!"
+              : "Chưa chính xác."}
+          </strong>
+          <p>
+            Đáp án đúng:{" "}
+            <b>
+              {q.correct === undefined
+                ? ""
+                : `${"ABCD"[q.correct]}. ${q.options[q.correct]}`}
+            </b>
+          </p>
+          <p>{q.explanation || "Chưa có lời giải."}</p>
+          <small>
+            Đã khóa lựa chọn đầu tiên. Lượt học này không đưa vào bảng xếp hạng.
+          </small>
+        </div>
+      )}
+    </>
+  );
   return (
     <>
       <div className="quiz-top">
@@ -185,20 +231,13 @@ export function Practice({ id }: { id: string }) {
               {data.flagged.includes(q.id) ? "Đã đánh dấu" : "Xem lại sau"}
             </button>
           </div>
-          <h2>{q.text}</h2>
-          {q.imageUrl && (
-            <img
-              className="question-image"
-              src={q.imageUrl}
-              alt="Hình minh họa câu hỏi"
-            />
+          {data.ranked ? (
+            <FairPlay endpoint={`/attempts/${id}/integrity`}>
+              {questionContent}
+            </FairPlay>
+          ) : (
+            questionContent
           )}
-          <Answers
-            question={q}
-            selected={data.answers[q.id]}
-            disabled={busy}
-            onSelect={(answer) => save({ questionId: q.id, answer })}
-          />
           <div className="question-nav">
             <button
               className="button outline"
@@ -236,7 +275,9 @@ export function Practice({ id }: { id: string }) {
             ))}
           </div>
           <p className="muted">
-            Bạn có thể quay lại và đổi đáp án trước khi nộp bài.
+            {data.instantFeedback
+              ? "Hiện đáp án ngay · Không xếp hạng. Mỗi câu chỉ ghi nhận lựa chọn đầu tiên; bạn vẫn có thể quay lại đọc lời giải."
+              : "Bạn có thể quay lại và đổi đáp án trước khi nộp bài."}
           </p>
           <button
             className="button wide"

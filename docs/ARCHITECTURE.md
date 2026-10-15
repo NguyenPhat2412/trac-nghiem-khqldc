@@ -24,13 +24,20 @@ LOBBY → QUESTION → REVEAL → QUESTION … → FINISHED. Máy chủ đặt d
 
 - `/session`, `/auth/login`, `/auth/logout`, `/auth/password`: nhận diện và phiên.
 - `/catalog`, `/attempts`, `/attempts/{id}/answer`, `/attempts/{id}/submit`, `/history`, `/leaderboard/{quizId}`: học tập.
+- `/attempts/{id}/integrity`, `/rooms/{code}/integrity`: ghi nhận tín hiệu tập trung theo actor hiện tại, kiểm tra quyền/thời hạn và giới hạn tần suất.
 - `/rooms/{code}`, `/rooms/{code}/join`, `/rooms/{code}/answer`: người chơi.
 - `/admin/rooms`, `/admin/rooms/{code}/{start|next|lock|kick|finish}`: chủ trì.
 - `/admin/chapters`, `/admin/questions`, `/admin/quizzes`: nội dung.
 - `/admin/import/{template|preview|commit}`: nhập Excel có giao dịch.
 - `/admin/report`, `/admin/report.csv`, `/admin/staff`: báo cáo và nhân sự.
 
-Question snapshot giữ nguyên nội dung/đáp án trong attempt và room, dù ngân hàng được sửa sau đó. Các API làm bài đang mở không trả đáp án đúng/lời giải. Kết quả riêng kiểm tra actor ID; tên không được dùng để cấp quyền.
+Question snapshot giữ nguyên nội dung/đáp án trong attempt và room, dù ngân hàng được sửa sau đó. Các API làm bài xếp hạng đang mở không trả đáp án đúng/lời giải; bài học `instantFeedback` chỉ mở lời giải của câu đã trả lời và khóa lựa chọn đầu tiên ở máy chủ. Các lượt học này không được xếp hạng. Kết quả riêng kiểm tra actor ID; tên không được dùng để cấp quyền.
+
+## Thứ tự đáp án và tín hiệu tập trung
+
+Phòng mới lấy cờ `shuffle` từ quiz. Thứ tự câu được đảo chung; `Member.optionOrders` giữ hoán vị lựa chọn cho từng câu của từng người. Máy chủ ánh xạ lựa chọn hiển thị về chỉ số chuẩn trước khi lưu/chấm, rồi ánh xạ ngược khi trả đáp án/phân bố/review. Phòng cũ thiếu trường này dùng thứ tự chuẩn để giữ tương thích.
+
+`Integrity` lưu tối đa 100 sự kiện có mã riêng cùng thời gian nhận máy chủ, gộp sự kiện gửi lại. Tổng hợp chỉ trả cho chủ trì hoặc báo cáo có quyền; không sửa điểm/thứ hạng. Sự kiện là dữ liệu do trình duyệt tự báo, không phải bằng chứng gian lận.
 
 ## Vận hành
 

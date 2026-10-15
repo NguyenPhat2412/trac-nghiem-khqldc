@@ -22,6 +22,7 @@ export function Home() {
   const [selected, setSelected] = useState<string[]>([]);
   const [count, setCount] = useState(4);
   const [minutes, setMinutes] = useState(0);
+  const [instantFeedback, setInstantFeedback] = useState(true);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   useEffect(() => {
@@ -225,11 +226,21 @@ export function Home() {
                       chapterIds: selected,
                       count: Math.min(count, available),
                       timeLimitSeconds: minutes * 60,
+                      instantFeedback,
                     })
                   }
                 >
                   Luyện ngay <ArrowRight size={18} />
                 </button>
+                <label className="feedback-choice">
+                  <input
+                    type="checkbox"
+                    checked={instantFeedback}
+                    onChange={(e) => setInstantFeedback(e.target.checked)}
+                  />{" "}
+                  Hiện đáp án và lời giải ngay sau khi chọn (khóa lựa chọn đầu
+                  tiên)
+                </label>
               </div>
             )}
             <div className="section-heading quiz-section">
@@ -264,11 +275,45 @@ export function Home() {
                   >
                     Làm bài <ArrowRight size={18} />
                   </button>
+                  <button
+                    className="button ghost wide"
+                    disabled={busy}
+                    onClick={() =>
+                      start({ quizId: q.id, instantFeedback: true })
+                    }
+                  >
+                    Học từng câu · Hiện đáp án ngay
+                  </button>
                 </article>
               ))}
             </div>
           </>
         )}
+      </section>
+      <section className="materials-panel">
+        <h2>Học liệu của môn học</h2>
+        <p>
+          Giáo trình Khoa học quản lý đại cương (2019) và bộ câu hỏi do bạn cung
+          cấp. Nguồn và trang tham khảo được ghi trong lời giải.
+        </p>
+        <div className="actions">
+          <a
+            href="https://drive.google.com/file/d/1qV0Hmwd0b8e2UTyBeBNRMPx4iHqNdpta/view"
+            target="_blank"
+            rel="noreferrer"
+            className="button outline"
+          >
+            Mở giáo trình
+          </a>
+          <a
+            href="https://dashboard.blooket.com/set/6ab48bdbd0064050e26f1a3a"
+            target="_blank"
+            rel="noreferrer"
+            className="text-link"
+          >
+            Bộ câu hỏi gốc chương 1–2
+          </a>
+        </div>
       </section>
     </>
   );

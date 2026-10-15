@@ -46,7 +46,9 @@ public class Reports {
                 "date",
                 a.finishedAt,
                 "roomId",
-                ""));
+                "",
+                "integrity",
+                Integrity.summary(a.integrityEvents)));
         for (Question q : a.questions) {
           acc(questionStats, texts, q, Objects.equals(a.answers.get(q.id), q.correct), -1);
           chapters.merge(q.chapterId, 1L, Long::sum);
@@ -67,6 +69,7 @@ public class Reports {
         v.put("mode", "Phòng chơi");
         v.put("date", r.finishedAt);
         v.put("roomId", r.id);
+        v.put("integrity", Integrity.summary(r.members.get(entry.get("playerId")).integrityEvents));
         rows.add(v);
       }
       for (Member m : r.members.values())

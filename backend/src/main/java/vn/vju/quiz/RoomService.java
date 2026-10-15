@@ -57,6 +57,11 @@ public class RoomService {
         s.db.queryForObject("select exists(select 1 from rooms where id=?)", Boolean.class, r.id)));
     r.hostId = a.id();
     r.quiz = q;
+    r.shuffleAnswers = q.shuffle;
+    if (q.shuffle) {
+      r.quiz.questions = new ArrayList<>(q.questions);
+      Collections.shuffle(r.quiz.questions, random);
+    }
     r.title = q.title;
     s.db.update("insert into rooms(id,data) values (?,?::jsonb)", r.id, s.write(r));
     save(r);
@@ -76,6 +81,13 @@ public class RoomService {
     Member m = new Member();
     m.id = a.id();
     m.name = a.name();
+    if (r.shuffleAnswers) {
+      for (Question q : r.quiz.questions) {
+        List<Integer> order = new ArrayList<>(List.of(0, 1, 2, 3));
+        Collections.shuffle(order, random);
+        m.optionOrders.put(q.id, order);
+      }
+    }
     r.members.put(m.id, m);
     save(r);
     return view(a, r);
@@ -159,7 +171,7 @@ public class RoomService {
         q.id.equals(questionId) && choice >= 0 && choice < 4, "Câu hỏi hoặc đáp án không hợp lệ");
     Member m = r.members.get(a.id());
     if (!m.answers.containsKey(q.id)) {
-      m.answers.put(q.id, choice);
+      m.answers.put(q.id, order(m, q).get(choice));
       m.times.put(q.id, Math.max(0, System.currentTimeMillis() - r.openedAt));
       if (r.members.values().stream()
           .filter(x -> !x.kicked)
@@ -167,6 +179,29 @@ public class RoomService {
       save(r);
     }
     return view(a, r);
+  }
+
+  List<Integer> order(Member m, Question q) {
+    return m == null ? List.of(0, 1, 2, 3) : m.optionOrders.getOrDefault(q.id, List.of(0, 1, 2, 3));
+  }
+
+  Map<String, Object> playerQuestion(Question q, Member m, boolean reveal) {
+    Map<String, Object> v = content.question(q, reveal);
+    var order = order(m, q);
+    v.put("options", order.stream().map(q.options::get).toList());
+    if (reveal) v.put("correct", order.indexOf(q.correct));
+    return v;
+  }
+
+  @Transactional
+  public void integrity(Actor a, String code, Integrity.Event event) {
+    Room r = s.get("rooms", code, Room.class, true);
+    Member m = r.members.get(a.id());
+    Errors.forbidden(m != null && !m.kicked);
+    Errors.require(
+        r.status.equals("QUESTION") && System.currentTimeMillis() < r.deadline, "Câu hỏi đã đóng");
+    Integrity.record(m.integrityEvents, event);
+    save(r);
   }
 
   public List<Map<String, Object>> ranking(Room r) {
@@ -222,6 +257,22 @@ public class RoomService {
     v.put("early", r.early);
     v.put("current", r.current);
     v.put("count", r.quiz.questions.size());
+    v.put("shuffleAnswers", r.shuffleAnswers);
+    if (isHost)
+      v.put(
+          "integrity",
+          r.members.values().stream()
+              .filter(m -> !m.kicked)
+              .map(
+                  m ->
+                      Map.of(
+                          "playerId",
+                          m.id,
+                          "name",
+                          m.name,
+                          "signals",
+                          Integrity.summary(m.integrityEvents)))
+              .toList());
     v.put(
         "members",
         r.members.values().stream()
@@ -232,9 +283,11 @@ public class RoomService {
     if (r.current >= 0) {
       Question q = r.quiz.questions.get(r.current);
       boolean reveal = !r.status.equals("QUESTION");
-      v.put("question", content.question(q, reveal));
       Member mine = r.members.get(a.id());
-      v.put("myAnswer", mine == null ? -1 : mine.answers.getOrDefault(q.id, -1));
+      Member displayed = isHost ? null : mine;
+      var order = order(displayed, q);
+      v.put("question", playerQuestion(q, displayed, reveal));
+      v.put("myAnswer", mine == null ? -1 : order.indexOf(mine.answers.getOrDefault(q.id, -1)));
       v.put(
           "answered",
           r.members.values().stream()
@@ -243,8 +296,8 @@ public class RoomService {
       if (reveal) {
         v.put(
             "distribution",
-            java.util.stream.IntStream.range(0, 4)
-                .mapToObj(
+            order.stream()
+                .map(
                     i ->
                         r.members.values().stream()
                             .filter(m -> !m.kicked && Objects.equals(m.answers.get(q.id), i))
@@ -268,9 +321,10 @@ public class RoomService {
                           q ->
                               Map.of(
                                   "question",
-                                  content.question(q, true),
+                                  playerQuestion(q, isHost ? null : m, true),
                                   "answer",
-                                  m.answers.getOrDefault(q.id, -1),
+                                  order(isHost ? null : m, q)
+                                      .indexOf(m.answers.getOrDefault(q.id, -1)),
                                   "durationMs",
                                   m.times.getOrDefault(q.id, r.quiz.questionSeconds * 1000L)))
                       .toList()));
