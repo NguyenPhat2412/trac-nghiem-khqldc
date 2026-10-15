@@ -6,9 +6,12 @@ import json
 import os
 import http.cookiejar
 import urllib.request
+import runpy
 from pathlib import Path
 
 root = Path(__file__).resolve().parents[1]
+source = json.loads((root / 'content/course-2019.json').read_text())
+runpy.run_path(str(root / 'scripts/validate-course.py'))['validate'](source)
 env = dict(line.split('=', 1) for line in (root / '.env').read_text().splitlines()
            if '=' in line and not line.startswith('#'))
 base = os.environ.get('VJU_URL', 'http://localhost:3000').rstrip('/')
@@ -28,15 +31,15 @@ def call(path, body=None, method=None):
 actor = call('/auth/login', {'username': env.get('ADMIN_USERNAME', 'admin'), 'password': env['ADMIN_PASSWORD']})
 csrf = actor['csrf']
 assert actor['role'] == 'ADMIN'
-source = json.loads((root / 'content/course-2019.json').read_text())
 old_chapters = call('/admin/chapters')
 chapter_ids = {}
 for n, title in enumerate(source['chapters'], 1):
     title = f'Chương {n}. {title}'
     existing = next((c for c in old_chapters if c['title'] == title), None)
-    description = ('Theo giáo trình 2019. Câu hỏi từ Blooket do người dùng cung cấp.' if n < 3 else
-                   'Theo giáo trình 2019. Gồm 50 câu từ CSV Nhóm 7 và 4 câu ôn tập cơ bản tự biên soạn.' if n == 3 else
-                   'Theo giáo trình 2019. Câu ôn tập cơ bản tự biên soạn; có trang tham khảo trong lời giải.')
+    description = ('100 câu ôn tập · ' +
+                   ('Gồm câu Blooket được cung cấp và câu tự biên soạn theo giáo trình 2019.' if n < 3 else
+                    '50 câu CSV Nhóm 7 về lập kế hoạch và 50 câu tự biên soạn về ra quyết định.' if n == 3 else
+                    'Tự biên soạn theo giáo trình 2019, có lời giải và trang tham khảo.'))
     chapter = existing or call('/admin/chapters', {
         'title': title, 'position': n, 'status': 'PUBLISHED',
         'description': description})
@@ -54,18 +57,27 @@ for q in source['questions']:
 if pending:
     call('/admin/import/commit', pending)
 all_questions = call('/admin/questions')
+questions_by_id = {q['id']: q for q in all_questions}
 quizzes = call('/admin/quizzes')
 for n, title in enumerate(source['chapters'], 1):
     quiz_title = f'Chương {n} · {title}'
-    if any(q['title'] == quiz_title and q['status'] == 'PUBLISHED' for q in quizzes):
-        continue
-    # Keep the original chapter quiz snapshot separate from the later Nhóm 7 bank.
-    chapter_texts = {q['text'] for q in source['questions'] if q['chapter'] == n and q['source'] != 'csv-nhom7'}
+    chapter_texts = {q['text'] for q in source['questions'] if q['chapter'] == n}
     ids = [q['id'] for q in all_questions if q['chapterId'] == chapter_ids[n] and q['text'] in chapter_texts and q['status'] == 'PUBLISHED']
-    call('/admin/quizzes', {'title': quiz_title,
-        'description': 'Nguồn Blooket · Chương 1–2' if n < 3 else 'Tự biên soạn theo giáo trình 2019 · Ôn tập cơ bản',
-        'status': 'PUBLISHED', 'questionIds': ids, 'timeLimitSeconds': max(240, len(ids) * 40),
-        'questionSeconds': 30, 'shuffle': True})
+    assert len(ids) == 100, f'Chương {n} cần đúng 100 câu đã xuất bản'
+    description = '100 câu ôn tập · Có câu hiểu bản chất và tình huống vận dụng. Nguồn và lời giải theo từng câu; không phải đề thi chính thức.'
+    current = next((q for q in quizzes if q['title'] == quiz_title and q['status'] == 'PUBLISHED'), None)
+    snapshot_fields = ('text', 'options', 'correct', 'explanation', 'difficulty', 'imageUrl')
+    snapshot_current = current and all(
+        q['id'] in questions_by_id and all(q[field] == questions_by_id[q['id']][field] for field in snapshot_fields)
+        for q in current['questions'])
+    if current and {q['id'] for q in current['questions']} == set(ids) and current['description'] == description and snapshot_current:
+        continue
+    # A new published version archives the old version; its snapshots and results remain intact.
+    previous = current or max((q for q in quizzes if q['title'] == quiz_title), key=lambda q: q['version'], default=None)
+    call('/admin/quizzes' + ('/' + previous['id'] if previous else ''), {'title': quiz_title,
+        'description': description,
+        'status': 'PUBLISHED', 'questionIds': ids, 'timeLimitSeconds': 4000,
+        'questionSeconds': 30, 'shuffle': True}, 'PUT' if previous else 'POST')
 
 group_title = 'Nhóm 7 · Lập kế hoạch · 50 câu'
 if not any(q['title'] == group_title and q['status'] == 'PUBLISHED' for q in quizzes):
@@ -76,6 +88,13 @@ if not any(q['title'] == group_title and q['status'] == 'PUBLISHED' for q in qui
         'description': 'Nguồn: Nhom 7 - Quizz.csv · Giữ đáp án từ tệp được cung cấp',
         'status': 'PUBLISHED', 'questionIds': group_ids, 'timeLimitSeconds': 2000,
         'questionSeconds': 30, 'shuffle': True})
+
+# Archive four superseded basic questions only after replacement quizzes were published.
+archive = json.loads((root / 'content/archived-basic-questions.json').read_text())
+superseded = {(chapter_ids[q['chapter']], q['text']) for q in archive['questions']}
+for q in existing_questions:
+    if (q['chapterId'], q['text']) in superseded and q['status'] != 'ARCHIVED':
+        call('/admin/questions/' + q['id'], q | {'status': 'ARCHIVED'}, 'PUT')
 
 # Archive only the original, explicitly labelled demo content, after successful import.
 demo = {c['id'] for c in old_chapters if c['description'] == 'Dữ liệu minh họa · Cần đối chiếu giáo trình trước khi sử dụng chính thức.'}
@@ -94,7 +113,9 @@ for q in existing_questions:
 catalog = call('/catalog')
 result = {'chapters': len(chapter_ids), 'importedNow': len(pending),
           'courseQuestions': sum(c['count'] for c in catalog['chapters'] if c['id'] in chapter_ids.values()),
+          'chapterCounts': {n: next(c['count'] for c in catalog['chapters'] if c['id'] == chapter_ids[n]) for n in chapter_ids},
           'chapterIds': chapter_ids}
+assert result['courseQuestions'] == 800 and all(v == 100 for v in result['chapterCounts'].values()), result
 (root / 'work').mkdir(exist_ok=True)
 (root / 'work/course-import.json').write_text(json.dumps(result, ensure_ascii=False, indent=2))
 call('/auth/logout', {})

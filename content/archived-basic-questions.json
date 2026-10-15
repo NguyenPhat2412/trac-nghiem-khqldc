@@ -1,0 +1,65 @@
+{
+  "reason": "Bốn câu ôn tập cơ bản có nội dung gần trùng bộ CSV Nhóm 7; lưu trữ để giữ lịch sử, thay bằng câu về ra quyết định trong ngân hàng 100 câu/chương.",
+  "questions": [
+    {
+      "chapter": 3,
+      "text": "Chức năng nào tạo nền tảng để triển khai tổ chức, lãnh đạo và kiểm tra?",
+      "options": [
+        "Lập kế hoạch",
+        "Chỉ kiểm tra kết quả cuối kỳ",
+        "Chỉ phân phối thông tin",
+        "Chỉ tuyển dụng nhân sự"
+      ],
+      "correct": 0,
+      "explanation": "Việc xác định mục tiêu và hướng thực hiện là cơ sở cho các chức năng quản lý tiếp theo.\nTự biên soạn theo Giáo trình Khoa học quản lý đại cương (2019), trang in 86. Không phải câu trích nguyên văn hoặc đáp án thi chính thức.",
+      "source": "textbook-authored",
+      "page": 86,
+      "difficulty": "EASY"
+    },
+    {
+      "chapter": 3,
+      "text": "Một bản kế hoạch đầy đủ cần làm rõ nội dung nào?",
+      "options": [
+        "Chỉ tên người phê duyệt",
+        "Chỉ kết quả đã xảy ra",
+        "Chỉ danh sách nhân viên",
+        "Mục tiêu, phương án, nguồn lực và khung thời gian"
+      ],
+      "correct": 3,
+      "explanation": "Kế hoạch nối mục tiêu tương lai với cách hành động, điều kiện thực hiện và các mốc thời gian; phần nguồn lực và thời gian tiếp tục ở trang 88.\nTự biên soạn theo Giáo trình Khoa học quản lý đại cương (2019), trang in 87. Không phải câu trích nguyên văn hoặc đáp án thi chính thức.",
+      "source": "textbook-authored",
+      "page": 87,
+      "difficulty": "EASY"
+    },
+    {
+      "chapter": 3,
+      "text": "Quan hệ giữa kế hoạch và lập kế hoạch được hiểu như thế nào?",
+      "options": [
+        "Kế hoạch chỉ xuất hiện sau khi kiểm tra xong",
+        "Lập kế hoạch là việc bỏ các mục tiêu đã xác định",
+        "Kế hoạch là sản phẩm của quá trình lập kế hoạch",
+        "Hai khái niệm không liên quan"
+      ],
+      "correct": 2,
+      "explanation": "Lập kế hoạch là quá trình; kế hoạch thể hiện kết quả cụ thể của quá trình đó.\nTự biên soạn theo Giáo trình Khoa học quản lý đại cương (2019), trang in 88. Không phải câu trích nguyên văn hoặc đáp án thi chính thức.",
+      "source": "textbook-authored",
+      "page": 88,
+      "difficulty": "EASY"
+    },
+    {
+      "chapter": 3,
+      "text": "Tính khách quan của kế hoạch yêu cầu điều gì?",
+      "options": [
+        "Không cần xem xét khả năng thực hiện",
+        "Dựa trên thông tin thực tế về tổ chức và nguồn lực",
+        "Chỉ dựa vào mong muốn của người đứng đầu",
+        "Loại bỏ thông tin trái với dự kiến"
+      ],
+      "correct": 1,
+      "explanation": "Kế hoạch cần phản ánh điều kiện thực tế, không thể chỉ là mong muốn chủ quan.\nTự biên soạn theo Giáo trình Khoa học quản lý đại cương (2019), trang in 89. Không phải câu trích nguyên văn hoặc đáp án thi chính thức.",
+      "source": "textbook-authored",
+      "page": 89,
+      "difficulty": "EASY"
+    }
+  ]
+}

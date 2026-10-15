@@ -6,23 +6,28 @@ Cập nhật ngày 15/10/2026. Bỏ qua Azota theo yêu cầu của người dù
 
 | Chương | Nội dung | Số câu |
 |---|---|---:|
-| 1 | Nhập môn khoa học quản lý | 13 |
-| 2 | Nguyên tắc và phương pháp quản lý | 5 |
-| 3 | Chức năng lập kế hoạch và ra quyết định | 54 |
-| 4 | Chức năng tổ chức | 4 |
-| 5 | Chức năng lãnh đạo | 4 |
-| 6 | Chức năng kiểm tra | 4 |
-| 7 | Thông tin trong quản lý | 4 |
-| 8 | Chọn lựa, đánh giá và phát triển cán bộ quản lý | 4 |
-| **Tổng** | **8 chương, 9 bộ quiz** | **92** |
+| 1 | Nhập môn khoa học quản lý | 100 |
+| 2 | Nguyên tắc và phương pháp quản lý | 100 |
+| 3 | Chức năng lập kế hoạch và ra quyết định | 100 |
+| 4 | Chức năng tổ chức | 100 |
+| 5 | Chức năng lãnh đạo | 100 |
+| 6 | Chức năng kiểm tra | 100 |
+| 7 | Thông tin trong quản lý | 100 |
+| 8 | Chọn lựa, đánh giá và phát triển cán bộ quản lý | 100 |
+| **Tổng** | **8 chương, 9 bộ quiz** | **800** |
 
 - **18 câu Blooket:** từ [bộ Khoa học Quản lý đại cương Chương 1&2 của VietHung17](https://dashboard.blooket.com/set/6ab48bdbd0064050e26f1a3a), gồm 13 câu chương 1 và 5 câu chương 2. Giữ đáp án của nguồn; bổ sung lời giải ngắn và nguồn từng câu. Câu 2 được chỉnh cách dịch hai lựa chọn để thể hiện rõ “doing things right” và “doing the right things”, tránh đảo nghĩa. Một số câu dẫn chiếu slide chưa được cung cấp, nên không coi toàn bộ câu Blooket là đã đối chiếu độc lập với giáo trình.
 - **50 câu Nhóm 7:** từ tệp `Nhom 7 - Quizz.csv` do người dùng bổ sung và xác nhận nhập. Kiểm tra đủ bốn lựa chọn khác nhau, một đáp án, không trùng nguyên văn với ngân hàng đã nhập. Xếp chương 3 theo chủ đề lập kế hoạch, có bộ quiz riêng 50 câu, 33 phút 20 giây; mỗi câu trong phòng 30 giây. Giữ nội dung và đáp án từ cột `Correct Answer`, không tự nhận đã thẩm định toàn bộ đáp án. Tệp không có lời giải chi tiết; phần phản hồi ghi đáp án theo tệp cùng số câu nguồn. Độ khó tạm gán MEDIUM, có thể sửa trong quản trị.
-- **24 câu tự biên soạn:** bốn câu/chương từ chương 3 đến chương 8, dựa trên các trang đã đọc của [Giáo trình Khoa học quản lý đại cương (2019)](https://drive.google.com/file/d/1qV0Hmwd0b8e2UTyBeBNRMPx4iHqNdpta/view), chủ biên PGS.TS Phạm Ngọc Thanh, NXB Đại học Quốc gia Hà Nội. Đây là câu ôn tập cơ bản, không phải trích nguyên bộ đề hoặc đã chuyển đổi toàn bộ giáo trình. Trang in tham khảo được ghi trong lời giải.
+- **732 câu tự biên soạn:** 20 câu cơ bản giữ lại và 712 câu bổ sung, dựa trên các phần đã đọc của [Giáo trình Khoa học quản lý đại cương (2019)](https://drive.google.com/file/d/1qV0Hmwd0b8e2UTyBeBNRMPx4iHqNdpta/view), chủ biên PGS.TS Phạm Ngọc Thanh, NXB Đại học Quốc gia Hà Nội. Có câu nhận biết, phân biệt khái niệm và tình huống vận dụng; lời giải ghi trang in. Đây là câu ôn tập tự biên soạn, không phải đề thi hay đáp án chính thức của giảng viên.
+- **4 câu cơ bản chương 3 được lưu trữ:** nội dung gần trùng với CSV Nhóm 7; thay bằng câu ra quyết định để ngân hàng mỗi chương đúng 100 câu. Dữ liệu lưu ở `content/archived-basic-questions.json`; lịch sử và các bản chụp câu hỏi cũ được giữ.
 
 PDF gốc là bản scan 154 trang PDF, mỗi trang thường chứa hai trang sách. Số trang tham khảo là số trang in trên sách. Dữ liệu chuẩn hóa ở `content/course-2019.json`; chạy `python3 scripts/import-course.py` để nhập bằng API quản trị. Có thể chạy lại mà không tạo trùng. Không đóng gói PDF gốc trong mã nguồn.
 
-Tám quiz chương giữ danh sách câu hỏi cố định ban đầu (13, 5, 4, 4, 4, 4, 4, 4). Quiz Nhóm 7 tách riêng 50 câu; bài tự chọn chương 3 có thể lấy ngẫu nhiên từ cả 54 câu. Việc bổ sung ngân hàng không thay đổi bài đang làm hoặc kết quả cũ. Dữ liệu minh họa ban đầu được lưu trữ, không xóa lịch sử.
+Tám quiz chương đã có phiên bản mới **100 câu/bộ**, thời gian 66 phút 40 giây, 30 giây/câu khi dùng trong phòng và bật đảo câu/đáp án. Quiz Nhóm 7 tách riêng 50 câu, dùng lại các câu trong chương 3, không cộng thêm vào tổng 800. Tự luyện theo chương có thể chọn ít câu hơn. Bản cũ được lưu trữ để giữ nguyên bài đang làm, phòng đang mở và kết quả.
+
+Chương 3 gồm 50 câu lập kế hoạch từ CSV và 50 câu tự biên soạn về quyết định, tiêu chí lựa chọn, xử lý vấn đề, biểu đồ xương cá và cây quyết định. Các chương khác được bổ sung theo các mục của chương, không chỉ nhân bản một dạng câu. Những bảng scan khó đọc không được dùng làm căn cứ cho câu mới; các ví dụ quy định cũ không được diễn đạt thành pháp luật hiện hành.
+
+Chạy `python3 scripts/validate-course.py` để kiểm tra 800 câu, bốn lựa chọn khác nhau, đáp án hợp lệ, trang nguồn trong phạm vi chương và câu trùng nguyên văn sau chuẩn hóa. Đây là kiểm tra cấu trúc và nguồn dẫn, không thay thế phản biện học thuật độc lập. Các đáp án Blooket/CSV vẫn giữ giới hạn kiểm chứng như nêu trên.
 
 ## Khi nào hiển thị đáp án?
 

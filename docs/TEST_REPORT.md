@@ -1,5 +1,15 @@
 # Báo cáo kiểm thử và bàn giao VJU Quiz
 
+## Bổ sung ngân hàng 100 câu mỗi chương (15/10/2026)
+
+Ngân hàng được cân bằng thành 800 câu thuộc 8 chương. Thêm 712 câu tự biên soạn theo giáo trình, giữ 18 câu Blooket, 50 câu CSV và 20 câu cơ bản; lưu trữ 4 câu cơ bản chương 3 gần trùng CSV. Tám bộ quiz chương được xuất bản phiên bản mới, mỗi bộ 100 câu; quiz CSV vẫn 50 câu. Không thay đổi mã frontend/backend trong đợt bổ sung nội dung này.
+
+**14 kiểm tra thực thi đều đạt**. Nhập lần đầu thêm 712 câu; chạy lại thêm 0 câu. Đã đối chiếu đủ 800 câu lưu trong database với nguồn, 8 bộ 100 câu, bộ CSV 50 câu, các phiên bản cũ và phòng thử 4 câu. Bài học 100 câu với 1 đúng, 1 sai, 98 bỏ trống được chấm 1.00 điểm; nộp lặp giữ điểm và thời gian. Chi tiết trong `course-800-verification.json`, `course-800-structure.json` và log import/rerun.
+
+Kiểm tra trực tiếp trên trình duyệt tích hợp: trang chủ hiện 800 câu, cả 8 thẻ chương hiện 100; mở bộ chương 8, chọn sai nhận đáp án/lời giải, khóa lựa chọn, chuyển tới câu 100 và nộp bài. Ở 390 × 844 px không tràn ngang; kết quả hiển thị 1 sai và 99 bỏ trống. Không có lỗi ứng dụng trong console đã kiểm tra. Ảnh: `bank-800-desktop.png`, `course-100-mobile.png`, `demo-room-941196.png`. Chưa thử trên điện thoại thật trong đợt này.
+
+Các câu mới là nội dung tự biên soạn để ôn tập. Đối chiếu nguồn và kiểm tra dữ liệu không phải chứng nhận học thuật độc lập; đáp án từ Blooket/CSV được giữ với giới hạn đã nêu trong tài liệu học liệu. Các kết quả tải và hồi quy ở các mục sau thuộc những đợt kiểm thử ứng dụng trước đó, không được tính là mới chạy lại trong đợt này.
+
 Ngày: 15/10/2026. Bản chạy tại http://localhost:3000; quản trị tại http://localhost:3000/admin.
 
 ## Cập nhật giao diện chơi quiz và ghi nhận tập trung
@@ -34,7 +44,7 @@ Log: `ux-unit.log`, `ux-types.log`, `ux-build*.log`, `ux-backend-final.log`, `ux
 - TypeScript và build Docker production thành công. Các bài test này không thay thế một kiểm toán bảo mật độc lập.
 - **100 kết nối STOMP**, ba kiểm tra quyền kênh và **100/100 đáp án** đạt; cập nhật đến đủ người trong 36 ms. Đáp án p50 **259 ms**, p95 **411 ms**, lớn nhất **428 ms**. HTTP đồng thời p50 173,91 ms, p95 304,14 ms, lớn nhất 319,17 ms. Cấu hình máy và giới hạn đo như phần bên dưới.
 - Khởi động lại backend test: giữ 100 thành viên, đáp án, xếp hạng, phiên khách, **thứ tự lựa chọn và đáp án hiển thị riêng của người chơi**.
-- Học liệu hiện tại **92 câu / 8 chương / 9 quiz**: 18 Blooket, 50 CSV Nhóm 7, 24 câu tự biên soạn theo giáo trình. Đã kiểm tra cấu trúc cả 50 dòng CSV, nhập đủ và chạy lại script không tạo trùng. Không nhập Azota theo yêu cầu người dùng. Kiểm tra cấu trúc dữ liệu không đồng nghĩa thẩm định học thuật tất cả đáp án nguồn.
+- Học liệu ở đợt cập nhật trước **92 câu / 8 chương / 9 quiz**: 18 Blooket, 50 CSV Nhóm 7, 24 câu tự biên soạn theo giáo trình. Đã kiểm tra cấu trúc cả 50 dòng CSV, nhập đủ và chạy lại script không tạo trùng. Không nhập Azota theo yêu cầu người dùng. Kiểm tra cấu trúc dữ liệu không đồng nghĩa thẩm định học thuật tất cả đáp án nguồn.
 
 Bằng chứng mới gồm `fair-play-api-results.json`, `course-import.json`, `restart-results.json`, `realtime-results.json`, log `update-*`, `content-validation.json` đối chiếu đủ 92 câu lưu trong database với nguồn chuẩn hóa và ảnh phản hồi. Phản hồi trên desktop và điện thoại được xem lại trực tiếp trong trình duyệt tích hợp; ảnh `instant-feedback-mobile.png` và `instant-feedback-desktop.png` được chụp theo viewport để tránh lỗi ghép ảnh toàn trang của Chrome. Không đóng gói cookie/phiên đăng nhập trong bằng chứng. Giới hạn: chưa kiểm thử điện thoại thật, Safari/Firefox, mất sự kiện tập trung khi offline hay khả năng ngăn người dùng cố tình vượt chặn copy. Tín hiệu tập trung không dùng để tự phạt.
 
@@ -91,6 +101,6 @@ Khác biệt có chủ đích so với ảnh ý tưởng: hiển thị số câu
 
 Đã có tự luyện, phòng nhiều người, quản lý nội dung/Excel, phân quyền, xếp hạng, thống kê/CSV, Docker Compose, script chạy và sao lưu. Database chính giữ trên ổ D. Bản mã nguồn không chứa mật khẩu, phiên đăng nhập hay database. File tài khoản quản trị bàn giao riêng tại máy này, chỉ chủ sở hữu đọc/ghi.
 
-Học liệu hiện tại gồm 92 câu với nguồn và giới hạn như phần cập nhật ở đầu báo cáo; các ảnh và số liệu trong phần bản đầu có thể còn nội dung minh họa. Tên là tự khai, danh tính theo cookie trình duyệt. Màu chưa được xác nhận là mã nhận diện chính thức VJU. Bản hiện tại chạy một backend và tối đa 100 người/phòng. Chưa triển khai tên miền công khai; localhost chỉ truy cập từ máy này. Hướng dẫn cấu hình HTTPS, origin, cookie và sao lưu nằm trong README.
+Học liệu hiện tại gồm 800 câu với nguồn và giới hạn như phần cập nhật ở đầu báo cáo; các ảnh và số liệu trong phần bản đầu có thể còn nội dung minh họa. Tên là tự khai, danh tính theo cookie trình duyệt. Màu chưa được xác nhận là mã nhận diện chính thức VJU. Bản hiện tại chạy một backend và tối đa 100 người/phòng. Chưa triển khai tên miền công khai; localhost chỉ truy cập từ máy này. Hướng dẫn cấu hình HTTPS, origin, cookie và sao lưu nằm trong README.
 
 Kiểm thử tự động tập trung Chrome và kích thước điện thoại giả lập; chưa chứng nhận trên Safari/Firefox hoặc điện thoại vật lý. Kiểm tra dependency frontend không thay thế một cuộc kiểm toán bảo mật toàn diện.

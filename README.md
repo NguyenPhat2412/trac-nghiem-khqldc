@@ -39,9 +39,9 @@ Giao diện đã được nâng cấp với thẻ đáp án lớn, hiệu ứng 
 
 ## Học liệu
 
-Bản local hiện có **8 chương, 92 câu và 9 bộ quiz**: 18 câu Blooket, 50 câu CSV Nhóm 7 và 24 câu ôn tập cơ bản tự biên soạn theo giáo trình 2019. Nguồn được ghi trong lời giải. Bộ Nhóm 7 nằm ở chương 3 và có quiz riêng. Đây chưa phải ngân hàng đề thi chính thức hoặc bao quát toàn bộ giáo trình. Xem [học liệu và chế độ tập trung](docs/MATERIALS_AND_FAIR_PLAY.md).
+Bản local hiện có **8 chương, 800 câu và 9 bộ quiz**: mỗi chương đúng 100 câu; gồm 18 câu Blooket, 50 câu CSV Nhóm 7 và 732 câu tự biên soạn theo giáo trình 2019. Nguồn được ghi trong lời giải. Bộ Nhóm 7 nằm ở chương 3 và có quiz riêng. Đây chưa phải ngân hàng đề thi chính thức hoặc bao quát toàn bộ giáo trình. Xem [học liệu và chế độ tập trung](docs/MATERIALS_AND_FAIR_PLAY.md).
 
-Database mới vẫn có dữ liệu minh họa nếu `SEED_DEMO=true`. Để nạp ngân hàng 92 câu đã bàn giao sau khi ứng dụng chạy, đặt thông tin quản trị hiện hành trong `.env` rồi chạy `python3 scripts/import-course.py`. Script dùng API quản trị, có thể chạy lại mà không tạo trùng; lưu trữ các chương/quiz minh họa ban đầu và giữ lịch sử. Dữ liệu nguồn chuẩn hóa nằm tại `content/course-2019.json`.
+Database mới vẫn có dữ liệu minh họa nếu `SEED_DEMO=true`. Để nạp ngân hàng 800 câu đã bàn giao sau khi ứng dụng chạy, đặt thông tin quản trị hiện hành trong `.env` rồi chạy `python3 scripts/import-course.py`. Script dùng API quản trị, có thể chạy lại mà không tạo trùng; xuất bản phiên bản mới cho 8 quiz chương, lưu trữ dữ liệu minh họa và 4 câu cơ bản gần trùng CSV, giữ lịch sử. Dữ liệu nguồn chuẩn hóa nằm tại `content/course-2019.json`.
 
 Màu xanh/đỏ và chữ VJU được dùng theo yêu cầu thiết kế; chưa xác nhận là bộ nhận diện chính thức.
 

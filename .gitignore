@@ -9,3 +9,5 @@ work/
 data/
 
 backups/
+
+__pycache__/

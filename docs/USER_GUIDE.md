@@ -12,7 +12,7 @@
 
 Điểm bằng tỷ lệ câu đúng trên thang 100. Cùng số câu đúng thì thời gian ngắn hơn xếp trước; giống cả hai thì đồng hạng. Bảng tự luyện giữ lượt tốt nhất và ghi số lượt đã làm. Bài tự chọn chương, luyện câu sai và học có phản hồi tức thì không tham gia bảng chung.
 
-Bộ “Nhóm 7 · Lập kế hoạch · 50 câu” dùng câu hỏi và đáp án trong CSV bạn cung cấp. Có thể chọn chương 3 để lấy ngẫu nhiên từ cả 54 câu của chương.
+Bộ “Nhóm 7 · Lập kế hoạch · 50 câu” dùng câu hỏi và đáp án trong CSV bạn cung cấp. Có thể chọn chương 3 để lấy ngẫu nhiên từ 100 câu của chương (50 câu lập kế hoạch từ CSV và 50 câu ra quyết định tự biên soạn).
 
 Khi làm bài có xếp hạng hoặc đang trả lời trong phòng, vùng câu hỏi hạn chế chọn/copy/in nội dung và có tên/mã người chơi. Hệ thống thông báo khi ghi nhận rời trang hoặc thao tác bị chặn; không tự trừ điểm. Đây chỉ là tín hiệu để người quản lý xem xét. Trong phòng, thứ tự A–D có thể khác nhau giữa người chơi; hãy đọc nội dung đáp án. Lời giải chỉ mở khi câu đã đóng cho cả phòng.
 
