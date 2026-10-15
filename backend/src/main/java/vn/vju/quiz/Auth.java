@@ -17,6 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AnonymousAuthenticationFilter;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -129,6 +130,12 @@ public class Auth {
   static class Security {
     @Bean
     SecurityFilterChain chain(HttpSecurity http, Auth auth) throws Exception {
+      // Use MVC-compatible parsed paths, including percent-encoded path segments.
+      var paths = PathPatternRequestMatcher.withDefaults();
+      var api = paths.matcher("/api/**");
+      var admin = paths.matcher("/api/admin/**");
+      var guestSession = paths.matcher("/api/session");
+      var login = paths.matcher("/api/auth/login");
       http.csrf(c -> c.disable())
           .sessionManagement(
               s ->
@@ -148,12 +155,11 @@ public class Auth {
                             actor,
                             null,
                             List.of(new SimpleGrantedAuthority("ROLE_" + actor.role()))));
-              String path = req.getRequestURI();
               boolean write = !Set.of("GET", "HEAD", "OPTIONS").contains(req.getMethod());
-              boolean bootstrap = Set.of("/api/session", "/api/auth/login").contains(path);
+              boolean bootstrap = guestSession.matches(req) || login.matches(req);
               String o = req.getHeader("Origin");
               if (write
-                  && path.startsWith("/api/")
+                  && api.matches(req)
                   && ((o != null && !o.equals(auth.origin))
                       || (bootstrap
                           && (req.getContentType() == null
@@ -169,7 +175,7 @@ public class Auth {
                 res.getWriter().write("{\"message\":\"Phiên không hợp lệ. Hãy tải lại trang.\"}");
                 return;
               }
-              if (path.startsWith("/api/admin/") && (actor == null || !actor.staff())) {
+              if (admin.matches(req) && (actor == null || !actor.staff())) {
                 res.setStatus(actor == null ? 401 : 403);
                 res.setContentType("application/json");
                 res.getWriter().write("{\"message\":\"Cần tài khoản quản lý\"}");

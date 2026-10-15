@@ -1,5 +1,7 @@
 server:
   port: ${PORT:8080}
+  # Direct/native and test backends must not trust arbitrary forwarding headers.
+  forward-headers-strategy: none
   error:
     include-message: never
 spring:

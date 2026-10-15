@@ -150,7 +150,15 @@ public class Reports {
       for (String key :
           List.of("name", "playerId", "title", "mode", "score", "durationMs", "roomId")) {
         String v = Objects.toString(r.get(key), "");
-        if (v.matches("^[=+@\\-].*")) v = "'" + v;
+        // Spreadsheet parsers may ignore leading whitespace/control characters.
+        // Inspect the prefix only: a line break later in the cell must not disable escaping.
+        int first = 0;
+        while (first < v.length()
+            && (Character.isWhitespace(v.charAt(first))
+                || Character.isSpaceChar(v.charAt(first))
+                || Character.isISOControl(v.charAt(first))
+                || Character.getType(v.charAt(first)) == Character.FORMAT)) first++;
+        if (first < v.length() && "=+-@".indexOf(v.charAt(first)) >= 0) v = "'" + v;
         b.append('"').append(v.replace("\"", "\"\"")).append('"').append(',');
       }
       Map<?, ?> signals = r.get("integrity") instanceof Map<?, ?> values ? values : Map.of();

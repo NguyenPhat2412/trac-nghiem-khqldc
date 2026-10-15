@@ -67,6 +67,8 @@ Một số Node được đóng gói trong ứng dụng macOS không nạp đư�
 - Kiểm tra TypeScript: `cd frontend && pnpm typecheck`.
 - API, phân quyền và tải 100 người: `./scripts/test-integration.sh` (chỉ xóa/tạo lại database **vju_quiz_test**).
 - Kiểm tra phản hồi và thứ tự đáp án riêng: khi test-backend đang chạy, `python3 scripts/fair-play_test.py`.
+- Kiểm tra đường dẫn mã hóa, quyền và thời điểm lộ đáp án: `python3 scripts/security-regression.py` (database test).
+- Kiểm tra giới hạn theo IP, chống giả header và proxy: `python3 scripts/proxy-security-test.py`. Tạo rồi tự dọn một backend/gateway riêng dùng database test; cần hai image đã build. Không gửi yêu cầu vào backend đang phục vụ người học.
 - Trình duyệt: nạp `.env`, `cd frontend && pnpm exec playwright test`. Cấu hình dùng Chrome; cài Google Chrome hoặc đổi channel theo môi trường. Các bài test tạo dữ liệu minh họa trong bản local.
 - WebSocket: sau khi test-backend sẵn sàng, nạp `.env`, `cd frontend && node tests/realtime-check.mjs`. Tránh chạy liên tục vượt 150 phiên khách/phút trên cùng IP.
 - Phục hồi: sau WebSocket test, `docker compose --profile test restart test-backend`, chờ health sẵn sàng, rồi `cd frontend && node tests/restart-check.mjs`.
@@ -75,6 +77,10 @@ Một số Node được đóng gói trong ứng dụng macOS không nạp đư�
 ## Đưa lên máy chủ
 
 Dùng một máy chủ chạy Docker, trỏ tên miền, đặt HTTPS reverse proxy phía trước cổng local 3000. Đổi `APP_ORIGIN=https://ten-mien-cua-ban`, `SECURE_COOKIE=true`, và `SEED_DEMO=false` trước lần tạo database chính thức. Giữ chuyển tiếp WebSocket Upgrade và cùng origin cho `/api` và `/ws`. Không công khai cổng PostgreSQL. Khởi động lại backend khi thay origin/cookie.
+
+Backend Docker chỉ tin địa chỉ proxy của gateway trên mạng `ingress`; gateway ghi đè các header địa chỉ do client gửi. Mạng mặc định dùng `172.30.42.0/24`, cấp động từ `172.30.42.128/25`, gateway cố định `172.30.42.2`. Nếu trùng mạng máy chủ, đặt đồng bộ `QUIZ_INGRESS_SUBNET`, `QUIZ_INGRESS_RANGE`, `QUIZ_GATEWAY_IP` trong `.env`; IP gateway phải thuộc subnet và nằm ngoài dải cấp động. Không công khai cổng backend hoặc chuyển sang tin mọi địa chỉ private/loopback. Backend native và test mặc định không tin header chuyển tiếp.
+
+Nếu thêm HTTPS proxy phía trước, sao chép `deploy/trusted-proxy/edge.conf.example` thành `edge.conf` cùng thư mục rồi thay địa chỉ minh họa bằng **đúng IP/CIDR proxy đó mà gateway nhìn thấy**. Nginx tự nạp các tệp `.conf` trong thư mục này; chạy `docker compose exec gateway nginx -t` và `docker compose exec gateway nginx -s reload` sau khi sửa. Proxy ngoài phải ghi đè `X-Forwarded-For` bằng IP khách đã xác minh, giữ WebSocket Upgrade và chỉ cho proxy đó kết nối cổng gateway. Nếu chưa khai báo trust này, các người dùng qua proxy ngoài vẫn chung hạn mức của proxy. Không dùng `set_real_ip_from 0.0.0.0/0`. Kiểm tra lại hai IP khách thật sau triển khai. Người dùng cùng một IP công cộng (ví dụ cùng Wi-Fi/NAT) vẫn dùng chung hạn mức IP; bản sửa tách người có IP khác nhau, không xác thực danh tính sinh viên.
 
 Sau triển khai, kiểm tra health, đăng nhập quản trị, tạo phòng và tham gia bằng một thiết bị khác. Chưa triển khai tên miền công khai trong lần bàn giao này.
 

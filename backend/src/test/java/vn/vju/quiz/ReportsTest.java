@@ -9,6 +9,29 @@ import vn.vju.quiz.Domain.*;
 
 class ReportsTest {
   @Test
+  void csvNeutralizesFormulaPrefixesRegardlessOfLineBreaksOrLeadingControls() {
+    var reports = new Reports(mock(Store.class), mock(RoomService.class));
+    for (String field : List.of("name", "title"))
+      for (String prefix : List.of("=", "+", "-", "@"))
+        for (String leading : List.of("", " ", "\t", "\r\n", "\u0000", "\uFEFF"))
+          for (String newline : List.of("\n", "\r\n", "\r", "\u0085", "\u2028", "\u2029")) {
+            String formula = leading + prefix + "HYPERLINK(\"https://x\",\"a" + newline + "b\")";
+            String csv = reports.csv(Map.of("rows", List.of(Map.of(field, formula))));
+            assertTrue(csv.contains("\"'" + formula.replace("\"", "\"\"") + "\""),
+                "Formula not escaped for " + field + " / " + prefix);
+          }
+  }
+
+  @Test
+  void csvPreservesOrdinaryMultilineVietnameseAndEmptyFields() {
+    var reports = new Reports(mock(Store.class), mock(RoomService.class));
+    String name = "Nguyễn, \"An\"\nBình";
+    String csv = reports.csv(Map.of("rows", List.of(Map.of("name", name, "score", 100))));
+    assertTrue(csv.startsWith("\uFEFFTên,"));
+    assertTrue(csv.contains("\"Nguyễn, \"\"An\"\"\nBình\",\"\",\"\",\"\",\"100\""));
+  }
+
+  @Test
   void practiceDoesNotDiluteRoomResponseTime() {
     var store = mock(Store.class);
     var rooms = mock(RoomService.class);
