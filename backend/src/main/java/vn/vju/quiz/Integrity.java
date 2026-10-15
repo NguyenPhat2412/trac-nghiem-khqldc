@@ -10,7 +10,8 @@ public final class Integrity {
     Errors.require(
         e.eventId() != null
             && e.eventId().matches("[a-zA-Z0-9-]{1,64}")
-            && Set.of("TAB_HIDDEN", "COPY_BLOCKED").contains(Objects.toString(e.kind(), "")),
+            && Set.of("TAB_HIDDEN", "COPY_BLOCKED", "FULLSCREEN_EXIT")
+                .contains(Objects.toString(e.kind(), "")),
         "Sự kiện không hợp lệ");
     if (events.size() < 100)
       events.putIfAbsent(e.kind() + ":" + e.eventId(), System.currentTimeMillis());
@@ -22,6 +23,8 @@ public final class Integrity {
         events.keySet().stream().filter(k -> k.startsWith("TAB_HIDDEN:")).count(),
         "copyBlocked",
         events.keySet().stream().filter(k -> k.startsWith("COPY_BLOCKED:")).count(),
+        "fullscreenExit",
+        events.keySet().stream().filter(k -> k.startsWith("FULLSCREEN_EXIT:")).count(),
         "capped",
         events.size() >= 100);
   }

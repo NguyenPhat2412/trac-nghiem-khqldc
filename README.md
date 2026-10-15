@@ -22,6 +22,8 @@ Bản local chỉ mở cổng trên `127.0.0.1`. Thiết bị khác chưa truy c
 
 ## Tính năng
 
+Giao diện đã được nâng cấp với thẻ đáp án lớn, hiệu ứng đúng/sai, chuyển câu, bục xếp hạng, âm thanh tùy chọn, phím 1–4 và toàn màn hình. Có hỗ trợ giảm chuyển động, thông báo mất mạng và đồng bộ lại bài. Xem [bản cập nhật UI/UX](docs/UX_UPGRADE.md).
+
 - Nhập tên và nhận mã người chơi qua cookie HttpOnly; không có đăng ký sinh viên.
 - Chương, ngân hàng câu hỏi, độ khó, hình ảnh bằng liên kết HTTPS, lời giải; nháp/xuất bản/lưu trữ.
 - Bộ quiz có phiên bản và danh sách câu hỏi cố định; sửa bản đã xuất bản tạo bản mới. Lưu nháp bản mới giữ bản đang công khai; xuất bản bản mới lưu trữ bản cũ.
@@ -30,7 +32,7 @@ Bản local chỉ mở cổng trên `127.0.0.1`. Thiết bị khác chưa truy c
 - Kết quả, lời giải, lịch sử tự luyện, luyện lại câu sai, bảng xếp hạng theo phiên bản quiz.
 - Phòng 6 số, liên kết/QR, phòng chờ, khóa/loại người chơi, chủ trì mở từng câu, khóa lựa chọn, đóng câu khi hết giờ hoặc mọi người trả lời.
 - Khi bật đảo câu/đáp án ở quiz, phòng dùng cùng câu hỏi nhưng mỗi người có thứ tự A–D riêng, được giữ khi kết nối lại.
-- Hạn chế thao tác sao chép, ghi tên/mã trên vùng câu hỏi và ghi nhận rời trang khi làm bài có xếp hạng hoặc chơi phòng. Người có quyền xem tín hiệu trong phòng/báo cáo; không tự trừ điểm hay kết luận gian lận.
+- Hạn chế thao tác sao chép, ghi tên/mã trên vùng câu hỏi, tạm ẩn nội dung khi trang bị ẩn, ghi nhận rời trang và thoát toàn màn hình khi làm bài có xếp hạng hoặc chơi phòng. Người có quyền xem tín hiệu trong phòng/báo cáo và CSV; không tự trừ điểm hay kết luận gian lận.
 - Xếp hạng sau từng câu, phân bố lựa chọn, top 3, kết thúc sớm và báo cáo chi tiết; khôi phục sau mất mạng và khởi động lại backend.
 - Nhập Excel có mẫu, xem trước, chỉnh sửa lỗi theo dòng, giao dịch nhập toàn bộ hoặc không nhập.
 - Báo cáo theo ngày/chương/quiz/phòng; xuất CSV; nhân sự ADMIN/EDITOR và khóa tài khoản.

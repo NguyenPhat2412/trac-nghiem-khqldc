@@ -64,6 +64,7 @@ test("instant wrong-answer feedback, first-choice lock and ranked copy notice", 
   await page.screenshot({
     path: path.resolve("../work/instant-feedback-mobile.png"),
     fullPage: true,
+    animations: "disabled",
   });
   await page.goto("/");
   await page
@@ -78,6 +79,7 @@ test("instant wrong-answer feedback, first-choice lock and ranked copy notice", 
   await page.screenshot({
     path: path.resolve("../work/fair-play-mobile.png"),
     fullPage: true,
+    animations: "disabled",
   });
   expect(errors).toEqual([]);
 });

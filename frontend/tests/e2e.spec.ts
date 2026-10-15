@@ -13,6 +13,7 @@ test("student practice, saved progress, result, leaderboard and mobile layout", 
   await page.screenshot({
     path: path.join(evidence, "desktop-home.png"),
     fullPage: true,
+    animations: "disabled",
   });
   await page.getByLabel("Tên của bạn", { exact: true }).fill("Minh Anh");
   await page
@@ -36,6 +37,7 @@ test("student practice, saved progress, result, leaderboard and mobile layout", 
   await page.screenshot({
     path: path.join(evidence, "desktop-practice.png"),
     fullPage: true,
+    animations: "disabled",
   });
   await page.getByRole("button", { name: "Câu tiếp", exact: true }).click();
   await page.locator(".answer").nth(1).click();
@@ -51,6 +53,7 @@ test("student practice, saved progress, result, leaderboard and mobile layout", 
   await page.screenshot({
     path: path.join(evidence, "desktop-result.png"),
     fullPage: true,
+    animations: "disabled",
   });
   await page.getByRole("link", { name: "Xem thứ hạng" }).click();
   await expect(page.locator("tr.mine")).toContainText("Minh Anh");
@@ -67,6 +70,7 @@ test("student practice, saved progress, result, leaderboard and mobile layout", 
   await page.screenshot({
     path: path.join(evidence, "mobile-home.png"),
     fullPage: true,
+    animations: "disabled",
   });
   await page.locator("button.chapter").first().click();
   await page.getByRole("button", { name: "Luyện ngay" }).click();
@@ -79,6 +83,7 @@ test("student practice, saved progress, result, leaderboard and mobile layout", 
   await page.screenshot({
     path: path.join(evidence, "mobile-practice.png"),
     fullPage: true,
+    animations: "disabled",
   });
   expect(errors).toEqual([]);
 });
@@ -102,6 +107,7 @@ test("admin content screens and synchronous multiplayer", async ({
   await page.screenshot({
     path: path.join(evidence, "admin-dashboard.png"),
     fullPage: true,
+    animations: "disabled",
   });
   for (const [link, heading] of [
     ["Chương học", "Chương học"],
@@ -174,6 +180,7 @@ test("admin content screens and synchronous multiplayer", async ({
   await page.screenshot({
     path: path.join(evidence, "room-lobby.png"),
     fullPage: true,
+    animations: "disabled",
   });
   await page.getByRole("button", { name: "Bắt đầu chơi" }).click();
   await expect(student.locator(".answers")).toBeVisible();
@@ -189,6 +196,7 @@ test("admin content screens and synchronous multiplayer", async ({
   await student.screenshot({
     path: path.join(evidence, "mobile-live.png"),
     fullPage: true,
+    animations: "disabled",
   });
   await page.getByRole("button", { name: "Câu tiếp theo" }).click();
   await expect(
@@ -208,6 +216,7 @@ test("admin content screens and synchronous multiplayer", async ({
   await page.screenshot({
     path: path.join(evidence, "room-result.png"),
     fullPage: true,
+    animations: "disabled",
   });
   await studentContext.close();
   expect(errors).toEqual([]);

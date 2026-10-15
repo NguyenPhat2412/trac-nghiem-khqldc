@@ -2,6 +2,28 @@
 
 Ngày: 15/10/2026. Bản chạy tại http://localhost:3000; quản trị tại http://localhost:3000/admin.
 
+## Cập nhật giao diện chơi quiz và ghi nhận tập trung
+
+Đợt UI/UX tiếp theo cùng ngày 15/10/2026, sau cập nhật học liệu. Đối chiếu yêu cầu và giới hạn trong `UX_UPGRADE.md`.
+
+| Nhóm | Bằng chứng của đợt UI/UX |
+|---|---|
+| Java | **11 unit test đạt**; thêm sự kiện fullscreen, CSV có tín hiệu, dữ liệu cũ và giữ chống công thức Excel |
+| API | **34 hồi quy + 10 kiểm tra phản hồi/ghi nhận đạt**; fullscreen lưu đúng, gộp lặp, host-only; người có tín hiệu vẫn được chấm đúng |
+| Trình duyệt | **8 kịch bản đạt qua các lần chạy**: 3 luồng cũ, 4 luồng điều khiển/phím tắt/âm thanh/offline/fullscreen/giảm chuyển động, 1 phản hồi phục hồi đến trễ |
+| Build | TypeScript, Docker frontend và backend đạt |
+| Đồng thời HTTP | 100/100 đáp án; p50 194,10 ms; p95 326,13 ms; max 340,95 ms |
+| 100 STOMP | 100/100 đáp án; mở câu đến đủ người trong 26 ms; đáp án p50 265 ms, p95 464 ms, max 483 ms; 3 kiểm tra quyền kênh đạt |
+| Restart | Giữ 100 thành viên, đáp án, phiên khách và thứ tự lựa chọn riêng |
+| Giao diện thật | Đối chiếu trang chủ/bài học/kết quả trong trình duyệt tích hợp; hết giờ 4 phút tự chuyển kết quả đúng; điện thoại 390 × 844 |
+| CSV bản chạy cuối | Kiểm tra API trả đủ 11 cột, cột số lượng hợp lệ, phản hồi riêng có `Cache-Control: no-store` |
+
+Đã sửa vòng Tab trong dialog sau khi test phát hiện focus đi ra ngoài hộp. Test lỗi lưu được thu hẹp selector để phân biệt thông báo lỗi ứng dụng với route announcer của Next.js. Test phản hồi trễ chủ động giữ một phản hồi đọc trạng thái cũ rồi trả sau lựa chọn mới; cả UI và database vẫn giữ lựa chọn mới. Các thay đổi CSV cuối cùng được kiểm thử unit và API trên bản chạy thật; không chạy lại bộ tải vì không thay đổi xử lý phòng/đáp án.
+
+Log: `ux-unit.log`, `ux-types.log`, `ux-build*.log`, `ux-backend-final.log`, `ux-integration.log`, `ux-fair-play-api-final.log`, `ux-browser.log`, `ux-browser-retry.log`, `ux-browser-evidence.log`, `ux-race-test.log`, `ux-realtime.log`, `ux-restart.log`, `ux-final-api.json`. Log lần đầu có hai test chưa đạt; các log retry ghi kết quả sau sửa. Visibility được mô phỏng trong browser test để xác nhận handler, không phải kiểm thử phát hiện gian lận thực tế. Fullscreen dùng API trình duyệt thật. Âm thanh kiểm tra tạo oscillator thực khi bật, không xác nhận âm lượng loa vật lý.
+
+Điều kiện máy/loopback và giới hạn tải như phần cấu hình bên dưới. Không có cam kết chống gian lận tuyệt đối, chưa kiểm thử trên điện thoại thật hay Safari/Firefox.
+
 ## Cập nhật học liệu và làm bài công bằng
 
 Đợt cập nhật ngày 15/10/2026 sau bản bàn giao đầu tiên:

@@ -99,11 +99,13 @@ export type Room = {
   distribution?: number[];
   details?: Detail[];
   shuffleAnswers: boolean;
+  openedAt: number;
   integrity?: { playerId: string; name: string; signals: IntegritySignals }[];
 };
 export type IntegritySignals = {
   tabHidden: number;
   copyBlocked: number;
+  fullscreenExit: number;
   capped: boolean;
 };
 export type Staff = {

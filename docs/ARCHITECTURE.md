@@ -39,6 +39,14 @@ Phòng mới lấy cờ `shuffle` từ quiz. Thứ tự câu được đảo chu
 
 `Integrity` lưu tối đa 100 sự kiện có mã riêng cùng thời gian nhận máy chủ, gộp sự kiện gửi lại. Tổng hợp chỉ trả cho chủ trì hoặc báo cáo có quyền; không sửa điểm/thứ hạng. Sự kiện là dữ liệu do trình duyệt tự báo, không phải bằng chứng gian lận.
 
+Các loại tín hiệu gồm TAB_HIDDEN, COPY_BLOCKED và FULLSCREEN_EXIT. CSV báo cáo xuất ba số lượng cùng cờ capped; dữ liệu cũ thiếu tín hiệu được xuất 0. Các kiểm tra quyền và bộ lọc báo cáo giữ nguyên.
+
+## Trải nghiệm chơi
+
+GameProvider quản lý tùy chọn âm thanh/hiệu ứng/phím tắt và trạng thái mạng ở frontend. Web Audio chỉ được dùng khi bật âm thanh; không thêm thư viện hoặc tải âm thanh ngoài. CSS xử lý chuyển câu, phản hồi và tổng kết, tôn trọng reduced motion. Fullscreen là yêu cầu trực tiếp từ nút của người dùng, không khóa phím hệ điều hành.
+
+Practice giữ số thứ tự thay đổi cục bộ để bỏ phản hồi đọc cũ đến sau lệnh lưu mới; trạng thái DONE không bị phản hồi ACTIVE ghi đè. Room tiếp tục dùng version máy chủ. Không lưu đáp án chưa gửi offline rồi gửi muộn; máy chủ vẫn áp dụng deadline. Đồng hồ frontend thông báo hết giờ một lần cho mỗi deadline, tránh vòng lặp gửi nộp khi lỗi mạng.
+
 ## Vận hành
 
 `/actuator/health` báo sức khỏe. Dữ liệu chính nằm trên ổ D qua bind mount; không chứa trong image. Bản local bind cổng vào loopback. Bản công khai cần TLS và APP_ORIGIN/SECURE_COOKIE tương ứng. Sao lưu PostgreSQL bằng pg_dump; trước nâng cấp schema, lưu bản sao và kiểm thử khôi phục trên database riêng.

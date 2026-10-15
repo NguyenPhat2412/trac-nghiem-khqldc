@@ -13,10 +13,18 @@ import {
   Copy,
   Wifi,
   WifiOff,
+  Trophy,
 } from "lucide-react";
 import { api } from "@/lib/api";
 import { Room } from "@/lib/types";
 import { FairPlay } from "./fair-play";
+import {
+  Celebration,
+  Feedback,
+  GameDialog,
+  GameToolbar,
+  useGame,
+} from "./game-experience";
 import {
   Answers,
   ErrorNote,
@@ -28,6 +36,7 @@ import {
   useSession,
 } from "./shared";
 export function RoomPage({ code }: { code: string }) {
+  const { online, play } = useGame();
   const { actor, ready } = useSession();
   const [data, setData] = useState<Room | null>(null);
   const [error, setError] = useState("");
@@ -36,6 +45,8 @@ export function RoomPage({ code }: { code: string }) {
   const [copied, setCopied] = useState(false);
   const [endConfirm, setEndConfirm] = useState(false);
   const [origin, setOrigin] = useState("");
+  const [expiredQuestion, setExpiredQuestion] = useState("");
+  const sending = useRef(false);
   const ref = useRef<Room | null>(null);
   const fetching = useRef(false);
   const apply = (r: Room) => {
@@ -79,12 +90,21 @@ export function RoomPage({ code }: { code: string }) {
     });
     client.activate();
     const poll = setInterval(() => void refresh(), 4000);
+    const returned = () => {
+      if (document.visibilityState === "visible") void refresh();
+    };
+    window.addEventListener("online", returned);
+    document.addEventListener("visibilitychange", returned);
     return () => {
       clearInterval(poll);
+      window.removeEventListener("online", returned);
+      document.removeEventListener("visibilitychange", returned);
       void client.deactivate();
     };
   }, [actor, code]);
   async function action(action: string, body: unknown = {}) {
+    if (sending.current) return;
+    sending.current = true;
     setBusy(true);
     setError("");
     try {
@@ -93,6 +113,33 @@ export function RoomPage({ code }: { code: string }) {
     } catch (e) {
       setError((e as Error).message);
     } finally {
+      setBusy(false);
+      sending.current = false;
+    }
+  }
+  async function answer(choice: number) {
+    if (
+      sending.current ||
+      !data?.question ||
+      data.host ||
+      data.myAnswer >= 0 ||
+      data.status !== "QUESTION"
+    )
+      return;
+    sending.current = true;
+    setBusy(true);
+    setError("");
+    try {
+      const result = await api<Room>(`/rooms/${code}/answer`, "POST", {
+        questionId: data.question.id,
+        answer: choice,
+      });
+      apply(result);
+      if (result.status === "QUESTION") play("saved");
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      sending.current = false;
       setBusy(false);
     }
   }
@@ -123,6 +170,7 @@ export function RoomPage({ code }: { code: string }) {
     );
   return (
     <>
+      <GameToolbar />
       <PageTitle
         title={
           data.status === "FINISHED" ? "Một hành trình thật tuyệt!" : data.title
@@ -162,7 +210,8 @@ export function RoomPage({ code }: { code: string }) {
                   {x.name} · #{x.playerId.slice(0, 6)}
                 </b>
                 : {x.signals.tabHidden} lần rời trang, {x.signals.copyBlocked}{" "}
-                thao tác sao chép
+                thao tác sao chép, {x.signals.fullscreenExit || 0} lần thoát
+                toàn màn hình
                 {x.signals.capped ? " (đã đạt giới hạn ghi nhận)" : ""}
               </li>
             ))}
@@ -268,6 +317,13 @@ export function RoomPage({ code }: { code: string }) {
         </>
       ) : data.status === "FINISHED" ? (
         <>
+          <div className="finish-moment">
+            <Celebration />
+            <span className="finish-medallion">
+              <Trophy size={32} />
+            </span>
+            <p>Cùng nhìn lại thành quả của cả lớp</p>
+          </div>
           <Ranking rows={data.ranking} mine={actor?.id} podium />
           <div className="actions">
             <Link className="button" href="/">
@@ -302,7 +358,15 @@ export function RoomPage({ code }: { code: string }) {
               Câu {data.current + 1} / {data.count}
             </span>
             {data.status === "QUESTION" ? (
-              <Timer deadline={data.deadline} serverTime={data.serverTime} />
+              <Timer
+                deadline={data.deadline}
+                serverTime={data.serverTime}
+                totalMs={data.deadline - data.openedAt}
+                onEnd={() => {
+                  setExpiredQuestion(data.question?.id || "");
+                  void refresh();
+                }}
+              />
             ) : (
               <span className="badge">Đã đóng câu hỏi</span>
             )}
@@ -310,7 +374,24 @@ export function RoomPage({ code }: { code: string }) {
               {data.answered}/{data.members.length} đã trả lời
             </span>
           </div>
-          <section className="question-panel live-question">
+          <div
+            className="progress"
+            role="progressbar"
+            aria-label="Tiến độ phòng"
+            aria-valuemin={0}
+            aria-valuemax={data.count}
+            aria-valuenow={data.current + 1}
+          >
+            <span
+              style={{
+                transform: `scaleX(${(data.current + 1) / data.count})`,
+              }}
+            />
+          </div>
+          <section
+            className="question-panel live-question question-transition"
+            key={data.question?.id}
+          >
             <FairPlay
               endpoint={`/rooms/${code}/integrity`}
               active={data.status === "QUESTION" && !data.host}
@@ -328,25 +409,29 @@ export function RoomPage({ code }: { code: string }) {
                   question={data.question}
                   selected={data.myAnswer}
                   reveal={data.status === "REVEAL"}
-                  disabled={busy || data.myAnswer >= 0 || data.host}
-                  onSelect={async (answer) => {
-                    setBusy(true);
-                    try {
-                      apply(
-                        await api<Room>(`/rooms/${code}/answer`, "POST", {
-                          questionId: data.question!.id,
-                          answer,
-                        }),
-                      );
-                    } catch (e) {
-                      setError((e as Error).message);
-                    } finally {
-                      setBusy(false);
-                    }
-                  }}
+                  disabled={
+                    busy ||
+                    !online ||
+                    expiredQuestion === data.question.id ||
+                    data.myAnswer >= 0 ||
+                    data.host
+                  }
+                  shortcuts={!data.host}
+                  onSelect={(choice) => void answer(choice)}
                 />
               )}
             </FairPlay>
+            {data.status === "QUESTION" &&
+              expiredQuestion === data.question?.id && (
+                <p className="saved" role="status">
+                  Hết thời gian · Đang nhận kết quả từ máy chủ…
+                </p>
+              )}
+            {busy && !data.host && (
+              <p className="saved" role="status">
+                Đang gửi đáp án…
+              </p>
+            )}
             {data.myAnswer >= 0 && data.status === "QUESTION" && (
               <p className="saved">
                 <Check size={18} />
@@ -355,6 +440,27 @@ export function RoomPage({ code }: { code: string }) {
             )}
             {data.status === "REVEAL" && (
               <>
+                {!data.host && (
+                  <Feedback
+                    eventKey={`${code}:${data.question?.id}`}
+                    outcome={
+                      data.myAnswer < 0
+                        ? "blank"
+                        : data.myAnswer === data.question?.correct
+                          ? "correct"
+                          : "wrong"
+                    }
+                  >
+                    <p>
+                      Đáp án đúng:{" "}
+                      <b>
+                        {data.question?.correct !== undefined
+                          ? `${"ABCD"[data.question.correct]}. ${data.question.options[data.question.correct]}`
+                          : ""}
+                      </b>
+                    </p>
+                  </Feedback>
+                )}
                 <p className="explanation">
                   <strong>Giải thích: </strong>
                   {data.question?.explanation}
@@ -416,27 +522,29 @@ export function RoomPage({ code }: { code: string }) {
         </>
       )}
       {endConfirm && (
-        <div className="modal-backdrop">
-          <section role="dialog" aria-modal="true" className="modal">
-            <h2>Kết thúc phòng ngay?</h2>
-            <p>Kết quả sẽ tính trên những câu đã mở.</p>
-            <div className="actions">
-              <button
-                className="button outline"
-                onClick={() => setEndConfirm(false)}
-              >
-                Quay lại
-              </button>
-              <button
-                className="button danger"
-                disabled={busy}
-                onClick={() => action("finish")}
-              >
-                Kết thúc phòng
-              </button>
-            </div>
-          </section>
-        </div>
+        <GameDialog
+          titleId="end-room-title"
+          busy={busy}
+          onClose={() => setEndConfirm(false)}
+        >
+          <h2 id="end-room-title">Kết thúc phòng ngay?</h2>
+          <p>Kết quả sẽ tính trên những câu đã mở.</p>
+          <div className="actions">
+            <button
+              className="button outline"
+              onClick={() => setEndConfirm(false)}
+            >
+              Quay lại
+            </button>
+            <button
+              className="button danger"
+              disabled={busy}
+              onClick={() => action("finish")}
+            >
+              Kết thúc phòng
+            </button>
+          </div>
+        </GameDialog>
       )}
     </>
   );

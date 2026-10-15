@@ -6,6 +6,7 @@ export async function api<T>(
   path: string,
   method = "GET",
   body?: unknown,
+  options?: { keepalive?: boolean },
 ): Promise<T> {
   if (
     method !== "GET" &&
@@ -21,6 +22,7 @@ export async function api<T>(
     method,
     credentials: "include",
     cache: "no-store",
+    keepalive: options?.keepalive,
     headers: {
       ...(!form && method !== "GET"
         ? { "Content-Type": "application/json" }

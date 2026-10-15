@@ -14,6 +14,13 @@ import { api, duration } from "@/lib/api";
 import { Attempt, History, Catalog, Rank } from "@/lib/types";
 import { FairPlay } from "./fair-play";
 import {
+  Celebration,
+  Feedback,
+  GameDialog,
+  GameToolbar,
+  useGame,
+} from "./game-experience";
+import {
   Answers,
   Empty,
   ErrorNote,
@@ -25,24 +32,63 @@ import {
   useSession,
 } from "./shared";
 export function Practice({ id }: { id: string }) {
+  const { online } = useGame();
   const [data, setData] = useState<Attempt | null>(null);
   const [index, setIndex] = useState(0);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const [confirm, setConfirm] = useState(false);
   const submitting = useRef(false);
+  const saving = useRef(false);
+  const mutation = useRef(0);
+  const activeId = useRef(id);
+  activeId.current = id;
   const router = useRouter();
+  const apply = (value: Attempt) => {
+    if (activeId.current !== value.id) return;
+    setData((previous) =>
+      previous?.id === value.id && previous.status === "DONE"
+        ? previous
+        : value,
+    );
+  };
   useEffect(() => {
-    api<Attempt>("/attempts/" + id)
-      .then(setData)
-      .catch((e) => setError(e.message));
+    setData(null);
+    setIndex(0);
+    setError("");
+    const sync = () => {
+      if (
+        document.visibilityState === "hidden" ||
+        saving.current ||
+        submitting.current
+      )
+        return;
+      const revision = mutation.current;
+      api<Attempt>("/attempts/" + id)
+        .then((a) => {
+          if (revision === mutation.current) {
+            apply(a);
+            setError("");
+          }
+        })
+        .catch((e) => setError(e.message));
+    };
+    sync();
+    window.addEventListener("online", sync);
+    document.addEventListener("visibilitychange", sync);
+    return () => {
+      window.removeEventListener("online", sync);
+      document.removeEventListener("visibilitychange", sync);
+    };
   }, [id]);
   async function submit() {
     if (submitting.current) return;
     submitting.current = true;
+    mutation.current++;
     setBusy(true);
     try {
-      setData(await api<Attempt>(`/attempts/${id}/submit`, "POST", {}));
+      apply(await api<Attempt>(`/attempts/${id}/submit`, "POST", {}));
+      setError("");
       setConfirm(false);
     } catch (e) {
       setError((e as Error).message);
@@ -52,17 +98,24 @@ export function Practice({ id }: { id: string }) {
     }
   }
   async function save(body: unknown) {
+    if (saving.current || submitting.current) return;
+    saving.current = true;
+    mutation.current++;
     setBusy(true);
     setError("");
     try {
-      setData(await api<Attempt>(`/attempts/${id}/answer`, "PUT", body));
+      apply(await api<Attempt>(`/attempts/${id}/answer`, "PUT", body));
     } catch (e) {
       setError((e as Error).message);
+      const revision = mutation.current;
       api<Attempt>("/attempts/" + id)
-        .then(setData)
+        .then((a) => {
+          if (revision === mutation.current) apply(a);
+        })
         .catch(() => {});
     } finally {
       setBusy(false);
+      saving.current = false;
     }
   }
   if (!data)
@@ -75,6 +128,7 @@ export function Practice({ id }: { id: string }) {
   if (data.status === "DONE")
     return (
       <>
+        <GameToolbar />
         <PageTitle title="Bạn đã hoàn thành!" subtitle={data.title}>
           <Link className="button outline" href="/">
             Về trang chủ
@@ -82,6 +136,7 @@ export function Practice({ id }: { id: string }) {
         </PageTitle>
         <ErrorNote error={error} />
         <section className="result-banner">
+          <Celebration />
           <CheckCircle size={48} />
           <div>
             <span>Kết quả của bạn</span>
@@ -99,6 +154,10 @@ export function Practice({ id }: { id: string }) {
           <div>
             <b>{duration(data.durationMs)}</b>
             <span>Thời gian làm bài</span>
+          </div>
+          <div>
+            <b>{Object.keys(data.answers).length - data.correct}</b>
+            <span>Câu trả lời sai</span>
           </div>
           <div>
             <b>{data.questions.length - Object.keys(data.answers).length}</b>
@@ -157,21 +216,18 @@ export function Practice({ id }: { id: string }) {
       <Answers
         question={q}
         selected={data.answers[q.id]}
-        disabled={busy || (data.instantFeedback && answered)}
+        disabled={
+          busy || !online || confirm || (data.instantFeedback && answered)
+        }
+        shortcuts
         reveal={data.instantFeedback && answered}
         onSelect={(answer) => save({ questionId: q.id, answer })}
       />
       {data.instantFeedback && answered && (
-        <div className="instant-feedback" role="status">
-          <strong
-            className={
-              data.answers[q.id] === q.correct ? "text-green" : "text-red"
-            }
-          >
-            {data.answers[q.id] === q.correct
-              ? "Chính xác!"
-              : "Chưa chính xác."}
-          </strong>
+        <Feedback
+          eventKey={`${id}:${q.id}`}
+          outcome={data.answers[q.id] === q.correct ? "correct" : "wrong"}
+        >
           <p>
             Đáp án đúng:{" "}
             <b>
@@ -184,12 +240,13 @@ export function Practice({ id }: { id: string }) {
           <small>
             Đã khóa lựa chọn đầu tiên. Lượt học này không đưa vào bảng xếp hạng.
           </small>
-        </div>
+        </Feedback>
       )}
     </>
   );
   return (
     <>
+      <GameToolbar />
       <div className="quiz-top">
         <Link href="/history" className="text-link">
           <ArrowLeft size={18} />
@@ -198,6 +255,7 @@ export function Practice({ id }: { id: string }) {
         <Timer
           deadline={data.deadline}
           serverTime={data.serverTime}
+          totalMs={data.deadline - data.startedAt}
           onEnd={() => void submit()}
         />
       </div>
@@ -205,21 +263,47 @@ export function Practice({ id }: { id: string }) {
         title={data.title}
         subtitle={`Câu ${index + 1} / ${data.questions.length} · Đã trả lời ${Object.keys(data.answers).length} câu`}
       />
-      <div className="progress">
+      <div
+        className="progress"
+        role="progressbar"
+        aria-label="Tiến độ làm bài"
+        aria-valuemin={0}
+        aria-valuemax={data.questions.length}
+        aria-valuenow={Object.keys(data.answers).length}
+      >
         <span
           style={{
-            width: `${(Object.keys(data.answers).length / data.questions.length) * 100}%`,
+            transform: `scaleX(${Object.keys(data.answers).length / data.questions.length})`,
           }}
         />
       </div>
       <ErrorNote error={error} />
+      {error && (
+        <button
+          className="button outline small"
+          disabled={busy || !online}
+          onClick={() => {
+            const revision = mutation.current;
+            void api<Attempt>("/attempts/" + id)
+              .then((a) => {
+                if (revision === mutation.current) {
+                  apply(a);
+                  setError("");
+                }
+              })
+              .catch((e) => setError(e.message));
+          }}
+        >
+          Đồng bộ lại bài làm
+        </button>
+      )}
       <div className="quiz-layout">
         <section className="question-panel">
           <div className="question-heading">
             <span>CÂU {String(index + 1).padStart(2, "0")}</span>
             <button
               className={`button ghost small ${data.flagged.includes(q.id) ? "flagged" : ""}`}
-              disabled={busy}
+              disabled={busy || !online}
               onClick={() =>
                 save({
                   questionId: q.id,
@@ -231,13 +315,15 @@ export function Practice({ id }: { id: string }) {
               {data.flagged.includes(q.id) ? "Đã đánh dấu" : "Xem lại sau"}
             </button>
           </div>
-          {data.ranked ? (
-            <FairPlay endpoint={`/attempts/${id}/integrity`}>
-              {questionContent}
-            </FairPlay>
-          ) : (
-            questionContent
-          )}
+          <div className="question-transition" key={q.id}>
+            {data.ranked ? (
+              <FairPlay endpoint={`/attempts/${id}/integrity`}>
+                {questionContent}
+              </FairPlay>
+            ) : (
+              questionContent
+            )}
+          </div>
           <div className="question-nav">
             <button
               className="button outline"
@@ -248,7 +334,11 @@ export function Practice({ id }: { id: string }) {
               Câu trước
             </button>
             <span className="muted">
-              {busy ? "Đang lưu…" : "Đã lưu trên hệ thống"}
+              {busy
+                ? "Đang lưu…"
+                : error
+                  ? "Chưa xác nhận lưu — hãy thử lại"
+                  : "Đã lưu trên hệ thống"}
             </span>
             <button
               className="button"
@@ -261,11 +351,20 @@ export function Practice({ id }: { id: string }) {
         </section>
         <aside className="question-sidebar">
           <h3>Tiến độ của bạn</h3>
+          <div className="progress-summary">
+            <strong>
+              {Object.keys(data.answers).length}
+              <small> / {data.questions.length}</small>
+            </strong>
+            <span>đã trả lời · {data.flagged.length} đánh dấu</span>
+          </div>
           <div className="question-numbers">
             {data.questions.map((x, i) => (
               <button
                 key={x.id}
                 aria-label={`Đến câu ${i + 1}`}
+                aria-current={i === index ? "step" : undefined}
+                disabled={busy}
                 className={`${i === index ? "current" : ""} ${data.answers[x.id] !== undefined ? "answered" : ""} ${data.flagged.includes(x.id) ? "flagged" : ""}`}
                 onClick={() => setIndex(i)}
               >
@@ -281,7 +380,7 @@ export function Practice({ id }: { id: string }) {
           </p>
           <button
             className="button wide"
-            disabled={busy}
+            disabled={busy || !online}
             onClick={() => setConfirm(true)}
           >
             Nộp bài <CheckCircle size={18} />
@@ -289,36 +388,33 @@ export function Practice({ id }: { id: string }) {
         </aside>
       </div>
       {confirm && (
-        <div className="modal-backdrop">
-          <section
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="submit-title"
-            className="modal"
-          >
-            <h2 id="submit-title">Sẵn sàng nộp bài?</h2>
-            <p>
-              Bạn đã trả lời {Object.keys(data.answers).length}/
-              {data.questions.length} câu. Sau khi nộp, bạn sẽ xem được đáp án
-              và lời giải.
-            </p>
-            <div className="actions">
-              <button
-                className="button outline"
-                onClick={() => setConfirm(false)}
-              >
-                Tiếp tục làm
-              </button>
-              <button
-                className="button"
-                disabled={busy}
-                onClick={() => void submit()}
-              >
-                Xác nhận nộp bài
-              </button>
-            </div>
-          </section>
-        </div>
+        <GameDialog
+          titleId="submit-title"
+          busy={busy}
+          onClose={() => setConfirm(false)}
+        >
+          <h2 id="submit-title">Sẵn sàng nộp bài?</h2>
+          <p>
+            Bạn đã trả lời {Object.keys(data.answers).length}/
+            {data.questions.length} câu. Sau khi nộp, bạn sẽ xem được đáp án và
+            lời giải.
+          </p>
+          <div className="actions">
+            <button
+              className="button outline"
+              onClick={() => setConfirm(false)}
+            >
+              Tiếp tục làm
+            </button>
+            <button
+              className="button"
+              disabled={busy}
+              onClick={() => void submit()}
+            >
+              Xác nhận nộp bài
+            </button>
+          </div>
+        </GameDialog>
       )}
     </>
   );

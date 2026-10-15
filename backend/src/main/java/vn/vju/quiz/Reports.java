@@ -143,18 +143,21 @@ public class Reports {
   public String csv(Map<String, Object> report) {
     StringBuilder b =
         new StringBuilder(
-            "\uFEFFTên,Mã người chơi,Bài quiz,Chế độ,Điểm,Thời gian (ms),Mã phòng\r\n");
+            "\uFEFFTên,Mã người chơi,Bài quiz,Chế độ,Điểm,Thời gian (ms),Mã phòng,Rời trang,Thao"
+                + " tác sao chép,Thoát toàn màn hình,Đạt giới hạn ghi nhận\r\n");
     for (Object x : (List<?>) report.get("rows")) {
       Map<?, ?> r = (Map<?, ?>) x;
       for (String key :
           List.of("name", "playerId", "title", "mode", "score", "durationMs", "roomId")) {
         String v = Objects.toString(r.get(key), "");
         if (v.matches("^[=+@\\-].*")) v = "'" + v;
-        b.append('"')
-            .append(v.replace("\"", "\"\""))
-            .append('"')
-            .append(key.equals("roomId") ? "\r\n" : ",");
+        b.append('"').append(v.replace("\"", "\"\"")).append('"').append(',');
       }
+      Map<?, ?> signals = r.get("integrity") instanceof Map<?, ?> values ? values : Map.of();
+      for (String key : List.of("tabHidden", "copyBlocked", "fullscreenExit")) {
+        b.append(signals.get(key) instanceof Number n ? n.longValue() : 0).append(',');
+      }
+      b.append(Boolean.TRUE.equals(signals.get("capped")) ? "Có" : "Không").append("\r\n");
     }
     return b.toString();
   }

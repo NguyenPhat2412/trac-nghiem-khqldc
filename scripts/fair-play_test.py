@@ -52,10 +52,11 @@ event={'eventId':'same-event','kind':'TAB_HIDDEN'}
 players[1].call('/attempts/'+a['id']+'/integrity',event,status=403)
 check('Private feedback and events enforce ownership',True)
 for _ in range(2):p.call('/attempts/'+a['id']+'/integrity',event)
+for _ in range(2):p.call('/attempts/'+a['id']+'/integrity',{'eventId':'same-fullscreen','kind':'FULLSCREEN_EXIT'})
 p.call('/attempts/'+a['id']+'/submit',{})
 check('Learning results do not enter ranked board',not any(x['playerId']==p.actor['id'] for x in p.call('/leaderboard/'+quiz['id'])))
 row=next(x for x in admin.call('/admin/report')['rows'] if x['playerId']==p.actor['id'])
-check('Duplicate focus event counted once',row['integrity']['tabHidden']==1)
+check('Focus and fullscreen events persist once each',row['integrity']['tabHidden']==1 and row['integrity']['fullscreenExit']==1)
 qz=admin.call('/admin/quizzes',{'title':'QA fair play','description':'Test only','status':'PUBLISHED','questionIds':[q['id'] for q in full['questions']], 'timeLimitSeconds':240,'questionSeconds':30,'shuffle':True})
 room=admin.call('/admin/rooms',{'quizId':qz['id']});code=room['id']
 for p in players:p.call('/rooms/'+code+'/join',{})
@@ -68,8 +69,10 @@ for p,v in zip(players,views):
     assert 'correct' not in v['question'] and 'integrity' not in v
 players[0].call('/rooms/'+code+'/integrity',event)
 players[0].call('/rooms/'+code+'/integrity',event)
+players[0].call('/rooms/'+code+'/integrity',{'eventId':'room-fullscreen','kind':'FULLSCREEN_EXIT'})
 host=admin.call('/rooms/'+code)
-check('Only host sees room signals',next(x for x in host['integrity'] if x['playerId']==players[0].actor['id'])['signals']['tabHidden']==1 and 'integrity' not in players[0].call('/rooms/'+code))
+signals=next(x for x in host['integrity'] if x['playerId']==players[0].actor['id'])['signals']
+check('Only host sees persisted focus and fullscreen signals',signals['tabHidden']==1 and signals['fullscreenExit']==1 and 'integrity' not in players[0].call('/rooms/'+code))
 answers=[]
 for p,v in zip(players,views):
     q=v['question'];choice=q['options'].index(keys[q['id']]);answers.append(choice)

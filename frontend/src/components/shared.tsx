@@ -6,6 +6,7 @@ import {
   useContext,
   useEffect,
   useState,
+  useRef,
   ReactNode,
 } from "react";
 import {
@@ -19,6 +20,7 @@ import {
 } from "lucide-react";
 import { api, setCsrf, duration } from "@/lib/api";
 import { Actor, Rank, Question } from "@/lib/types";
+import { GameProvider, useGame } from "./game-experience";
 const Session = createContext<{
   actor: Actor | null;
   ready: boolean;
@@ -43,43 +45,57 @@ export function Shell({ children }: { children: ReactNode }) {
   }, []);
   return (
     <Session.Provider value={{ actor, ready, refresh }}>
-      <header className="header">
-        <div className="nav">
-          <Link className="brand" href="/">
-            <span>
-              <b>V</b>
-              <b>J</b>
-              <b>U</b>
-            </span>{" "}
-            Quiz
-            <span className="brand-dot" />
-          </Link>
-          <nav aria-label="Điều hướng chính">
-            {[
-              ["/", "Tự luyện"],
-              ["/leaderboard", "Bảng xếp hạng"],
-              ["/history", "Lịch sử"],
-            ].map(([href, label]) => (
-              <Link
-                key={href}
-                className={path === href ? "active" : ""}
-                href={href}
-              >
-                {label}
+      <GameProvider>
+        <div
+          className={`app-shell ${path.startsWith("/admin") ? "admin-shell" : "student-shell"} ${path.startsWith("/attempt/") || path.startsWith("/room/") ? "play-shell" : ""}`}
+        >
+          <a className="skip-link" href="#main-content">
+            Đến nội dung chính
+          </a>
+          <header className="header">
+            <div className="nav">
+              <Link className="brand" href="/">
+                <span>
+                  <b>V</b>
+                  <b>J</b>
+                  <b>U</b>
+                </span>{" "}
+                Quiz
+                <span className="brand-dot" />
               </Link>
-            ))}
-          </nav>
-          <Link className="button outline small" href="/admin">
-            {actor?.role && actor.role !== "GUEST" ? "Quản trị" : "Quản trị"}
-          </Link>
+              <nav aria-label="Điều hướng chính">
+                {[
+                  ["/", "Tự luyện"],
+                  ["/leaderboard", "Bảng xếp hạng"],
+                  ["/history", "Lịch sử"],
+                ].map(([href, label]) => (
+                  <Link
+                    key={href}
+                    className={path === href ? "active" : ""}
+                    aria-current={path === href ? "page" : undefined}
+                    href={href}
+                  >
+                    {label}
+                  </Link>
+                ))}
+              </nav>
+              <Link className="button outline small" href="/admin">
+                {actor?.role && actor.role !== "GUEST"
+                  ? "Quản trị"
+                  : "Quản trị"}
+              </Link>
+            </div>
+          </header>
+          <main className="main" id="main-content" tabIndex={-1}>
+            {children}
+          </main>
+          <footer>
+            <span />
+            Học theo nhịp của bạn.
+            <span />
+          </footer>
         </div>
-      </header>
-      <main className="main">{children}</main>
-      <footer>
-        <span />
-        Học theo nhịp của bạn.
-        <span />
-      </footer>
+      </GameProvider>
     </Session.Provider>
   );
 }
@@ -130,12 +146,15 @@ export function Timer({
   deadline,
   serverTime,
   onEnd,
+  totalMs,
 }: {
   deadline: number;
   serverTime: number;
   onEnd?: () => void;
+  totalMs?: number;
 }) {
   const [now, setNow] = useState(serverTime);
+  const ended = useRef(0);
   useEffect(() => {
     const offset = serverTime - Date.now();
     setNow(Date.now() + offset);
@@ -143,14 +162,35 @@ export function Timer({
     return () => clearInterval(id);
   }, [serverTime]);
   useEffect(() => {
-    if (deadline && now >= deadline) onEnd?.();
+    if (deadline && now >= deadline && ended.current !== deadline) {
+      ended.current = deadline;
+      onEnd?.();
+    }
   }, [now, deadline, onEnd]);
   return (
     <span
       className={`timer ${deadline && deadline - now < 15000 ? "urgent" : ""}`}
+      role="timer"
+      aria-label={
+        deadline
+          ? `Thời gian còn lại ${duration(deadline - now)}`
+          : "Không giới hạn thời gian"
+      }
+      style={
+        {
+          "--time-left": totalMs
+            ? Math.max(0, Math.min(1, (deadline - now) / totalMs))
+            : 1,
+        } as React.CSSProperties
+      }
     >
       <Clock size={18} />
       {deadline ? duration(deadline - now) : "Không giới hạn"}
+      {!!deadline && !!totalMs && (
+        <span className="timer-track" aria-hidden="true">
+          <i />
+        </span>
+      )}
     </span>
   );
 }
@@ -160,18 +200,51 @@ export function Answers({
   onSelect,
   reveal = false,
   disabled = false,
+  shortcuts = false,
 }: {
   question: Question;
   selected?: number;
   onSelect?: (i: number) => void;
   reveal?: boolean;
   disabled?: boolean;
+  shortcuts?: boolean;
 }) {
+  const game = useGame();
+  const buttons = useRef<(HTMLButtonElement | null)[]>([]);
+  useEffect(() => {
+    if (!shortcuts || !game.shortcuts || disabled || reveal || !onSelect)
+      return;
+    const choose = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (
+        event.repeat ||
+        event.altKey ||
+        event.ctrlKey ||
+        event.metaKey ||
+        event.shiftKey ||
+        target?.closest(
+          "input,textarea,select,[contenteditable=true],[role=dialog]",
+        ) ||
+        document.querySelector('[role="dialog"]')
+      )
+        return;
+      const index = ["1", "2", "3", "4"].indexOf(event.key);
+      if (index >= 0) {
+        event.preventDefault();
+        buttons.current[index]?.click();
+      }
+    };
+    document.addEventListener("keydown", choose);
+    return () => document.removeEventListener("keydown", choose);
+  }, [shortcuts, game.shortcuts, disabled, reveal, onSelect]);
   return (
-    <div className="answers">
+    <div className="answers" aria-label="Các lựa chọn trả lời">
       {question.options.map((text, i) => (
         <button
           key={i}
+          ref={(el) => {
+            buttons.current[i] = el;
+          }}
           disabled={disabled || reveal}
           aria-pressed={selected === i}
           className={`answer ${selected === i ? "selected" : ""} ${reveal && i === question.correct ? "correct" : ""} ${reveal && selected === i && i !== question.correct ? "wrong" : ""}`}
@@ -179,6 +252,9 @@ export function Answers({
         >
           <span className="letter">{"ABCD"[i]}</span>
           <span>{text}</span>
+          {shortcuts && game.shortcuts && !reveal && (
+            <kbd aria-hidden="true">{i + 1}</kbd>
+          )}
           {reveal && i === question.correct ? (
             <Check size={22} />
           ) : reveal && selected === i ? (

@@ -68,6 +68,9 @@ export function Home() {
     <>
       <section className="welcome">
         <div className="welcome-copy">
+          <span className="course-eyebrow">
+            <span /> VJU · Học cùng nhau
+          </span>
           <h1>
             Học từng chương.
             <br />
@@ -99,6 +102,9 @@ export function Home() {
           >
             Bắt đầu tự luyện <ArrowRight size={20} />
           </button>
+          <p className="entry-note">
+            Chỉ cần một cái tên. Không cần tạo tài khoản.
+          </p>
         </div>
         <form
           className="join-panel"
@@ -132,6 +138,32 @@ export function Home() {
         </form>
       </section>
       <ErrorNote error={error} />
+      {data && (
+        <div className="course-stats" aria-label="Ngân hàng ôn tập">
+          <div>
+            <strong>{data.chapters.length}</strong>
+            <span>chương học</span>
+          </div>
+          <div>
+            <strong>
+              {data.chapters.reduce(
+                (sum, chapter) => sum + (chapter.count || 0),
+                0,
+              )}
+            </strong>
+            <span>câu hỏi để khám phá</span>
+          </div>
+          <div>
+            <strong>{data.quizzes.length}</strong>
+            <span>bộ quiz sẵn sàng</span>
+          </div>
+          <p>
+            Học từng câu để hiểu.
+            <br />
+            <b>Chơi cùng lớp để nhớ.</b>
+          </p>
+        </div>
+      )}
       <section id="library" className="library">
         <div className="section-heading">
           <h2>Khám phá các chương</h2>
@@ -158,6 +190,7 @@ export function Home() {
                   <button
                     className={`chapter ${selected.includes(c.id) ? "chosen" : ""}`}
                     key={c.id}
+                    aria-pressed={selected.includes(c.id)}
                     onClick={() => {
                       setSelected((v) =>
                         v.includes(c.id)
@@ -242,6 +275,13 @@ export function Home() {
                   tiên)
                 </label>
               </div>
+            )}
+            {data.chapters.every(
+              (c) => !c.title.toLowerCase().includes(search.toLowerCase()),
+            ) && (
+              <p className="empty">
+                Chưa tìm thấy chương phù hợp. Thử tên ngắn hơn hoặc xóa từ khóa.
+              </p>
             )}
             <div className="section-heading quiz-section">
               <div>

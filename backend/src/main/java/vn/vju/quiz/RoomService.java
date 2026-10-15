@@ -258,6 +258,7 @@ public class RoomService {
     v.put("current", r.current);
     v.put("count", r.quiz.questions.size());
     v.put("shuffleAnswers", r.shuffleAnswers);
+    v.put("openedAt", r.openedAt);
     if (isHost)
       v.put(
           "integrity",

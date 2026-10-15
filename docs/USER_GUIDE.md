@@ -16,6 +16,12 @@ Bộ “Nhóm 7 · Lập kế hoạch · 50 câu” dùng câu hỏi và đáp �
 
 Khi làm bài có xếp hạng hoặc đang trả lời trong phòng, vùng câu hỏi hạn chế chọn/copy/in nội dung và có tên/mã người chơi. Hệ thống thông báo khi ghi nhận rời trang hoặc thao tác bị chặn; không tự trừ điểm. Đây chỉ là tín hiệu để người quản lý xem xét. Trong phòng, thứ tự A–D có thể khác nhau giữa người chơi; hãy đọc nội dung đáp án. Lời giải chỉ mở khi câu đã đóng cho cả phòng.
 
+## Tùy chọn khi chơi
+
+Ở đầu màn chơi có các nút Âm thanh, Hiệu ứng, Phím 1–4 và Toàn màn hình. Âm thanh và phím tắt mặc định tắt. Có thể bật để chơi nhanh hơn; lựa chọn được ghi nhớ trên trình duyệt. Nút Hiệu ứng và cài đặt giảm chuyển động của thiết bị giúp hạn chế chuyển động. Toàn màn hình có thể thoát bình thường; thoát trong bài được bảo vệ là một tín hiệu tham khảo, không bị trừ điểm.
+
+Khi có thông báo mất mạng, chờ kết nối lại để gửi lựa chọn. Đồng hồ vẫn chạy; không coi thao tác chưa được máy chủ xác nhận là đã lưu. Nếu lưu lỗi, dùng “Đồng bộ lại bài làm” rồi chọn lại nếu chưa thấy lựa chọn được lưu.
+
 ## Người quản lý
 
 1. Đăng nhập `/admin` bằng tài khoản được cấp. Quản trị viên ban đầu xem mật khẩu ở file `.env` trong dự án.
@@ -25,7 +31,7 @@ Khi làm bài có xếp hạng hoặc đang trả lời trong phòng, vùng câu
 5. Xuất bản quiz. Bộ câu hỏi được cố định; sửa tạo phiên bản mới để không ảnh hưởng bài cũ.
 6. Mở “Phòng chơi”, chọn quiz, bấm tạo phòng. Chia sẻ mã, đường dẫn hoặc QR. Bấm bắt đầu khi lớp đã vào đủ.
 7. Sau mỗi câu, xem phân bố câu trả lời và bấm câu tiếp theo. Có thể kết thúc sớm; báo cáo sẽ ghi rõ.
-8. Xem “Báo cáo”, lọc và xuất CSV. Biên tập viên chỉ xem các phòng mình tạo. Mục “Ghi nhận tập trung” trong phòng và cột tương ứng trong báo cáo hiển thị số lần rời trang/thao tác sao chép bị chặn. Không dùng số này để tự động kết luận gian lận. CSV kết quả hiện chưa có các cột tín hiệu này.
+8. Xem “Báo cáo”, lọc và xuất CSV. Biên tập viên chỉ xem các phòng mình tạo. Mục “Ghi nhận tập trung” trong phòng và cột tương ứng trong báo cáo hiển thị số lần rời trang, thao tác sao chép bị chặn và thoát toàn màn hình. CSV có các cột này và cờ đạt giới hạn ghi nhận. Không dùng số này để tự động kết luận gian lận.
 9. Bật tùy chọn đảo câu/đáp án khi tạo quiz để phòng mới có thứ tự lựa chọn riêng cho từng người. Phòng cũ giữ bố cục đã lưu.
 
 ## Nhập Excel

@@ -101,6 +101,33 @@ class FairPlayTest {
   }
 
   @Test
+  void csvExportsFocusSignalsAndKeepsFormulaEscaping() {
+    var reports = new Reports(mock(Store.class), mock(RoomService.class));
+    var row = new HashMap<String, Object>();
+    row.put("name", "=2+2");
+    row.put(
+        "integrity",
+        Map.of("tabHidden", 2L, "copyBlocked", 3L, "fullscreenExit", 1L, "capped", true));
+    String csv = reports.csv(Map.of("rows", List.of(row, Map.of("name", "Legacy"))));
+    assertTrue(csv.contains("Thoát toàn màn hình"));
+    assertTrue(csv.contains("\"'=2+2\""));
+    assertTrue(csv.contains(",2,3,1,Có\r\n"));
+    assertTrue(csv.endsWith(",0,0,0,Không\r\n"));
+  }
+
+  @Test
+  void fullscreenSignalsAreOptionalAndDoNotChangeExistingCounters() {
+    Map<String, Long> events = new HashMap<>();
+    assertEquals(0L, Integrity.summary(events).get("fullscreenExit"));
+    var event = new Integrity.Event("exit-1", "FULLSCREEN_EXIT");
+    Integrity.record(events, event);
+    Integrity.record(events, event);
+    assertEquals(1L, Integrity.summary(events).get("fullscreenExit"));
+    assertEquals(0L, Integrity.summary(events).get("tabHidden"));
+    assertEquals(0L, Integrity.summary(events).get("copyBlocked"));
+  }
+
+  @Test
   void integritySignalsAreIdempotentAndBounded() {
     Map<String, Long> events = new HashMap<>();
     var e = new Integrity.Event("same", "TAB_HIDDEN");

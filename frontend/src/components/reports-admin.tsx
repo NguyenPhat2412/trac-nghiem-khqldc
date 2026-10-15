@@ -211,6 +211,9 @@ export function ReportAdmin({ overview }: { overview: boolean }) {
                           <small>
                             {r.integrity.tabHidden} lần rời trang ·{" "}
                             {r.integrity.copyBlocked} thao tác sao chép
+                            {" · "}
+                            {r.integrity.fullscreenExit || 0} lần thoát toàn màn
+                            hình
                             {r.integrity.capped ? " · ≥100 sự kiện" : ""}
                           </small>
                         ) : (
