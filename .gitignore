@@ -1,0 +1,11 @@
+work/
+.env
+**/node_modules/
+**/.next/
+**/target/
+**/tsconfig.tsbuildinfo
+.DS_Store
+.codebase-memory/
+data/
+
+backups/

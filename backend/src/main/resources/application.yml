@@ -1,0 +1,28 @@
+server:
+  port: ${PORT:8080}
+  error:
+    include-message: never
+spring:
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:55432/vju_quiz}
+    username: ${DATABASE_USER:vju}
+    password: ${DATABASE_PASSWORD}
+    hikari:
+      maximum-pool-size: 16
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 6MB
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+app:
+  origin: ${APP_ORIGIN:http://localhost:3000}
+  secure-cookie: ${SECURE_COOKIE:false}
+  admin-password: ${ADMIN_PASSWORD}
+  seed: ${SEED_DEMO:true}

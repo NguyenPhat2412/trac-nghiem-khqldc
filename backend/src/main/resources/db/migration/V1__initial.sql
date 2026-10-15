@@ -1,0 +1,11 @@
+CREATE TABLE staff(id text PRIMARY KEY, username text UNIQUE NOT NULL, password text NOT NULL, name text NOT NULL, role text NOT NULL CHECK(role IN ('ADMIN','EDITOR')), enabled boolean NOT NULL DEFAULT true);
+CREATE TABLE sessions(token_hash text PRIMARY KEY, actor_id text NOT NULL, name text NOT NULL, role text NOT NULL, csrf text NOT NULL, expires_at bigint NOT NULL);
+CREATE INDEX sessions_expiry ON sessions(expires_at);
+CREATE TABLE chapters(id text PRIMARY KEY, data jsonb NOT NULL);
+CREATE TABLE questions(id text PRIMARY KEY, data jsonb NOT NULL);
+CREATE TABLE quizzes(id text PRIMARY KEY, data jsonb NOT NULL);
+CREATE TABLE attempts(id text PRIMARY KEY, data jsonb NOT NULL);
+CREATE INDEX attempt_actor ON attempts((data->>'playerId'));
+CREATE INDEX attempt_quiz ON attempts((data->>'quizId'));
+CREATE TABLE rooms(id text PRIMARY KEY, data jsonb NOT NULL);
+CREATE INDEX question_chapter ON questions((data->>'chapterId'));
