@@ -102,9 +102,16 @@ public class RoomService {
     Room r = s.liveRoom(code, false);
     Errors.forbidden(access(a, r));
     if (r.status.equals("QUESTION") && System.currentTimeMillis() >= r.deadline) {
-      r = s.liveRoom(code, true);
-      Errors.forbidden(access(a, r));
-      expire(r);
+      Room expired = s.tryExpiredRoom(code, System.currentTimeMillis());
+      if (expired != null) {
+        r = expired;
+        Errors.forbidden(access(a, r));
+        expire(r);
+      } else {
+        // Another transaction may already be closing it. Never invent a reveal before commit.
+        r = s.liveRoom(code, false);
+        Errors.forbidden(access(a, r));
+      }
     }
     return view(a, r);
   }
@@ -171,26 +178,62 @@ public class RoomService {
     return view(a, r);
   }
 
+  record AnswerCommand(Actor actor, String questionId, int choice, long receivedAt) {}
+
+  record AnswerOutcome(Map<String, Object> value, RuntimeException failure) {}
+
+  /** One durable transaction per short burst; no result escapes until the proxy commits. */
   @Transactional
-  public Map<String, Object> answer(Actor a, String code, String questionId, int choice) {
+  public List<AnswerOutcome> answerBatch(String code, List<AnswerCommand> commands) {
     Room r = s.liveRoom(code, true);
-    Errors.forbidden(r.members.containsKey(a.id()) && !r.members.get(a.id()).kicked);
-    expire(r);
-    Errors.require(
-        r.status.equals("QUESTION") && System.currentTimeMillis() < r.deadline, "Câu hỏi đã đóng");
-    Question q = r.quiz.questions.get(r.current);
-    Errors.require(
-        q.id.equals(questionId) && choice >= 0 && choice < 4, "Câu hỏi hoặc đáp án không hợp lệ");
-    Member m = r.members.get(a.id());
-    if (!m.answers.containsKey(q.id)) {
-      m.answers.put(q.id, order(m, q).get(choice));
-      m.times.put(q.id, Math.max(0, System.currentTimeMillis() - r.openedAt));
+    var failures = new ArrayList<RuntimeException>();
+    boolean changed = false;
+    int accepted = 0;
+    for (var command : commands) {
+      try {
+        Actor a = command.actor();
+        Member m = r.members.get(a.id());
+        Errors.forbidden(m != null && !m.kicked);
+        Errors.require(
+            r.status.equals("QUESTION")
+                && System.currentTimeMillis() < r.deadline
+                && command.receivedAt() >= r.openedAt,
+            "Câu hỏi đã đóng");
+        Question q = r.quiz.questions.get(r.current);
+        Errors.require(
+            q.id.equals(command.questionId()) && command.choice() >= 0 && command.choice() < 4,
+            "Câu hỏi hoặc đáp án không hợp lệ");
+        if (!m.answers.containsKey(q.id)) {
+          m.answers.put(q.id, order(m, q).get(command.choice()));
+          // The server receive time excludes our batching wait, never a client-supplied time.
+          m.times.put(q.id, Math.max(0, command.receivedAt() - r.openedAt));
+          changed = true;
+        }
+        accepted++;
+        failures.add(null);
+      } catch (org.springframework.web.server.ResponseStatusException rejection) {
+        failures.add(rejection);
+      }
+    }
+    if (changed) {
+      Question q = r.quiz.questions.get(r.current);
       if (r.members.values().stream()
-          .filter(x -> !x.kicked)
-          .allMatch(x -> x.answers.containsKey(q.id))) r.status = "REVEAL";
+          .filter(m -> !m.kicked)
+          .allMatch(m -> m.answers.containsKey(q.id))) r.status = "REVEAL";
       save(r);
     }
-    return view(a, r);
+    // A rejected burst must not commit even an automatic legacy-storage conversion.
+    if (accepted == 0)
+      org.springframework.transaction.interceptor.TransactionAspectSupport
+          .currentTransactionStatus()
+          .setRollbackOnly();
+    var result = new ArrayList<AnswerOutcome>();
+    for (int i = 0; i < commands.size(); i++) {
+      RuntimeException failure = failures.get(i);
+      result.add(
+          new AnswerOutcome(failure == null ? view(commands.get(i).actor(), r) : null, failure));
+    }
+    return result;
   }
 
   List<Integer> order(Member m, Question q) {

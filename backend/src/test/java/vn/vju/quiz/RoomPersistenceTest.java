@@ -14,6 +14,53 @@ import vn.vju.quiz.Domain.*;
 class RoomPersistenceTest {
   final ObjectMapper json = new ObjectMapper();
 
+  @Test
+  void contendedExpiryReadDoesNotWaitOrRevealUncommittedAnswers() {
+    var r = room();
+    r.status = "QUESTION";
+    r.deadline = System.currentTimeMillis() - 1;
+    var store = mock(Store.class);
+    when(store.liveRoom(r.id, false)).thenReturn(r);
+    when(store.tryExpiredRoom(eq(r.id), anyLong())).thenReturn(null);
+    var service =
+        new RoomService(store, new ContentService(store), mock(SimpMessagingTemplate.class));
+    var view = service.get(new Actor("player-1", "Student", "GUEST", "csrf"), r.id);
+    assertEquals("QUESTION", view.get("status"));
+    assertFalse(((Map<?, ?>) view.get("question")).containsKey("correct"));
+    verify(store, never()).liveRoom(r.id, true);
+    verify(store, never()).save(anyString(), anyString(), any());
+  }
+
+  @Test
+  void expiryWinnerClosesOnceAndOutsidersCannotAcquireExpiryLock() {
+    var r = room();
+    r.status = "QUESTION";
+    r.deadline = System.currentTimeMillis() - 1;
+    var store = mock(Store.class);
+    when(store.liveRoom(r.id, false)).thenReturn(r);
+    when(store.tryExpiredRoom(eq(r.id), anyLong())).thenReturn(r);
+    var service =
+        new RoomService(store, new ContentService(store), mock(SimpMessagingTemplate.class));
+    assertThrows(
+        org.springframework.web.server.ResponseStatusException.class,
+        () -> service.get(new Actor("outsider", "Other", "GUEST", "csrf"), r.id));
+    verify(store, never()).tryExpiredRoom(anyString(), anyLong());
+    var view = service.get(new Actor("player-1", "Student", "GUEST", "csrf"), r.id);
+    assertEquals("REVEAL", view.get("status"));
+    assertTrue(((Map<?, ?>) view.get("question")).containsKey("correct"));
+    verify(store, times(1)).save("rooms", r.id, r);
+  }
+
+  @Test
+  void expiryLockQueryIsConditionalAndNonBlocking() {
+    var db = mock(JdbcTemplate.class);
+    var persistence = new RoomPersistence(db, json);
+    assertNull(persistence.tryExpired("123456", 1000));
+    verify(db)
+        .queryForList(
+            contains("for update skip locked"), eq(String.class), eq("123456"), eq(1000L));
+  }
+
   Room room() {
     Room r = new Room();
     r.id = "123456";

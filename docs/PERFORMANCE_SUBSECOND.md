@@ -1,5 +1,7 @@
 # Tối ưu phản hồi cuối bài — 100 sinh viên
 
+Lịch sử đo của đợt tối ưu trước. Ngưỡng mới kiểm tra độ trễ tối đa mọi vòng và kết quả đợt xử lý phần chậm 1.439 ms nằm tại [PERFORMANCE_TAIL.md](PERFORMANCE_TAIL.md).
+
 ## Thay đổi
 
 Trước sửa, một lượt trả lời ở câu 100 ghi lại khoảng 981 KB gồm quiz và toàn bộ lịch sử của 100 người. Khi các yêu cầu cùng chờ khóa phòng, p95 ba lượt đo là 3.113 / 3.900 / 3.988 ms. Đọc kết quả cuối đơn lẻ vẫn nhanh; nút thắt chính của bài đo là đường ghi đáp án nối tiếp trên aggregate lớn.

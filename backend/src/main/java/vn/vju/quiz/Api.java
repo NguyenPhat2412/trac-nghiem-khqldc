@@ -16,6 +16,7 @@ public class Api {
   final ExcelService excel;
   final Reports reports;
   final Auth auth;
+  final RoomAnswers roomAnswers;
 
   public Api(
       Store s,
@@ -24,7 +25,8 @@ public class Api {
       RoomService r,
       ExcelService e,
       Reports reports,
-      Auth auth) {
+      Auth auth,
+      RoomAnswers roomAnswers) {
     this.s = s;
     this.c = c;
     this.p = p;
@@ -32,6 +34,7 @@ public class Api {
     excel = e;
     this.reports = reports;
     this.auth = auth;
+    this.roomAnswers = roomAnswers;
   }
 
   @GetMapping("/catalog")
@@ -111,9 +114,12 @@ public class Api {
   }
 
   @PostMapping("/rooms/{code}/answer")
-  Object roomAnswer(@PathVariable String code, @RequestBody PracticeService.Answer in) {
+  java.util.concurrent.CompletableFuture<Map<String, Object>> roomAnswer(
+      @PathVariable String code, @RequestBody PracticeService.Answer in) {
     Errors.require(in.answer() != null, "Chọn một đáp án");
-    return r.answer(Auth.actor(), code, in.questionId(), in.answer());
+    var actor = Auth.actor();
+    auth.limit("room-answer:" + actor.id(), 240);
+    return roomAnswers.submit(actor, code, in.questionId(), in.answer());
   }
 
   @PostMapping("/admin/rooms")

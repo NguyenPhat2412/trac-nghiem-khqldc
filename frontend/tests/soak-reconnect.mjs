@@ -1,6 +1,7 @@
 // 100 real HTTP/STOMP clients, fault-injected TCP, disposable localhost:8081 only.
 // Run from frontend. No browser cookies or credentials are written to the result.
 import net from "node:net";
+import { monitorEventLoopDelay, PerformanceObserver } from "node:perf_hooks";
 import WebSocket from "ws";
 import { Client } from "@stomp/stompjs";
 import { readFile, writeFile, mkdir } from "node:fs/promises";
@@ -10,11 +11,32 @@ import assert from "node:assert/strict";
 const exec = promisify(execFile),
   base = "http://localhost:8081",
   count = 100;
+const loopDelay = monitorEventLoopDelay({ resolution: 10 });
+loopDelay.enable();
+const gcEvents = [];
+const gcObserver = new PerformanceObserver((list) => {
+  for (const entry of list.getEntries())
+    if (entry.duration >= 25)
+      gcEvents.push({
+        at: new Date().toISOString(),
+        durationMs: Math.round(entry.duration),
+      });
+});
+gcObserver.observe({ entryTypes: ["gc"] });
 const noFaults = process.env.SOAK_NO_FAULTS === "1";
+const expireAll = process.env.SOAK_EXPIRE_ALL === "1";
+const questionSeconds = expireAll ? 5 : 15;
 const sloMs = Number(process.env.SOAK_SLO_MS || 0);
+const forceCheckpoints = process.env.SOAK_CHECKPOINTS === "1";
+const extraReadBursts = Number(process.env.SOAK_EXTRA_READS || 0);
+assert(
+  Number.isInteger(extraReadBursts) &&
+    extraReadBursts >= 0 &&
+    extraReadBursts <= 3,
+);
 const rounds = Number(process.env.SOAK_ROUNDS || 100),
   roundMs = Number(process.env.SOAK_ROUND_MS || 18000);
-assert(rounds >= 1 && rounds <= 100 && roundMs >= (noFaults ? 1000 : 16000));
+assert(rounds >= 1 && rounds <= 100 && roundMs >= (noFaults ? 1000 : 4000));
 const run =
   process.env.SOAK_RUN || new Date().toISOString().replace(/[:.]/g, "-");
 const dir = "../work/soak-" + run;
@@ -31,7 +53,12 @@ const metrics = {
   startedAt: new Date().toISOString(),
   players: count,
   noFaults,
+  expireAll,
+  questionSeconds,
   sloMs,
+  forceCheckpoints,
+  extraReadBursts,
+  checkpoints: [],
   plannedRounds: rounds,
   roundMs,
   completedRounds: 0,
@@ -56,6 +83,8 @@ const metrics = {
   answerMs: [],
   acceptedAnswerMs: [],
   finalReadMs: [],
+  liveReadMs: [],
+  slowReads: [],
   stompErrors: 0,
   setupRateLimitWaits: 0,
 };
@@ -95,6 +124,22 @@ async function call(
   const data = await response.json();
   metrics.httpRequests++;
   metrics.apiMs.push(performance.now() - start);
+  if (
+    method === "GET" &&
+    /^\/rooms\/\d{6}$/.test(path) &&
+    response.status === 200
+  )
+    metrics.liveReadMs.push(performance.now() - start);
+  if (
+    method === "GET" &&
+    /^\/rooms\/\d{6}$/.test(path) &&
+    performance.now() - start >= 500
+  )
+    metrics.slowReads.push({
+      at: new Date().toISOString(),
+      elapsedMs: Math.round(performance.now() - start),
+      status: response.status,
+    });
   assert(
     expected.includes(response.status),
     `${path}: HTTP ${response.status} ${data.message || ""}`,
@@ -325,12 +370,19 @@ async function checkpoint(status = "running") {
     answers: stats(metrics.answerMs),
     acceptedAnswers: stats(metrics.acceptedAnswerMs),
     finalReads: stats(metrics.finalReadMs),
+    liveReads: stats(metrics.liveReadMs),
     recoveryIncludingOffline: stats(metrics.recoveryMs),
+    loadGenerator: {
+      eventLoopMaxMs: Math.round(loopDelay.max / 1e6),
+      eventLoopP99Ms: Math.round(loopDelay.percentile(99) / 1e6),
+      slowGc: gcEvents,
+    },
   };
   delete snapshot.apiMs;
   delete snapshot.answerMs;
   delete snapshot.acceptedAnswerMs;
   delete snapshot.finalReadMs;
+  delete snapshot.liveReadMs;
   delete snapshot.recoveryMs;
   checkpointWrites = checkpointWrites.then(async () => {
     await writeFile(dir + "/results.json", JSON.stringify(snapshot, null, 2));
@@ -403,7 +455,7 @@ try {
       questionIds: ids,
       status: "PUBLISHED",
       timeLimitSeconds: 0,
-      questionSeconds: 15,
+      questionSeconds,
       shuffle: true,
     })
   ).data;
@@ -456,12 +508,17 @@ try {
     );
     if (previousQuestion) await students[0].submit(previousQuestion, 0, [400]);
     const allDrop = (round + 1) % 15 === 0;
-    const affected = students.filter(
-      (p) => !noFaults && (allDrop || (p.index + round * 7) % 100 < 20),
-    );
-    const blank =
-      (round + 1) % 10 === 0 ? new Set(affected.slice(0, 10)) : new Set();
-    for (const p of affected) p.offline((round + 1) % 3 !== 0);
+    const affected = expireAll
+      ? students
+      : students.filter(
+          (p) => !noFaults && (allDrop || (p.index + round * 7) % 100 < 20),
+        );
+    const blank = expireAll
+      ? new Set(students)
+      : (round + 1) % 10 === 0
+        ? new Set(affected.slice(0, 10))
+        : new Set();
+    if (!expireAll) for (const p of affected) p.offline((round + 1) % 3 !== 0);
     const normal = students.filter((p) => !affected.includes(p));
     async function answer(p) {
       const choice = (p.index + round) % 4;
@@ -470,13 +527,45 @@ try {
       p.answers.set(qid, choice);
       metrics.answerAccepted++;
     }
+    const checkpointJob =
+      forceCheckpoints && round % 5 === 0
+        ? (async () => {
+            const at = new Date().toISOString(),
+              start = performance.now();
+            await exec(
+              "docker",
+              [
+                "compose",
+                "exec",
+                "-T",
+                "db",
+                "psql",
+                "-U",
+                "vju",
+                "-d",
+                "vju_quiz_test",
+                "-v",
+                "ON_ERROR_STOP=1",
+                "-c",
+                "CHECKPOINT;",
+              ],
+              { cwd: ".." },
+            );
+            metrics.checkpoints.push({
+              round: round + 1,
+              at,
+              elapsedMs: Math.round(performance.now() - start),
+            });
+          })().catch(fail)
+        : Promise.resolve();
     await Promise.all(normal.map(answer));
+    await checkpointJob;
     if (!noFaults) await delay(Math.max(0, roundStart + 3000 - Date.now()));
     await Promise.all(
       affected
         .filter((p) => !blank.has(p))
         .map(async (p) => {
-          await p.recover();
+          if (!expireAll) await p.recover();
           const v = (await call(p, "/rooms/" + roomId)).data;
           assert.deepEqual(v.question.options, p.options.get(qid));
           metrics.stateChecks++;
@@ -484,10 +573,12 @@ try {
         }),
     );
     if (blank.size) {
-      await delay(Math.max(0, opened.deadline + 300 - Date.now()));
+      await delay(
+        Math.max(0, opened.deadline + (expireAll ? 1 : 300) - Date.now()),
+      );
       await Promise.all(
         [...blank].map(async (p) => {
-          await p.recover();
+          if (!expireAll) await p.recover();
           const v = (await call(p, "/rooms/" + roomId)).data;
           assert.equal(v.myAnswer, -1);
           assert.deepEqual(v.question.options, p.options.get(qid));
@@ -511,12 +602,14 @@ try {
         const ranking = v.ranking.find((x) => x.playerId === p.actor.id);
         assert.equal(ranking.correct, p.expectedCorrect);
         const delta = ranking.durationMs - p.lastDuration;
-        assert(delta >= 0 && delta <= 15000);
-        if (blank.has(p)) assert.equal(delta, 15000);
+        assert(delta >= 0 && delta <= questionSeconds * 1000);
+        if (blank.has(p)) assert.equal(delta, questionSeconds * 1000);
         p.lastDuration = ranking.durationMs;
         metrics.stateChecks++;
       }),
     );
+    for (let burst = 0; burst < extraReadBursts; burst++)
+      await Promise.all(students.map((p) => p.refresh()));
     const retry = students.slice(0, 10);
     await Promise.all(
       retry.map(async (p) => {
@@ -564,7 +657,8 @@ try {
       round: round + 1,
       elapsedMs: Date.now() - roundStart,
       answers: 100 - blank.size,
-      offline: affected.length,
+      answerCommits: closed.version - opened.version,
+      offline: expireAll ? 0 : affected.length,
       answerLatency: stats(metrics.answerMs.slice(latencyStart)),
       acceptedAnswerLatency: stats(
         metrics.acceptedAnswerMs.slice(acceptedStart),
@@ -613,17 +707,25 @@ try {
   metrics.finalVerified = true;
   if (sloMs > 0) {
     assert(
-      stats(metrics.acceptedAnswerMs).p95 < sloMs,
-      "Overall accepted-answer p95 exceeds SLO",
+      stats(metrics.answerMs).max < sloMs,
+      "Answer-response maximum exceeds SLO",
     );
-    for (const r of metrics.rounds.slice(-10))
+    assert(
+      expireAll || stats(metrics.acceptedAnswerMs).max < sloMs,
+      "Accepted-answer maximum exceeds SLO",
+    );
+    for (const r of metrics.rounds)
       assert(
-        r.acceptedAnswerLatency.p95 < sloMs,
-        `Round ${r.round} p95 exceeds SLO`,
+        expireAll || r.acceptedAnswerLatency.max < sloMs,
+        `Round ${r.round} maximum exceeds SLO`,
       );
     assert(
-      stats(metrics.finalReadMs).p95 < sloMs,
-      "Student final-result p95 exceeds SLO",
+      stats(metrics.finalReadMs).max < sloMs,
+      "Student final-result maximum exceeds SLO",
+    );
+    assert(
+      stats(metrics.liveReadMs).max < sloMs,
+      "Room state-read maximum exceeds SLO",
     );
     assert(metrics.hostFinishMs < sloMs, "Host finish exceeds SLO");
     metrics.sloPassed = true;
@@ -638,6 +740,8 @@ try {
   process.exitCode = 1;
 } finally {
   stopping = true;
+  loopDelay.disable();
+  gcObserver.disconnect();
   clearInterval(monitor);
   await Promise.all(students.map((p) => p.stop()));
   for (const l of links) {

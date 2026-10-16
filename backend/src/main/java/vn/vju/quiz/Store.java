@@ -82,6 +82,10 @@ public class Store {
     return rooms.get(id, lock, false);
   }
 
+  public Domain.Room tryExpiredRoom(String id, long now) {
+    return rooms.tryExpired(id, now);
+  }
+
   public void roomHistory(Domain.Room room, String playerId) {
     rooms.history(room, playerId);
   }

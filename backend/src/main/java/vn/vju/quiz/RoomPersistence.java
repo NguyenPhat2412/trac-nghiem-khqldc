@@ -98,6 +98,22 @@ final class RoomPersistence {
     return room;
   }
 
+  Room tryExpired(String id, long now) {
+    // A burst of expired reads must not queue another durable row lock per reader.
+    // The winner commits the transition; other readers see committed state and its event.
+    var rows =
+        db.queryForList(
+            "select data::text from rooms where id=? and data->>'status'='QUESTION'"
+                + " and (data->>'deadline')::bigint<=? for update skip locked",
+            String.class,
+            id,
+            now);
+    if (rows.isEmpty()) return null;
+    Room room = decode(rows.getFirst(), false);
+    if (!room.compact) save(room);
+    return room;
+  }
+
   Room decode(String raw, boolean full) {
     Room room = read(raw, Room.class);
     if (room.compact) {

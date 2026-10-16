@@ -81,7 +81,13 @@ class FairPlayTest {
     var before = (Map<?, ?>) service.view(actor, r).get("question");
     assertEquals("three", ((List<?>) before.get("options")).getFirst());
     assertFalse(before.containsKey("correct"));
-    var after = service.answer(actor, r.id, q.id, 0);
+    var after =
+        service
+            .answerBatch(
+                r.id,
+                List.of(new RoomService.AnswerCommand(actor, q.id, 0, System.currentTimeMillis())))
+            .getFirst()
+            .value();
     assertEquals(2, m.answers.get(q.id));
     assertEquals(0, after.get("myAnswer"));
     assertEquals(0, ((Map<?, ?>) after.get("question")).get("correct"));

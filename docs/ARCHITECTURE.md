@@ -72,3 +72,15 @@ Sau khi đã chuyển đổi phòng, **không chỉ đổi về image cũ**: phi
 ## Từ chối kết nối mà không tạo vòng lặp
 
 Lỗi quyền/phiên ở STOMP đóng transport bằng 1008, loại frame khỏi kênh và ghi audit chỉ gồm command, mã socket và loại lỗi. Không ném lại ngoại lệ chứa frame CONNECT để Spring ghi token vào log. Lỗi máy chủ tạm thời đóng bằng 1011 để client vẫn được nối lại. Frontend dừng polling, timer làm mới và reconnect sau 1008; bỏ qua phản hồi đang chờ để không ghi đè thông báo. Tải lại trang lấy phiên hiện tại. Các giới hạn socket, subscription và kiểm tra CSRF/thành viên giữ nguyên.
+
+## Gom đáp án đồng thời, giữ xác nhận sau commit
+
+`RoomAnswers` nhận lệnh đã qua phiên và CSRF, gom trong cửa sổ 10 ms theo mã phòng. Một phòng chỉ có một đợt đang xử lý; bốn worker phục vụ các phòng. Mỗi đợt gọi `RoomService.answerBatch` qua proxy giao dịch Spring: đọc và khóa phòng một lần, kiểm tra từng người/câu/hạn giờ, giữ lựa chọn đầu tiên, lưu một lần và phát một sự kiện sau commit. Chỉ khi proxy hoàn tất commit mới trả kết quả HTTP qua `CompletableFuture`. Không dùng bộ nhớ làm nguồn dữ liệu chính hoặc trả thành công trước khi lưu.
+
+Đáp án sai định dạng, ngoài quyền hoặc quá hạn được trả lỗi riêng; không làm mất các đáp án hợp lệ trong cùng đợt. Nếu cả đợt bị từ chối, rollback cả chuyển đổi phòng cũ. Nếu lưu/commit thất bại, mọi lệnh trong đợt thất bại. Câu chỉ được công bố đáp án khi trạng thái đã chuyển REVEAL/FINISHED, và chi tiết vẫn được dựng theo từng người. Thời gian trả lời lấy lúc máy chủ nhận lệnh đã xác thực, loại trừ khoảng đợi gom; lệnh nhận trước lúc mở câu hoặc xử lý sau hạn đều bị từ chối.
+
+Hàng đợi giới hạn 1.024 người đang chờ trên toàn backend, 128 phòng, 100 người/phòng. Gửi lặp cùng người và câu đang lưu dùng chung kết quả của lựa chọn đầu tiên, giới hạn 32 phản hồi chờ/lệnh để tránh mở vô hạn lượt chờ; hủy một kết nối không hủy việc lưu hoặc phản hồi của lần gửi lại. API giới hạn 240 lần gửi/phút/mã người chơi. Khi đầy trả 429; khi dừng máy chủ, yêu cầu chưa có xác nhận nhận lỗi và phải kết nối lại để đối chiếu trạng thái đã lưu. Số phiên bản tăng theo giao dịch thay đổi trạng thái, không phải số yêu cầu HTTP; frontend vốn xử lý phiên bản tăng đơn điệu và tự đọc lại khi nối mạng.
+
+Không đổi schema V4, không tắt `fsync`/`synchronous_commit`; bản nâng cấp này có thể quay lại backend V4 trước đó mà không đổi định dạng dữ liệu. Vẫn cần backup trước triển khai. Mô hình triển khai được kiểm thử là một backend; khóa PostgreSQL bảo vệ dữ liệu nhưng chưa đo SLO cho nhiều backend hoặc nhiều phòng đầy đồng thời.
+
+Đọc phòng khi hết giờ dùng `FOR UPDATE SKIP LOCKED` kèm điều kiện QUESTION/deadline. Chỉ yêu cầu lấy được khóa mới chuyển trạng thái; các yêu cầu khác đọc lại trạng thái đã commit và nhận sự kiện sau commit. Không trả khóa đáp án khi giao dịch đóng câu chưa hoàn tất. Việc đọc không còn xếp hàng để mỗi người lần lượt khóa cùng một hàng chỉ để phát hiện người trước đã đóng câu. Có chẩn đoán tùy chọn `APP_PROFILE_ROOM_READS=true` ghi thời lượng đọc chậm từ 100 ms, không ghi tên, cookie, token hoặc nội dung đáp án; mặc định tắt.
