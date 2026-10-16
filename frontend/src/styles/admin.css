@@ -122,6 +122,40 @@
   flex-shrink: 0;
   accent-color: #16803c;
 }
+.room-create-form {
+  display: grid;
+  gap: 20px;
+  padding: 24px;
+  margin-bottom: 28px;
+  border: 1px solid #dde7df;
+  border-radius: 16px;
+  background: #fff;
+}
+.room-create-form > .button {
+  justify-self: start;
+}
+.room-create-options {
+  display: grid;
+  gap: 20px;
+  min-width: 0;
+  margin: 0;
+  padding: 16px;
+  border: 1px solid #dde7df;
+  border-radius: 12px;
+}
+.room-create-options legend {
+  padding: 0 8px;
+  font-weight: 600;
+}
+.room-create-options .checkbox {
+  font-size: 14px;
+  font-weight: 600;
+}
+.room-create-options p {
+  margin: 6px 0 0 29px;
+  font-size: 13px;
+  line-height: 1.6;
+}
 .check-list {
   max-height: 330px;
   overflow: auto;

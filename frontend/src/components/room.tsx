@@ -271,6 +271,16 @@ export function RoomPage({ code }: { code: string }) {
         </span>
       </PageTitle>
       <ErrorNote error={error} />
+      {data.status !== "FINISHED" && (
+        <p className="muted">
+          {data.untimed
+            ? "Không giới hạn thời gian trả lời."
+            : "Trả lời theo thời gian của bộ quiz."}{" "}
+          {data.advanceWhenReady
+            ? "Chuyển câu khi tất cả người chơi bấm “Đã đọc xong”."
+            : "Chủ trì điều khiển chuyển câu."}
+        </p>
+      )}
       {connectionBlocked && (
         <button
           className="button outline"
@@ -604,9 +614,13 @@ export function RoomPage({ code }: { code: string }) {
                       )}
                     </button>
                     <p className="muted">
-                      {data.myReady
-                        ? "Đã báo chủ trì. Đang chờ chuyển câu."
-                        : "Đọc lời giải theo nhịp của bạn, rồi báo chủ trì khi sẵn sàng."}
+                      {data.advanceWhenReady
+                        ? data.myReady
+                          ? "Bạn đã sẵn sàng. Chờ những người còn lại đọc xong."
+                          : "Đọc xong rồi bấm. Phòng chuyển khi tất cả người chơi sẵn sàng."
+                        : data.myReady
+                          ? "Đã báo chủ trì. Đang chờ chuyển câu."
+                          : "Đọc lời giải theo nhịp của bạn, rồi báo chủ trì khi sẵn sàng."}
                     </p>
                   </div>
                 )}

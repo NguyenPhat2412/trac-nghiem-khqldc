@@ -122,9 +122,11 @@ public class Api {
     return roomAnswers.submit(actor, code, in.questionId(), in.answer());
   }
 
+  record CreateRoom(String quizId, boolean untimed, boolean advanceWhenReady) {}
+
   @PostMapping("/admin/rooms")
-  Object createRoom(@RequestBody Map<String, String> b) {
-    return r.create(Auth.actor(), b.get("quizId"));
+  Object createRoom(@RequestBody CreateRoom b) {
+    return r.create(Auth.actor(), b.quizId(), b.untimed(), b.advanceWhenReady());
   }
 
   @PostMapping("/rooms/{code}/ready")

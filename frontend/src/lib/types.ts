@@ -85,6 +85,7 @@ export type Room = {
   status: string;
   host: boolean;
   untimed?: boolean;
+  advanceWhenReady?: boolean;
   version: number;
   serverTime: number;
   deadline: number;

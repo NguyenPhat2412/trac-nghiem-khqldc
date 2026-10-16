@@ -46,11 +46,14 @@ public class RoomService {
   }
 
   @Transactional
-  public Map<String, Object> create(Actor a, String quizId) {
+  public Map<String, Object> create(
+      Actor a, String quizId, boolean untimed, boolean advanceWhenReady) {
     Errors.forbidden(a.staff());
     Quiz q = s.get("quizzes", quizId, Quiz.class, false);
     Errors.require(q.status.equals("PUBLISHED"), "Bộ quiz chưa xuất bản");
     Room r = new Room();
+    r.untimed = untimed;
+    r.advanceWhenReady = advanceWhenReady;
     do {
       r.id = String.valueOf(100000 + random.nextInt(900000));
     } while (Boolean.TRUE.equals(
@@ -158,17 +161,7 @@ public class RoomService {
             "Trạng thái phòng đã thay đổi");
         Errors.require(
             r.members.values().stream().anyMatch(m -> !m.kicked), "Cần ít nhất một người chơi");
-        if (r.current + 1 >= r.quiz.questions.size()) {
-          r.status = "FINISHED";
-          r.finishedAt = System.currentTimeMillis();
-        } else {
-          s.advanceRoom(r);
-          r.current++;
-          r.status = "QUESTION";
-          r.openedAt = System.currentTimeMillis();
-          r.deadline = r.untimed ? 0 : r.openedAt + r.quiz.questionSeconds * 1000L;
-          r.locked = true;
-        }
+        advance(r);
       }
       case "finish" -> {
         Errors.require(!r.status.equals("FINISHED"), "Phòng đã kết thúc");
@@ -191,6 +184,20 @@ public class RoomService {
 
   record AnswerCommand(Actor actor, String questionId, int choice, long receivedAt) {}
 
+  private void advance(Room r) {
+    if (r.current + 1 >= r.quiz.questions.size()) {
+      r.status = "FINISHED";
+      r.finishedAt = System.currentTimeMillis();
+    } else {
+      s.advanceRoom(r);
+      r.current++;
+      r.status = "QUESTION";
+      r.openedAt = System.currentTimeMillis();
+      r.deadline = r.untimed ? 0 : r.openedAt + r.quiz.questionSeconds * 1000L;
+      r.locked = true;
+    }
+  }
+
   @Transactional
   public Map<String, Object> ready(Actor a, String code, String questionId) {
     Room r = s.liveRoom(code, true);
@@ -203,9 +210,13 @@ public class RoomService {
         "Câu hỏi đã thay đổi hoặc chưa hiển thị lời giải");
     if (!questionId.equals(m.readQuestionId)) {
       m.readQuestionId = questionId;
+      if (r.advanceWhenReady
+          && r.members.values().stream()
+              .filter(member -> !member.kicked)
+              .allMatch(member -> questionId.equals(member.readQuestionId))) advance(r);
       save(r);
     }
-    // Readiness is a signal only. Students never gain host controls.
+    // The host opts in when creating the room; one learner cannot skip peers' review.
     return view(a, r);
   }
 
@@ -352,6 +363,7 @@ public class RoomService {
     v.put("serverTime", System.currentTimeMillis());
     v.put("deadline", r.deadline);
     v.put("untimed", r.untimed);
+    v.put("advanceWhenReady", r.advanceWhenReady);
     v.put("locked", r.locked);
     v.put("early", r.early);
     v.put("current", r.current);

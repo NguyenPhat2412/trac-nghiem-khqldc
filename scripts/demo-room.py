@@ -26,12 +26,11 @@ if args.untimed:
  payload['title']='Không giới hạn thời gian · '+str(len(qs))+' câu'
  payload['description']='Phòng thử: đọc kỹ câu hỏi, trả lời rồi bấm sau khi xem xong lời giải. Không có đồng hồ đếm ngược.'
 quiz=host.call('/admin/quizzes',payload)
-room=host.call('/admin/rooms',{'quizId':quiz['id']});code=room['id']
-if args.untimed:host.call('/admin/rooms/'+code+'/untimed',{})
+room=host.call('/admin/rooms',{'quizId':quiz['id'],'untimed':args.untimed,'advanceWhenReady':True});code=room['id']
 host.call('/admin/quizzes/'+quiz['id'],payload|{'status':'ARCHIVED'},'PUT')
-bots=[];bot_ids=set()
+bots=[]
 for name in ['An · minh họa','Bình · minh họa','Chi · minh họa']:
- bot=Client();identity=bot.call('/session',{'name':name});bot_ids.add(identity['id']);bot.call('/rooms/'+code+'/join',{});bots.append(bot)
+ bot=Client();bot.call('/session',{'name':name});bot.call('/rooms/'+code+'/join',{});bots.append(bot)
 Path(args.state).write_text(json.dumps({'room':code,'url':'http://localhost:3000/room/'+code}))
 print('Ready room '+code,flush=True)
 seen=set();end=time.monotonic()+14400
@@ -46,9 +45,10 @@ while time.monotonic()<end:
    if view['status']=='QUESTION':bot.call('/rooms/'+code+'/answer',{'questionId':view['question']['id'],'answer':(state['current']+i)%4})
   seen.add(state['current'])
  elif state['status']=='REVEAL':
-  humans=[m for m in state['members'] if m['id'] not in bot_ids]
-  if humans and all(m['id'] in state.get('readyPlayers',[]) for m in humans):
-   host.call('/admin/rooms/'+code+'/next',{});print('Advanced after learner clicked ready.',flush=True)
+  for bot in bots:
+   view=bot.call('/rooms/'+code)
+   if view['status']!='REVEAL' or view['current']!=state['current']:break
+   if not view.get('myReady'):bot.call('/rooms/'+code+'/ready',{'questionId':view['question']['id']})
  elif state['status']=='FINISHED':break
  time.sleep(1)
 host.call('/auth/logout',{})

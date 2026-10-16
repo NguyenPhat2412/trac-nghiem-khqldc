@@ -144,3 +144,7 @@ Từ thư mục gốc, `python3 scripts/room-storage-regression.py` kiểm tra l
 Nếu máy chủ đóng WebSocket vì phiên/quyền không hợp lệ (mã 1008), trang dừng nối lại và dừng tải nền, hiển thị hướng dẫn tải lại. Ngắt mạng thông thường hoặc lỗi máy chủ tạm thời (1011) vẫn được nối lại. Backend đóng và loại bỏ frame bị từ chối, ghi audit đã loại bỏ token thay vì để framework ghi toàn bộ CONNECT. Trong frontend, `node tests/policy-denial-check.mjs` kiểm tra đóng kết nối, giải phóng chỗ, chặn đăng ký/gửi giả và không ghi CSRF vào log; chỉ dùng test backend.
 
 Kết quả xử lý độ trễ cao nhất và cơ chế gom đáp án bền vững: [docs/PERFORMANCE_TAIL.md](docs/PERFORMANCE_TAIL.md). Kiểm tra lỗi commit thực trên database thử: `python3 scripts/room-batch-regression.py` (không chạy đồng thời với bài tải).
+
+### Tạo phòng tự đọc và tự chuyển câu
+
+Vào **Quản trị → Phòng chơi**, chọn bộ quiz rồi bật **Không giới hạn thời gian trả lời** và **Người chơi bấm chuyển câu sau lời giải**. Bấm **Tạo phòng mới**, chia sẻ mã và bấm **Bắt đầu chơi** khi người chơi đã vào. Cả phòng chuyển câu khi mọi người bấm “Đã đọc xong”; một người chơi thì bấm là chuyển. Chủ trì có thể đóng trang sau khi bắt đầu; trạng thái được máy chủ lưu. Có thể bật riêng từng tùy chọn; bỏ chọn cả hai để dùng thời gian của quiz và chủ trì chuyển câu như trước.

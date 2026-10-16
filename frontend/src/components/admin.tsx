@@ -152,6 +152,8 @@ function RoomsAdmin() {
   const rooms = useLoad<RoomSummary[]>("/admin/rooms", []);
   const quizzes = useLoad<Quiz[]>("/admin/quizzes", []);
   const [quiz, setQuiz] = useState("");
+  const [untimed, setUntimed] = useState(false);
+  const [advanceWhenReady, setAdvanceWhenReady] = useState(false);
   const [busy, setBusy] = useState(false);
   const router = useRouter();
   return (
@@ -162,12 +164,17 @@ function RoomsAdmin() {
       />
       <ErrorNote error={rooms.error || quizzes.error} />
       <form
-        className="filter-bar"
+        className="room-create-form"
         onSubmit={async (e) => {
           e.preventDefault();
+          if (busy) return;
           setBusy(true);
           try {
-            const r = await api<Room>("/admin/rooms", "POST", { quizId: quiz });
+            const r = await api<Room>("/admin/rooms", "POST", {
+              quizId: quiz,
+              untimed,
+              advanceWhenReady,
+            });
             router.push("/room/" + r.id);
           } catch (e) {
             rooms.setError((e as Error).message);
@@ -193,6 +200,41 @@ function RoomsAdmin() {
               ))}
           </select>
         </label>
+        <fieldset className="room-create-options" disabled={busy}>
+          <legend>Cách chơi</legend>
+          <div>
+            <label className="checkbox">
+              <input
+                type="checkbox"
+                checked={untimed}
+                onChange={(e) => setUntimed(e.target.checked)}
+                aria-describedby="untimed-help"
+              />
+              Không giới hạn thời gian trả lời
+            </label>
+            <p id="untimed-help" className="muted">
+              {untimed
+                ? "Người chơi đọc kỹ và trả lời theo nhịp của mình. Không có đồng hồ đếm ngược."
+                : "Mỗi câu dùng thời gian đã cấu hình trong bộ quiz."}
+            </p>
+          </div>
+          <div>
+            <label className="checkbox">
+              <input
+                type="checkbox"
+                checked={advanceWhenReady}
+                onChange={(e) => setAdvanceWhenReady(e.target.checked)}
+                aria-describedby="ready-help"
+              />
+              Người chơi bấm chuyển câu sau lời giải
+            </label>
+            <p id="ready-help" className="muted">
+              {advanceWhenReady
+                ? "Cả phòng chuyển khi tất cả người chơi bấm “Đã đọc xong”. Chơi một mình thì bấm là chuyển. Chủ trì vẫn có thể chuyển thủ công."
+                : "Chủ trì chuyển câu; nút “Đã đọc xong” của người chơi chỉ báo sẵn sàng."}
+            </p>
+          </div>
+        </fieldset>
         <button className="button" disabled={busy || !quiz}>
           <Plus size={18} />
           Tạo phòng mới
