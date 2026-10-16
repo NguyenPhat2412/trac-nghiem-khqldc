@@ -84,6 +84,7 @@ export type Room = {
   title: string;
   status: string;
   host: boolean;
+  untimed?: boolean;
   version: number;
   serverTime: number;
   deadline: number;

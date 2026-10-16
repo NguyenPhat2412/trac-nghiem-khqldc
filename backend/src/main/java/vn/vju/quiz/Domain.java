@@ -75,7 +75,7 @@ public final class Domain {
   public static class Room {
     public String id, hostId, title, status = "LOBBY";
     public Quiz quiz;
-    public boolean locked, early, shuffleAnswers, compact;
+    public boolean locked, early, shuffleAnswers, compact, untimed;
     public int current = -1;
     public long version = 0, openedAt, deadline, createdAt = System.currentTimeMillis(), finishedAt;
     public Map<String, Member> members = new LinkedHashMap<>();

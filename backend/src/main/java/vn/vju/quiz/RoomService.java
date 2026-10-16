@@ -101,7 +101,7 @@ public class RoomService {
   public Map<String, Object> get(Actor a, String code) {
     Room r = s.liveRoom(code, false);
     Errors.forbidden(access(a, r));
-    if (r.status.equals("QUESTION") && System.currentTimeMillis() >= r.deadline) {
+    if (r.status.equals("QUESTION") && !r.untimed && System.currentTimeMillis() >= r.deadline) {
       Room expired = s.tryExpiredRoom(code, System.currentTimeMillis());
       if (expired != null) {
         r = expired;
@@ -117,7 +117,7 @@ public class RoomService {
   }
 
   void expire(Room r) {
-    if (r.status.equals("QUESTION") && System.currentTimeMillis() >= r.deadline) {
+    if (r.status.equals("QUESTION") && !r.untimed && System.currentTimeMillis() >= r.deadline) {
       r.status = "REVEAL";
       save(r);
     }
@@ -135,6 +135,10 @@ public class RoomService {
     host(a, r);
     expire(r);
     switch (action) {
+      case "untimed" -> {
+        Errors.require(r.status.equals("LOBBY"), "Chỉ đổi thời gian trước khi bắt đầu phòng");
+        r.untimed = true;
+      }
       case "lock" -> {
         Errors.require(r.status.equals("LOBBY"), "Chỉ khóa phòng chờ");
         r.locked = !r.locked;
@@ -162,12 +166,19 @@ public class RoomService {
           r.current++;
           r.status = "QUESTION";
           r.openedAt = System.currentTimeMillis();
-          r.deadline = r.openedAt + r.quiz.questionSeconds * 1000L;
+          r.deadline = r.untimed ? 0 : r.openedAt + r.quiz.questionSeconds * 1000L;
           r.locked = true;
         }
       }
       case "finish" -> {
         Errors.require(!r.status.equals("FINISHED"), "Phòng đã kết thúc");
+        if (r.untimed && r.status.equals("QUESTION") && r.current >= 0) {
+          String questionId = r.quiz.questions.get(r.current).id;
+          long elapsed = Math.max(0, System.currentTimeMillis() - r.openedAt);
+          r.members.values().stream()
+              .filter(m -> !m.kicked)
+              .forEach(m -> m.times.putIfAbsent(questionId, elapsed));
+        }
         r.early = !r.status.equals("REVEAL") || r.current + 1 < r.quiz.questions.size();
         r.status = "FINISHED";
         r.finishedAt = System.currentTimeMillis();
@@ -214,7 +225,7 @@ public class RoomService {
         Errors.forbidden(m != null && !m.kicked);
         Errors.require(
             r.status.equals("QUESTION")
-                && System.currentTimeMillis() < r.deadline
+                && (r.untimed || System.currentTimeMillis() < r.deadline)
                 && command.receivedAt() >= r.openedAt,
             "Câu hỏi đã đóng");
         Question q = r.quiz.questions.get(r.current);
@@ -285,7 +296,8 @@ public class RoomService {
     Member m = r.members.get(a.id());
     Errors.forbidden(m != null && !m.kicked);
     Errors.require(
-        r.status.equals("QUESTION") && System.currentTimeMillis() < r.deadline, "Câu hỏi đã đóng");
+        r.status.equals("QUESTION") && (r.untimed || System.currentTimeMillis() < r.deadline),
+        "Câu hỏi đã đóng");
     Integrity.record(m.integrityEvents, event);
     save(r);
   }
@@ -339,6 +351,7 @@ public class RoomService {
     v.put("version", r.version);
     v.put("serverTime", System.currentTimeMillis());
     v.put("deadline", r.deadline);
+    v.put("untimed", r.untimed);
     v.put("locked", r.locked);
     v.put("early", r.early);
     v.put("current", r.current);

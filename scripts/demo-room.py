@@ -7,6 +7,7 @@ parser=argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--questions',type=int,default=6,choices=range(1,21))
 parser.add_argument('--seconds',type=int,default=180,choices=range(5,301))
 parser.add_argument('--state',default='work/manual-demo.json')
+parser.add_argument('--untimed',action='store_true',help='No answer deadline; explanations still wait for the learner.')
 args=parser.parse_args()
 class Client:
  def __init__(self):
@@ -21,8 +22,12 @@ host=Client();host.call('/auth/login',{'username':env['ADMIN_USERNAME'],'passwor
 catalog=host.call('/catalog');chapter=next(c for c in catalog['chapters'] if 'Chương 1.' in c['title'])
 qs=[q for q in host.call('/admin/questions') if q['chapterId']==chapter['id'] and q['status']=='PUBLISHED'][:args.questions]
 payload={'title':f'Đọc xong rồi chuyển · {len(qs)} câu','description':f'Phòng trải nghiệm: {len(qs)} câu, {args.seconds} giây mỗi câu; ba người chơi minh họa. Đọc xong rồi bấm để chuyển.','status':'PUBLISHED','questionIds':[q['id'] for q in qs],'timeLimitSeconds':1200,'questionSeconds':args.seconds,'shuffle':True}
+if args.untimed:
+ payload['title']='Không giới hạn thời gian · '+str(len(qs))+' câu'
+ payload['description']='Phòng thử: đọc kỹ câu hỏi, trả lời rồi bấm sau khi xem xong lời giải. Không có đồng hồ đếm ngược.'
 quiz=host.call('/admin/quizzes',payload)
 room=host.call('/admin/rooms',{'quizId':quiz['id']});code=room['id']
+if args.untimed:host.call('/admin/rooms/'+code+'/untimed',{})
 host.call('/admin/quizzes/'+quiz['id'],payload|{'status':'ARCHIVED'},'PUT')
 bots=[];bot_ids=set()
 for name in ['An · minh họa','Bình · minh họa','Chi · minh họa']:

@@ -103,8 +103,9 @@ final class RoomPersistence {
     // The winner commits the transition; other readers see committed state and its event.
     var rows =
         db.queryForList(
-            "select data::text from rooms where id=? and data->>'status'='QUESTION'"
-                + " and (data->>'deadline')::bigint<=? for update skip locked",
+            "select data::text from rooms where id=? and data->>'status'='QUESTION' and"
+                + " (data->>'deadline')::bigint>0 and (data->>'deadline')::bigint<=? for update"
+                + " skip locked",
             String.class,
             id,
             now);

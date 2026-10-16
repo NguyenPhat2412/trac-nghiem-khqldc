@@ -467,7 +467,9 @@ export function RoomPage({ code }: { code: string }) {
             <span>
               Câu {data.current + 1} / {data.count}
             </span>
-            {data.status === "QUESTION" ? (
+            {data.status === "QUESTION" && data.untimed ? (
+              <span className="badge">Không giới hạn thời gian</span>
+            ) : data.status === "QUESTION" ? (
               <Timer
                 deadline={data.deadline}
                 serverTime={data.serverTime}
