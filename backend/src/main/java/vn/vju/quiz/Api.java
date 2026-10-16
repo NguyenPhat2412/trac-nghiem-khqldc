@@ -127,6 +127,13 @@ public class Api {
     return r.create(Auth.actor(), b.get("quizId"));
   }
 
+  @PostMapping("/rooms/{code}/ready")
+  Object roomReady(@PathVariable String code, @RequestBody Map<String, String> body) {
+    var actor = Auth.actor();
+    auth.limit("room-ready:" + actor.id(), 120);
+    return r.ready(actor, code, body.get("questionId"));
+  }
+
   @PostMapping("/admin/rooms/{code}/{action}")
   Object roomAction(
       @PathVariable String code,

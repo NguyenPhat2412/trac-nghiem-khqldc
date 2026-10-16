@@ -180,6 +180,24 @@ public class RoomService {
 
   record AnswerCommand(Actor actor, String questionId, int choice, long receivedAt) {}
 
+  @Transactional
+  public Map<String, Object> ready(Actor a, String code, String questionId) {
+    Room r = s.liveRoom(code, true);
+    Member m = r.members.get(a.id());
+    Errors.forbidden(m != null && !m.kicked);
+    Errors.require(
+        r.status.equals("REVEAL")
+            && r.current >= 0
+            && r.quiz.questions.get(r.current).id.equals(questionId),
+        "Câu hỏi đã thay đổi hoặc chưa hiển thị lời giải");
+    if (!questionId.equals(m.readQuestionId)) {
+      m.readQuestionId = questionId;
+      save(r);
+    }
+    // Readiness is a signal only. Students never gain host controls.
+    return view(a, r);
+  }
+
   record AnswerOutcome(Map<String, Object> value, RuntimeException failure) {}
 
   /** One durable transaction per short burst; no result escapes until the proxy commits. */
@@ -353,6 +371,15 @@ public class RoomService {
       Question q = r.quiz.questions.get(r.current);
       boolean reveal = !r.status.equals("QUESTION");
       Member mine = r.members.get(a.id());
+      v.put(
+          "myReady", r.status.equals("REVEAL") && mine != null && q.id.equals(mine.readQuestionId));
+      if (isHost && r.status.equals("REVEAL"))
+        v.put(
+            "readyPlayers",
+            r.members.values().stream()
+                .filter(m -> !m.kicked && q.id.equals(m.readQuestionId))
+                .map(m -> m.id)
+                .toList());
       Member displayed = isHost ? null : mine;
       var order = order(displayed, q);
       v.put("question", playerQuestion(q, displayed, reveal));

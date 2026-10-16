@@ -62,6 +62,7 @@ public final class Domain {
   public static class Member {
     public String id, name;
     public String optionSeed = "";
+    public String readQuestionId = "";
     public boolean kicked;
     public int completedCorrect;
     public long completedDurationMs;

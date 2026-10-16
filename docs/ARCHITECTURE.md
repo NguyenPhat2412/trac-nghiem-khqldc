@@ -84,3 +84,9 @@ Hàng đợi giới hạn 1.024 người đang chờ trên toàn backend, 128 ph
 Không đổi schema V4, không tắt `fsync`/`synchronous_commit`; bản nâng cấp này có thể quay lại backend V4 trước đó mà không đổi định dạng dữ liệu. Vẫn cần backup trước triển khai. Mô hình triển khai được kiểm thử là một backend; khóa PostgreSQL bảo vệ dữ liệu nhưng chưa đo SLO cho nhiều backend hoặc nhiều phòng đầy đồng thời.
 
 Đọc phòng khi hết giờ dùng `FOR UPDATE SKIP LOCKED` kèm điều kiện QUESTION/deadline. Chỉ yêu cầu lấy được khóa mới chuyển trạng thái; các yêu cầu khác đọc lại trạng thái đã commit và nhận sự kiện sau commit. Không trả khóa đáp án khi giao dịch đóng câu chưa hoàn tất. Việc đọc không còn xếp hàng để mỗi người lần lượt khóa cùng một hàng chỉ để phát hiện người trước đã đóng câu. Có chẩn đoán tùy chọn `APP_PROFILE_ROOM_READS=true` ghi thời lượng đọc chậm từ 100 ms, không ghi tên, cookie, token hoặc nội dung đáp án; mặc định tắt.
+
+## Xác nhận đọc lời giải
+
+`POST /rooms/{code}/ready` chỉ ghi tín hiệu của chính thành viên đang hoạt động, khi phòng ở REVEAL và questionId khớp câu hiện tại. Gửi lặp không tăng phiên bản hoặc thay đổi điểm/thời gian; yêu cầu cũ không đánh dấu câu mới. `myReady` thuộc người đang xem; danh sách `readyPlayers` chỉ gửi cho chủ trì. Endpoint này không chuyển câu và không cấp quyền chủ trì. Phòng bình thường tiếp tục dùng thao tác next của chủ trì.
+
+Phòng trải nghiệm cục bộ từ `python3 scripts/demo-room.py` có ba người chơi minh họa và người chủ trì tự động chờ tất cả người thật bấm “Đã đọc xong”. Không còn tự chuyển sau 12 giây; câu cuối cũng chờ xác nhận trước tổng kết. Giữ tiến trình chạy trong khi trải nghiệm (tối đa 4 giờ); script không tự chọn đáp án của người thật. Bộ quiz thử được lưu trữ ngay sau tạo phòng để không thêm vào thư viện công khai.

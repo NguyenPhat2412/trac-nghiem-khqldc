@@ -95,6 +95,8 @@ export type Room = {
   ranking: Rank[];
   question?: Question;
   myAnswer: number;
+  myReady?: boolean;
+  readyPlayers?: string[];
   answered: number;
   distribution?: number[];
   details?: Detail[];

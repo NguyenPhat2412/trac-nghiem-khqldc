@@ -187,6 +187,32 @@ export function RoomPage({ code }: { code: string }) {
       setBusy(false);
     }
   }
+  async function readyForNext() {
+    if (
+      sending.current ||
+      connectionDenied.current ||
+      !data?.question ||
+      data.host ||
+      data.status !== "REVEAL" ||
+      data.myReady
+    )
+      return;
+    sending.current = true;
+    setBusy(true);
+    setError("");
+    try {
+      apply(
+        await api<Room>(`/rooms/${code}/ready`, "POST", {
+          questionId: data.question.id,
+        }),
+      );
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      sending.current = false;
+      setBusy(false);
+    }
+  }
   if (ready && !actor)
     return (
       <>
@@ -515,7 +541,7 @@ export function RoomPage({ code }: { code: string }) {
                   Hết thời gian · Đang nhận kết quả từ máy chủ…
                 </p>
               )}
-            {busy && !data.host && (
+            {busy && !data.host && data.status === "QUESTION" && (
               <p className="saved" role="status">
                 Đang gửi đáp án…
               </p>
@@ -553,6 +579,35 @@ export function RoomPage({ code }: { code: string }) {
                   <strong>Giải thích: </strong>
                   {data.question?.explanation}
                 </p>
+                {!data.host && (
+                  <div className="actions" aria-live="polite">
+                    <button
+                      className="button"
+                      disabled={
+                        busy || connectionBlocked || !online || data.myReady
+                      }
+                      onClick={() => void readyForNext()}
+                    >
+                      {data.myReady
+                        ? "Đã sẵn sàng"
+                        : busy
+                          ? "Đang gửi…"
+                          : data.current + 1 === data.count
+                            ? "Đã đọc xong · Xem tổng kết"
+                            : "Đã đọc xong · Câu tiếp theo"}
+                      {data.myReady ? (
+                        <Check size={18} />
+                      ) : (
+                        <ArrowRight size={18} />
+                      )}
+                    </button>
+                    <p className="muted">
+                      {data.myReady
+                        ? "Đã báo chủ trì. Đang chờ chuyển câu."
+                        : "Đọc lời giải theo nhịp của bạn, rồi báo chủ trì khi sẵn sàng."}
+                    </p>
+                  </div>
+                )}
                 <div className="distribution">
                   {data.distribution?.map((n, i) => (
                     <div key={i}>
@@ -579,6 +634,12 @@ export function RoomPage({ code }: { code: string }) {
           )}
           {data.host ? (
             <div className="host-controls">
+              {data.status === "REVEAL" && (
+                <p role="status">
+                  {data.readyPlayers?.length || 0}/{data.members.length} người
+                  đã đọc xong
+                </p>
+              )}
               <button
                 className="button danger-outline"
                 disabled={busy || connectionBlocked}
@@ -603,7 +664,9 @@ export function RoomPage({ code }: { code: string }) {
             data.status === "REVEAL" && (
               <p className="waiting">
                 <span className="pulse" />
-                Chờ chủ trì chuyển câu tiếp theo.
+                {data.myReady
+                  ? "Đã sẵn sàng cho câu tiếp theo."
+                  : "Hãy bấm “Đã đọc xong” sau khi xem lời giải."}
               </p>
             )
           )}
