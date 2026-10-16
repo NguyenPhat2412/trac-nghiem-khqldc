@@ -152,6 +152,10 @@ function RoomsAdmin() {
   const rooms = useLoad<RoomSummary[]>("/admin/rooms", []);
   const quizzes = useLoad<Quiz[]>("/admin/quizzes", []);
   const [quiz, setQuiz] = useState("");
+  const [questionCount, setQuestionCount] = useState(0);
+  const selectedQuiz = quizzes.data.find((q) => q.id === quiz);
+  const availableCount =
+    selectedQuiz?.questions?.length ?? selectedQuiz?.count ?? 0;
   const [untimed, setUntimed] = useState(false);
   const [advanceWhenReady, setAdvanceWhenReady] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -174,6 +178,7 @@ function RoomsAdmin() {
               quizId: quiz,
               untimed,
               advanceWhenReady,
+              questionCount: questionCount || null,
             });
             router.push("/room/" + r.id);
           } catch (e) {
@@ -187,8 +192,12 @@ function RoomsAdmin() {
           Bộ quiz
           <select
             required
+            disabled={busy}
             value={quiz}
-            onChange={(e) => setQuiz(e.target.value)}
+            onChange={(e) => {
+              setQuiz(e.target.value);
+              setQuestionCount(0);
+            }}
           >
             <option value="">Chọn bộ quiz đã xuất bản</option>
             {quizzes.data
@@ -200,6 +209,36 @@ function RoomsAdmin() {
               ))}
           </select>
         </label>
+        <div>
+          <label>
+            Số lượng câu hỏi
+            <select
+              value={questionCount}
+              disabled={busy || !quiz}
+              onChange={(e) => setQuestionCount(Number(e.target.value))}
+              aria-describedby="room-question-count-help"
+            >
+              <option value={0}>
+                Toàn bộ{quiz ? ` · ${availableCount} câu` : " bộ quiz"}
+              </option>
+              {[10, 20, 50].map((count) => (
+                <option
+                  key={count}
+                  value={count}
+                  disabled={count > availableCount}
+                >
+                  {count} câu ngẫu nhiên
+                  {quiz && count > availableCount ? " · Không đủ câu" : ""}
+                </option>
+              ))}
+            </select>
+          </label>
+          <p id="room-question-count-help" className="muted">
+            {questionCount
+              ? `Lấy ngẫu nhiên ${questionCount} câu một lần khi tạo phòng, không lặp câu. Mọi người cùng làm bộ câu hỏi này.`
+              : "Dùng toàn bộ câu hỏi trong bộ quiz. Chọn số lượng để chơi một lượt ngắn hơn."}
+          </p>
+        </div>
         <fieldset className="room-create-options" disabled={busy}>
           <legend>Cách chơi</legend>
           <div>

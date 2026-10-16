@@ -148,3 +148,5 @@ Kết quả xử lý độ trễ cao nhất và cơ chế gom đáp án bền v�
 ### Tạo phòng tự đọc và tự chuyển câu
 
 Vào **Quản trị → Phòng chơi**, chọn bộ quiz rồi bật **Không giới hạn thời gian trả lời** và **Người chơi bấm chuyển câu sau lời giải**. Bấm **Tạo phòng mới**, chia sẻ mã và bấm **Bắt đầu chơi** khi người chơi đã vào. Cả phòng chuyển câu khi mọi người bấm “Đã đọc xong”; một người chơi thì bấm là chuyển. Chủ trì có thể đóng trang sau khi bắt đầu; trạng thái được máy chủ lưu. Có thể bật riêng từng tùy chọn; bỏ chọn cả hai để dùng thời gian của quiz và chủ trì chuyển câu như trước.
+
+Trong biểu mẫu tạo phòng, **Số lượng câu hỏi** cho phép chọn **10, 20, 50 câu ngẫu nhiên** hoặc **Toàn bộ** (mặc định). Các mức vượt số câu của bộ quiz bị vô hiệu hóa. Hệ thống lấy ngẫu nhiên không lặp một lần khi tạo phòng; mọi người trong phòng dùng cùng danh sách và kết quả tính trên số câu đã chọn. Tải lại hoặc kết nối lại không bốc lại câu; bộ quiz gốc vẫn giữ nguyên.

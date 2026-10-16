@@ -250,7 +250,7 @@ export function RoomPage({ code }: { code: string }) {
             ? data.early
               ? "Phòng đã kết thúc sớm · Điểm tính trên các câu đã mở"
               : "Tổng kết phòng chơi"
-            : `Phòng ${code} · ${data.members.length} người chơi`
+            : `Phòng ${code} · ${data.count} câu · ${data.members.length} người chơi`
         }
       >
         <span className="connection">

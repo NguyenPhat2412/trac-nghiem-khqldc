@@ -47,10 +47,15 @@ public class RoomService {
 
   @Transactional
   public Map<String, Object> create(
-      Actor a, String quizId, boolean untimed, boolean advanceWhenReady) {
+      Actor a, String quizId, boolean untimed, boolean advanceWhenReady, Integer questionCount) {
     Errors.forbidden(a.staff());
     Quiz q = s.get("quizzes", quizId, Quiz.class, false);
     Errors.require(q.status.equals("PUBLISHED"), "Bộ quiz chưa xuất bản");
+    if (questionCount != null) {
+      Errors.require(
+          Set.of(10, 20, 50).contains(questionCount), "Chọn 10, 20, 50 câu hoặc toàn bộ bộ quiz");
+      Errors.require(questionCount <= q.questions.size(), "Bộ quiz không đủ số câu đã chọn");
+    }
     Room r = new Room();
     r.untimed = untimed;
     r.advanceWhenReady = advanceWhenReady;
@@ -61,9 +66,11 @@ public class RoomService {
     r.hostId = a.id();
     r.quiz = q;
     r.shuffleAnswers = q.shuffle;
-    if (q.shuffle) {
+    if (q.shuffle || questionCount != null) {
       r.quiz.questions = new ArrayList<>(q.questions);
       Collections.shuffle(r.quiz.questions, random);
+      if (questionCount != null)
+        r.quiz.questions = new ArrayList<>(r.quiz.questions.subList(0, questionCount));
     }
     r.title = q.title;
     s.db.update("insert into rooms(id,data) values (?,?::jsonb)", r.id, s.write(r));
