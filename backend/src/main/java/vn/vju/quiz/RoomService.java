@@ -107,6 +107,82 @@ public class RoomService {
     return view(a, r);
   }
 
+  private boolean replayEligible(Actor a, Room r) {
+    Member member = r.members.get(a.id());
+    return !a.staff()
+        && member != null
+        && !member.kicked
+        && r.status.equals("FINISHED")
+        && !r.early
+        && r.untimed
+        && r.advanceWhenReady
+        && r.quiz.questions.size() == 10;
+  }
+
+  private List<Question> replayPool(Room previous, Quiz source) {
+    Set<String> excluded = new HashSet<>();
+    previous.quiz.questions.forEach(q -> excluded.add(q.id));
+    return new ArrayList<>(
+        source.questions.stream().filter(q -> !excluded.contains(q.id)).toList());
+  }
+
+  @Transactional
+  public Map<String, String> replay(Actor a, String code, String sourceIp) {
+    Room previous = s.liveRoom(code, true);
+    Member member = previous.members.get(a.id());
+    Errors.forbidden(!a.staff() && member != null && !member.kicked);
+    Errors.require(
+        replayEligible(a, previous),
+        "Hoàn thành phòng 10 câu tự chuyển, không giới hạn thời gian trước khi luyện tiếp.");
+    String existing = previous.replays.get(a.id());
+    if (existing != null) return Map.of("id", existing);
+    Quiz source = s.get("quizzes", previous.quiz.id, Quiz.class, false);
+    Errors.require(source.status.equals("PUBLISHED"), "Bộ quiz không còn mở để luyện tiếp.");
+    List<Question> pool = replayPool(previous, source);
+    Errors.require(pool.size() >= 10, "Bộ quiz không còn đủ 10 câu khác với lượt vừa làm.");
+    s.db.queryForList(
+        "select pg_advisory_xact_lock(hashtextextended(?, 0))", "room-replay:" + a.id());
+    Long active =
+        s.db.queryForObject(
+            "select count(*) from rooms where data->>'personalReplay'='true' and"
+                + " data->>'status'<>'FINISHED' and jsonb_exists(data->'members',?)",
+            Long.class,
+            a.id());
+    Errors.require(
+        active == null || active < 5,
+        "Bạn đang có 5 lượt luyện chưa hoàn thành. Hãy hoàn thành lượt đang mở trước.");
+    s.allocationBudget("replay-ip-minute:" + sourceIp, 200, 60000);
+    s.allocationBudget("replay-global-minute", 600, 60000);
+    s.allocationBudget("replay-ip-day:" + sourceIp, 5000, 86400000);
+    s.allocationBudget("replay-global-day", 20000, 86400000);
+    Collections.shuffle(pool, random);
+    source.questions = new ArrayList<>(pool.subList(0, 10));
+    Room next = new Room();
+    do {
+      next.id = String.valueOf(100000 + random.nextInt(900000));
+    } while (Boolean.TRUE.equals(
+        s.db.queryForObject(
+            "select exists(select 1 from rooms where id=?)", Boolean.class, next.id)));
+    next.hostId = previous.hostId;
+    next.title = source.title;
+    next.quiz = source;
+    next.shuffleAnswers = previous.shuffleAnswers;
+    next.personalReplay = true;
+    next.untimed = previous.untimed;
+    next.advanceWhenReady = previous.advanceWhenReady;
+    Member learner = new Member();
+    learner.id = a.id();
+    learner.name = a.name();
+    if (next.shuffleAnswers) learner.optionSeed = UUID.randomUUID().toString();
+    next.members.put(a.id(), learner);
+    advance(next);
+    s.db.update("insert into rooms(id,data) values (?,?::jsonb)", next.id, s.write(next));
+    save(next);
+    previous.replays.put(a.id(), next.id);
+    save(previous);
+    return Map.of("id", next.id);
+  }
+
   @Transactional
   public Map<String, Object> get(Actor a, String code) {
     Room r = s.liveRoom(code, false);
@@ -371,6 +447,23 @@ public class RoomService {
     v.put("deadline", r.deadline);
     v.put("untimed", r.untimed);
     v.put("advanceWhenReady", r.advanceWhenReady);
+    v.put("personalReplay", r.personalReplay);
+    if (replayEligible(a, r)) {
+      String existing = r.replays.get(a.id());
+      if (existing != null) {
+        v.put("replayAvailable", true);
+        v.put("replayRoomId", existing);
+      } else {
+        Quiz source = s.get("quizzes", r.quiz.id, Quiz.class, false);
+        boolean available =
+            source != null
+                && source.status.equals("PUBLISHED")
+                && replayPool(r, source).size() >= 10;
+        v.put("replayAvailable", available);
+        if (!available)
+          v.put("replayReason", "Bộ quiz chưa có đủ 10 câu khác đang mở để luyện tiếp.");
+      }
+    }
     v.put("locked", r.locked);
     v.put("early", r.early);
     v.put("current", r.current);

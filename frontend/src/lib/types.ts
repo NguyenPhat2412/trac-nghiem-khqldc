@@ -86,6 +86,10 @@ export type Room = {
   host: boolean;
   untimed?: boolean;
   advanceWhenReady?: boolean;
+  personalReplay?: boolean;
+  replayAvailable?: boolean;
+  replayRoomId?: string;
+  replayReason?: string;
   version: number;
   serverTime: number;
   deadline: number;

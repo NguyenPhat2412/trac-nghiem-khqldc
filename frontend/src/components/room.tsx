@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Client } from "@stomp/stompjs";
 import { QRCodeSVG } from "qrcode.react";
 import {
@@ -36,6 +37,7 @@ import {
   useSession,
 } from "./shared";
 export function RoomPage({ code }: { code: string }) {
+  const router = useRouter();
   const { online, play } = useGame();
   const { actor, ready } = useSession();
   const [data, setData] = useState<Room | null>(null);
@@ -424,11 +426,47 @@ export function RoomPage({ code }: { code: string }) {
             <span className="finish-medallion">
               <Trophy size={32} />
             </span>
-            <p>Cùng nhìn lại thành quả của cả lớp</p>
+            <p>
+              {data.personalReplay
+                ? "Nhìn lại lượt luyện của bạn"
+                : "Cùng nhìn lại thành quả của cả lớp"}
+            </p>
           </div>
           <Ranking rows={data.ranking} mine={actor?.id} podium />
           <div className="actions">
-            <Link className="button" href="/">
+            {data.replayAvailable && (
+              <button
+                className="button"
+                disabled={busy || !online}
+                onClick={async () => {
+                  if (sending.current) return;
+                  sending.current = true;
+                  setBusy(true);
+                  setError("");
+                  try {
+                    const next = await api<{ id: string }>(
+                      `/rooms/${code}/replay`,
+                      "POST",
+                      {},
+                    );
+                    router.push(`/room/${next.id}`);
+                  } catch (e) {
+                    setError((e as Error).message);
+                  } finally {
+                    sending.current = false;
+                    setBusy(false);
+                  }
+                }}
+              >
+                {busy
+                  ? "Đang mở lượt luyện…"
+                  : data.replayRoomId
+                    ? "Mở lại lượt luyện tiếp"
+                    : "Chơi lại 10 câu ngẫu nhiên khác"}
+                <ArrowRight size={18} />
+              </button>
+            )}
+            <Link className="button outline" href="/">
               Tiếp tục luyện tập <ArrowRight size={18} />
             </Link>
             {data.host && (
@@ -440,6 +478,13 @@ export function RoomPage({ code }: { code: string }) {
               </Link>
             )}
           </div>
+          {data.replayAvailable && (
+            <p className="muted">
+              Lượt luyện riêng bắt đầu ngay, không trùng 10 câu vừa làm. Giữ
+              không giới hạn thời gian và tự bấm chuyển câu sau lời giải.
+            </p>
+          )}
+          {data.replayReason && <p className="muted">{data.replayReason}</p>}
           {data.host && !!data.details?.length && (
             <label>
               Xem bài làm của sinh viên

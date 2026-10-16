@@ -137,6 +137,19 @@ public class Api {
     return r.ready(actor, code, body.get("questionId"));
   }
 
+  @PostMapping("/rooms/{code}/replay")
+  Object replayRoom(@PathVariable String code, jakarta.servlet.http.HttpServletRequest request) {
+    var actor = Auth.actor();
+    auth.limit("room-replay:" + actor.id(), 20);
+    String source =
+        java.util
+            .UUID
+            .nameUUIDFromBytes(
+                request.getRemoteAddr().getBytes(java.nio.charset.StandardCharsets.UTF_8))
+            .toString();
+    return r.replay(actor, code, source);
+  }
+
   @PostMapping("/admin/rooms/{code}/{action}")
   Object roomAction(
       @PathVariable String code,
