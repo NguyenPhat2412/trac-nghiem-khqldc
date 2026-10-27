@@ -152,3 +152,5 @@ Vào **Quản trị → Phòng chơi**, chọn bộ quiz rồi bật **Không gi
 Trong biểu mẫu tạo phòng, **Số lượng câu hỏi** cho phép chọn **10, 20, 50 câu ngẫu nhiên** hoặc **Toàn bộ** (mặc định). Các mức vượt số câu của bộ quiz bị vô hiệu hóa. Hệ thống lấy ngẫu nhiên không lặp một lần khi tạo phòng; mọi người trong phòng dùng cùng danh sách và kết quả tính trên số câu đã chọn. Tải lại hoặc kết nối lại không bốc lại câu; bộ quiz gốc vẫn giữ nguyên.
 
 Sau khi hoàn thành phòng **10 câu**, bật cả **Không giới hạn thời gian** và **Người chơi bấm chuyển câu**, sinh viên có nút **Chơi lại 10 câu ngẫu nhiên khác**. Nút mở ngay một lượt riêng, giữ tên và hai chế độ; không cần chủ trì hay người chơi minh họa. Mười câu mới không trùng lượt vừa hoàn thành (có thể gặp lại câu từ các lượt xa hơn). Kết quả cũ giữ nguyên. Nếu bộ quiz không còn mở hoặc không còn đủ 10 câu khác, giao diện giải thích thay vì lấy trùng câu. Bấm lặp hoặc mở lại kết quả cũ sẽ trở về cùng lượt luyện đã tạo.
+
+# trac-nghiem-khqldc
