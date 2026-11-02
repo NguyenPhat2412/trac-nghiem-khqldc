@@ -19,6 +19,7 @@ import {
 import { api } from "@/lib/api";
 import { Room } from "@/lib/types";
 import { FairPlay } from "./fair-play";
+import { Toast } from "./toast";
 import {
   Celebration,
   Feedback,
@@ -147,6 +148,18 @@ export function RoomPage({ code }: { code: string }) {
       void client.deactivate();
     };
   }, [actor, code, finished]);
+  const stage = useRef<HTMLElement | null>(null);
+  const live = data?.status === "QUESTION" || data?.status === "REVEAL";
+  useEffect(() => {
+    // Bring each newly opened question to the middle of the screen.
+    const panel = stage.current;
+    if (!panel || data?.status !== "QUESTION") return;
+    const fits = panel.offsetHeight < window.innerHeight - 120;
+    panel.scrollIntoView({
+      block: fits ? "center" : "start",
+      behavior: "smooth",
+    });
+  }, [data?.question?.id, data?.status]);
   async function action(action: string, body: unknown = {}) {
     if (sending.current || connectionDenied.current) return;
     sending.current = true;
@@ -241,7 +254,7 @@ export function RoomPage({ code }: { code: string }) {
       </>
     );
   return (
-    <>
+    <div className={live ? "room-stage" : undefined}>
       <GameToolbar />
       <PageTitle
         title={
@@ -274,14 +287,21 @@ export function RoomPage({ code }: { code: string }) {
       </PageTitle>
       <ErrorNote error={error} />
       {data.status !== "FINISHED" && (
-        <p className="muted">
-          {data.untimed
-            ? "Không giới hạn thời gian trả lời."
-            : "Trả lời theo thời gian của bộ quiz."}{" "}
-          {data.advanceWhenReady
-            ? "Chuyển câu khi tất cả người chơi bấm “Đã đọc xong”."
-            : "Chủ trì điều khiển chuyển câu."}
-        </p>
+        <ul className="room-rules" aria-label="Luật phòng">
+          <li>
+            {data.untimed
+              ? "Không giới hạn thời gian trả lời"
+              : "Trả lời theo thời gian của bộ quiz"}
+          </li>
+          <li>
+            {data.advanceWhenReady
+              ? "Chuyển câu khi tất cả bấm “Đã đọc xong”"
+              : "Chủ trì điều khiển chuyển câu"}
+          </li>
+          {data.shuffleAnswers && (
+            <li>Vị trí A/B/C/D đảo riêng mỗi người · trả lời theo nội dung</li>
+          )}
+        </ul>
       )}
       {connectionBlocked && (
         <button
@@ -290,12 +310,6 @@ export function RoomPage({ code }: { code: string }) {
         >
           Tải lại trang
         </button>
-      )}
-      {data.shuffleAnswers && data.status !== "FINISHED" && (
-        <p className="muted">
-          Vị trí A/B/C/D được đảo riêng cho mỗi người. Hãy trả lời theo nội
-          dung.
-        </p>
       )}
       {data.host && data.integrity && data.status !== "LOBBY" && (
         <details className="integrity-panel">
@@ -518,7 +532,7 @@ export function RoomPage({ code }: { code: string }) {
         </>
       ) : (
         <>
-          <div className="quiz-top">
+          <div className="quiz-top room-top">
             <span>
               Câu {data.current + 1} / {data.count}
             </span>
@@ -556,6 +570,7 @@ export function RoomPage({ code }: { code: string }) {
             />
           </div>
           <section
+            ref={stage}
             className="question-panel live-question question-transition"
             key={data.question?.id}
           >
@@ -594,20 +609,20 @@ export function RoomPage({ code }: { code: string }) {
             </FairPlay>
             {data.status === "QUESTION" &&
               expiredQuestion === data.question?.id && (
-                <p className="saved" role="status">
-                  Hết thời gian · Đang nhận kết quả từ máy chủ…
-                </p>
+                <Toast className="saved">
+                  <span>Hết thời gian · Đang nhận kết quả từ máy chủ…</span>
+                </Toast>
               )}
             {busy && !data.host && data.status === "QUESTION" && (
-              <p className="saved" role="status">
-                Đang gửi đáp án…
-              </p>
+              <Toast className="saved">
+                <span>Đang gửi đáp án…</span>
+              </Toast>
             )}
             {data.myAnswer >= 0 && data.status === "QUESTION" && (
-              <p className="saved">
+              <Toast className="saved">
                 <Check size={18} />
-                Đã gửi đáp án. Cùng chờ kết quả nhé!
-              </p>
+                <span>Đã gửi đáp án. Cùng chờ kết quả nhé!</span>
+              </Toast>
             )}
             {data.status === "REVEAL" && (
               <>
@@ -637,7 +652,7 @@ export function RoomPage({ code }: { code: string }) {
                   {data.question?.explanation}
                 </p>
                 {!data.host && (
-                  <div className="actions" aria-live="polite">
+                  <div className="actions ready-bar" aria-live="polite">
                     <button
                       className="button"
                       disabled={
@@ -695,12 +710,6 @@ export function RoomPage({ code }: { code: string }) {
           )}
           {data.host ? (
             <div className="host-controls">
-              {data.status === "REVEAL" && (
-                <p role="status">
-                  {data.readyPlayers?.length || 0}/{data.members.length} người
-                  đã đọc xong
-                </p>
-              )}
               <button
                 className="button danger-outline"
                 disabled={busy || connectionBlocked}
@@ -708,6 +717,11 @@ export function RoomPage({ code }: { code: string }) {
               >
                 Kết thúc sớm
               </button>
+              <p role="status">
+                {data.status === "REVEAL"
+                  ? `${data.readyPlayers?.length || 0}/${data.members.length} người đã đọc xong`
+                  : `${data.answered}/${data.members.length} người đã trả lời`}
+              </p>
               {data.status === "REVEAL" && (
                 <button
                   className="button"
@@ -758,6 +772,6 @@ export function RoomPage({ code }: { code: string }) {
           </div>
         </GameDialog>
       )}
-    </>
+    </div>
   );
 }

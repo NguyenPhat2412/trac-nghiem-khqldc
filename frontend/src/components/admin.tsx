@@ -16,7 +16,14 @@ import {
 } from "lucide-react";
 import { api, statusLabel, date } from "@/lib/api";
 import { Actor, Quiz, Room, RoomSummary } from "@/lib/types";
-import { ErrorNote, Loading, PageTitle, Empty, useSession } from "./shared";
+import {
+  ErrorNote,
+  Loading,
+  PageTitle,
+  Empty,
+  SuccessNote,
+  useSession,
+} from "./shared";
 import {
   ChaptersAdmin,
   QuestionsAdmin,
@@ -334,9 +341,9 @@ function PasswordAdmin() {
       <PageTitle title="Đổi mật khẩu" />
       <ErrorNote error={error} />
       {done && (
-        <p className="success">
+        <SuccessNote>
           Đã đổi mật khẩu. Những phiên khác đã đăng xuất.
-        </p>
+        </SuccessNote>
       )}
       <form
         className="editor-form"
@@ -363,11 +370,11 @@ function PasswordAdmin() {
           />
         </label>
         <label>
-          Mật khẩu mới (ít nhất 12 ký tự)
+          Mật khẩu mới (ít nhất 8 ký tự)
           <input
             type="password"
             required
-            minLength={12}
+            minLength={8}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />

@@ -96,7 +96,7 @@ test("admin content screens and synchronous multiplayer", async ({
   await page.goto("/admin");
   await page
     .getByLabel("Tên đăng nhập", { exact: true })
-    .fill(process.env.ADMIN_USERNAME || "admin");
+    .fill(process.env.ADMIN_USERNAME || "admin123@gmail.com");
   await page
     .getByLabel("Mật khẩu", { exact: true })
     .fill(process.env.ADMIN_PASSWORD!);

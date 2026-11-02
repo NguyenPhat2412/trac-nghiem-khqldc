@@ -3,6 +3,7 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import { ShieldCheck } from "lucide-react";
 import { api } from "@/lib/api";
 import { useSession } from "./shared";
+import { Toast } from "./toast";
 
 export function FairPlay({
   endpoint,
@@ -67,13 +68,17 @@ export function FairPlay({
   if (!active) return <>{children}</>;
   return (
     <div className="fair-play">
-      <p className="fair-play-notice">
-        <ShieldCheck size={18} /> Chế độ tập trung: hạn chế sao chép; số lần rời
-        trang và thoát toàn màn hình được ghi nhận để người quản lý xem xét,
-        không tự trừ điểm.
-      </p>
+      <details className="fair-play-notice">
+        <summary>
+          <ShieldCheck size={16} /> Chế độ tập trung đang bật
+        </summary>
+        <p>
+          Hạn chế sao chép; số lần rời trang và thoát toàn màn hình được ghi
+          nhận để người quản lý xem xét, không tự trừ điểm.
+        </p>
+      </details>
       {notice && (
-        <p role="status" className="fair-play-warning">
+        <Toast className="fair-play-warning">
           <span>{notice}</span>
           <button
             type="button"
@@ -82,7 +87,7 @@ export function FairPlay({
           >
             Đã hiểu
           </button>
-        </p>
+        </Toast>
       )}
       <div
         className="protected-question"

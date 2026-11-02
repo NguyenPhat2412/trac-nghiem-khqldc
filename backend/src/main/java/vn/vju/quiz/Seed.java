@@ -28,15 +28,37 @@ public class Seed implements CommandLineRunner {
   }
 
   public void run(String... args) {
-    if (s.db.queryForObject("select count(*) from staff", Integer.class) == 0) {
-      Errors.require(password.length() >= 12, "ADMIN_PASSWORD cần ít nhất 12 ký tự");
-      s.db.update(
-          "insert into staff values(?,?,?,?,?,true)",
-          UUID.randomUUID().toString(),
-          username,
-          auth.passwords.encode(password),
-          "Quản trị VJU",
-          "ADMIN");
+    String cleanUser = Errors.text(username, 60);
+    Errors.require(cleanUser.matches("[a-zA-Z0-9_.@-]{3,60}"), "ADMIN_USERNAME không hợp lệ");
+    Errors.require(
+        password != null && password.length() >= 8, "ADMIN_PASSWORD cần ít nhất 8 ký tự");
+    if (Objects.equals(
+        0,
+        s.db.queryForObject(
+            "select count(*) from staff where username=?", Integer.class, cleanUser))) {
+      var legacy =
+          cleanUser.equals("admin")
+              ? List.<String>of()
+              : s.db.queryForList(
+                  "select id from staff where username='admin' and role='ADMIN'", String.class);
+      String encoded = auth.passwords.encode(password);
+      if (!legacy.isEmpty()) {
+        String legacyId = legacy.getFirst();
+        s.db.update(
+            "update staff set username=?,password=?,role='ADMIN',enabled=true where id=?",
+            cleanUser,
+            encoded,
+            legacyId);
+        s.db.update("delete from sessions where actor_id=?", legacyId);
+      } else {
+        s.db.update(
+            "insert into staff values(?,?,?,?,?,true)",
+            UUID.randomUUID().toString(),
+            cleanUser,
+            encoded,
+            "Quản trị VJU",
+            "ADMIN");
+      }
     }
     if (!demo || !s.all("chapters", Chapter.class).isEmpty()) return;
     String[] titles = {"Tổng quan về quản lý", "Chức năng hoạch định", "Tổ chức và lãnh đạo"};

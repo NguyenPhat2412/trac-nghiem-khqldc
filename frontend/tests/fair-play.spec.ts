@@ -8,7 +8,7 @@ test("instant wrong-answer feedback, first-choice lock and ranked copy notice", 
   page.on("pageerror", (e) => errors.push(e.message));
   const login = await page.request.post("/api/auth/login", {
     data: {
-      username: process.env.ADMIN_USERNAME || "admin",
+      username: process.env.ADMIN_USERNAME || "admin123@gmail.com",
       password: process.env.ADMIN_PASSWORD,
     },
   });

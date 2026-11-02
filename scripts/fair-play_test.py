@@ -32,7 +32,7 @@ def check(name, truth):
     print('PASS',name)
 
 
-admin=Client();admin.call('/auth/login',{'username':env.get('ADMIN_USERNAME','admin'),'password':env['ADMIN_PASSWORD']})
+admin=Client();admin.call('/auth/login',{'username':env.get('ADMIN_USERNAME','admin123@gmail.com'),'password':env['ADMIN_PASSWORD']})
 catalog=admin.call('/catalog');quiz=catalog['quizzes'][0]
 full=next(x for x in admin.call('/admin/quizzes') if x['id']==quiz['id'])
 keys={q['id']:q['options'][q['correct']] for q in full['questions']}

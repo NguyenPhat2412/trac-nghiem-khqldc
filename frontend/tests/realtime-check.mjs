@@ -17,7 +17,7 @@ function connect(client,csrf=client.actor.csrf){return new Promise((resolve,reje
  socket.on('message',raw=>{const frame=raw.toString();frames.push(frame);if(frame.startsWith('CONNECTED')){clearTimeout(timeout);resolve({socket,frames});}if(frame.startsWith('ERROR')){clearTimeout(timeout);reject(new Error('STOMP rejected'));}});socket.on('error',reject);socket.on('close',()=>{clearTimeout(timeout);reject(new Error('STOMP connection closed'));});
 });}
 const delay=ms=>new Promise(r=>setTimeout(r,ms));
-const admin=await session({username:process.env.ADMIN_USERNAME||'admin',password:process.env.ADMIN_PASSWORD},'/auth/login');const catalog=await call(admin,'/catalog');const room=await call(admin,'/admin/rooms',{quizId:catalog.quizzes[0].id});
+const admin=await session({username:process.env.ADMIN_USERNAME||'admin123@gmail.com',password:process.env.ADMIN_PASSWORD},'/auth/login');const catalog=await call(admin,'/catalog');const room=await call(admin,'/admin/rooms',{quizId:catalog.quizzes[0].id});
 const players=[];for(let i=0;i<100;i++){const p=await session({name:`WS Load ${i+1}`});await call(p,`/rooms/${room.id}/join`,{});players.push(p);}
 const sockets=await Promise.all(players.map(p=>connect(p)));sockets.forEach((s,i)=>s.socket.send(`SUBSCRIBE\nid:p${i}\ndestination:/topic/rooms/${room.id}\nreceipt:sub${i}\n\n\0`));
 await delay(300);const start=performance.now();const opened=await call(admin,`/admin/rooms/${room.id}/start`,{});

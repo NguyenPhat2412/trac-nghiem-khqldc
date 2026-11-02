@@ -288,8 +288,8 @@ public class Api {
         name = Errors.text(in.name(), 80),
         password = Errors.text(in.password(), 100);
     Errors.require(
-        username.matches("[a-zA-Z0-9_.-]{3,60}")
-            && password.length() >= 12
+        username.matches("[a-zA-Z0-9_.@-]{3,60}")
+            && password.length() >= 8
             && Set.of("ADMIN", "EDITOR").contains(in.role()),
         "Tên đăng nhập hoặc mật khẩu/quyền chưa hợp lệ");
     Errors.require(

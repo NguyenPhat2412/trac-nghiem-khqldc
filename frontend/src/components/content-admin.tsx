@@ -12,7 +12,14 @@ import {
 } from "lucide-react";
 import { api, statusLabel } from "@/lib/api";
 import { Chapter, Question, Quiz } from "@/lib/types";
-import { Answers, ErrorNote, Loading, PageTitle, Empty } from "./shared";
+import {
+  Answers,
+  ErrorNote,
+  Loading,
+  PageTitle,
+  Empty,
+  SuccessNote,
+} from "./shared";
 import { useLoad } from "@/lib/use-load";
 const statuses = ["DRAFT", "PUBLISHED", "ARCHIVED"];
 const difficulties: Record<string, string> = {
@@ -767,7 +774,7 @@ export function ImportAdmin() {
         subtitle="Tải mẫu, điền nội dung, kiểm tra rồi nhập vào ngân hàng."
       />
       <ErrorNote error={error} />
-      {success && <p className="success">{success}</p>}
+      {success && <SuccessNote key={success}>{success}</SuccessNote>}
       <div className="import-box">
         <Upload size={34} />
         <h2>Thêm nhiều câu hỏi cùng lúc</h2>

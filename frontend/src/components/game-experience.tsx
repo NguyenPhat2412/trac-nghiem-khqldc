@@ -21,6 +21,7 @@ import {
   WifiOff,
   X,
 } from "lucide-react";
+import { Toast, ToastRegion } from "./toast";
 
 type Cue = "correct" | "wrong" | "saved" | "finish";
 type Preferences = { sound: boolean; effects: boolean; shortcuts: boolean };
@@ -120,12 +121,16 @@ export function GameProvider({ children }: { children: ReactNode }) {
     <GameContext.Provider value={{ ...prefs, online, setPreference, play }}>
       <div className="game-root" data-effects={prefs.effects ? "on" : "off"}>
         {!online && (
-          <div className="network-banner" role="status">
-            <WifiOff size={18} /> Mất kết nối. Đáp án mới chưa thể gửi; đồng hồ
-            máy chủ vẫn chạy. Trang sẽ đồng bộ khi có mạng.
-          </div>
+          <Toast className="network-banner">
+            <WifiOff size={18} />
+            <span>
+              Mất kết nối. Đáp án mới chưa thể gửi; đồng hồ máy chủ vẫn chạy.
+              Trang sẽ đồng bộ khi có mạng.
+            </span>
+          </Toast>
         )}
         {children}
+        <ToastRegion />
       </div>
     </GameContext.Provider>
   );
@@ -165,15 +170,17 @@ export function GameToolbar() {
           aria-pressed={sound}
           onClick={() => setPreference("sound", !sound)}
         >
-          {sound ? <Volume2 size={17} /> : <VolumeX size={17} />}Âm thanh{" "}
-          <span>{sound ? "Bật" : "Tắt"}</span>
+          {sound ? <Volume2 size={17} /> : <VolumeX size={17} />}
+          <span className="tool-label">Âm thanh</span>{" "}
+          <span className="tool-state">{sound ? "Bật" : "Tắt"}</span>
         </button>
         <button
           aria-pressed={effects}
           onClick={() => setPreference("effects", !effects)}
         >
           <Sparkles size={17} />
-          Hiệu ứng <span>{effects ? "Bật" : "Tắt"}</span>
+          <span className="tool-label">Hiệu ứng</span>{" "}
+          <span className="tool-state">{effects ? "Bật" : "Tắt"}</span>
         </button>
         <button
           aria-pressed={shortcuts}
@@ -181,19 +188,22 @@ export function GameToolbar() {
           onClick={() => setPreference("shortcuts", !shortcuts)}
         >
           <Keyboard size={17} />
-          Phím 1–4 <span>{shortcuts ? "Bật" : "Tắt"}</span>
+          <span className="tool-label">Phím 1–4</span>{" "}
+          <span className="tool-state">{shortcuts ? "Bật" : "Tắt"}</span>
         </button>
         {supported && (
           <button aria-pressed={full} onClick={() => void fullscreen()}>
             {full ? <Minimize size={17} /> : <Maximize size={17} />}
-            {full ? "Thu nhỏ" : "Toàn màn hình"}
+            <span className="tool-label">
+              {full ? "Thu nhỏ" : "Toàn màn hình"}
+            </span>
           </button>
         )}
       </div>
       {error && (
-        <p role="status" className="muted">
-          {error}
-        </p>
+        <Toast onClose={() => setError("")}>
+          <span>{error}</span>
+        </Toast>
       )}
     </div>
   );
@@ -210,13 +220,21 @@ export function Feedback({
 }) {
   const { play } = useGame();
   const last = useRef("");
+  const box = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (last.current === eventKey) return;
     last.current = eventKey;
     if (outcome !== "blank") play(outcome);
+    // Show the result without making the player scroll down to find it.
+    const el = box.current;
+    if (!el) return;
+    const { top, bottom } = el.getBoundingClientRect();
+    if (top < 0 || bottom > window.innerHeight - 90)
+      el.scrollIntoView({ block: "start", behavior: "smooth" });
   }, [eventKey, outcome, play]);
   return (
     <div
+      ref={box}
       key={eventKey}
       className={`instant-feedback feedback-${outcome}`}
       role="status"

@@ -12,8 +12,8 @@ Yêu cầu Docker Desktop/Engine có Docker Compose. Tại thư mục dự án:
 
 - Website: http://localhost:3000
 - Quản trị: http://localhost:3000/admin
-- Tài khoản ban đầu lấy từ `ADMIN_USERNAME` (mặc định `admin`). Mật khẩu được tạo riêng trong `.env`, trường `ADMIN_PASSWORD`.
-- `ADMIN_USERNAME` và `ADMIN_PASSWORD` chỉ được dùng khi cơ sở dữ liệu chưa có nhân sự. Sau đó đổi mật khẩu trong giao diện Quản trị → Đổi mật khẩu.
+- Tài khoản ban đầu lấy từ `ADMIN_USERNAME` (mặc định `admin123@gmail.com`) và `ADMIN_PASSWORD` trong `.env`.
+- Khi khởi động, nếu tài khoản `ADMIN_USERNAME` chưa tồn tại, hệ thống tự động tạo mới (hoặc chuyển tài khoản `admin` mặc định cũ sang `ADMIN_USERNAME` và `ADMIN_PASSWORD`). Sau đó có thể đổi mật khẩu trong giao diện Quản trị → Đổi mật khẩu.
 - Dừng: `docker compose stop`. Chạy lại: `docker compose up -d`.
 - Dữ liệu PostgreSQL nằm trong `data/postgres/` của dự án trên ổ D. Không cần đăng ký dịch vụ ngoài.
 - Chạy `./scripts/backup.sh` để tạo bản sao vào `backups/`.

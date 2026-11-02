@@ -107,7 +107,7 @@ for(let i=0;i<4;i++) assert.equal(await call('/api/auth/login',bad,spoof(i)),429
     checks.append('One gateway client is limited; spoofed forwarding headers cannot reset its quota')
     node('b', helper + '''assert.equal(await call('/api/auth/login',bad),401);''' +
          'assert.equal(await call("/api/auth/login",' + json.dumps({
-             'username': env.get('ADMIN_USERNAME', 'admin'), 'password': env['ADMIN_PASSWORD']}) + '),200);')
+             'username': env.get('ADMIN_USERNAME', 'admin123@gmail.com'), 'password': env['ADMIN_PASSWORD']}) + '),200);')
     checks.append('Second gateway client retains its quota and can log in legitimately')
     node('c', helper + '''
 for(let i=0;i<10;i++) assert.equal(await call('/api/auth/login',bad,spoof(i),true),401);
@@ -143,7 +143,7 @@ assert.equal(await call('/api/session',{},spoof(30)),429);
 assert.equal(await call('/api/auth/login',bad),401);
 assert.equal(await call('/api/session',{name:'Khách qua hai proxy'}),200);
 ''' + 'assert.equal(await call("/api/auth/login",' + json.dumps({
-        'username': env.get('ADMIN_USERNAME', 'admin'), 'password': env['ADMIN_PASSWORD']}) + '),200);')
+        'username': env.get('ADMIN_USERNAME', 'admin123@gmail.com'), 'password': env['ADMIN_PASSWORD']}) + '),200);')
     checks.append('Two-proxy chain preserves separate login/guest quotas and rejects forged headers')
     node('c', helper + "assert.equal(await call('/api/auth/login',bad,spoof(40)),429);")
     checks.append('Trusting the specified outer edge does not trust arbitrary direct clients')

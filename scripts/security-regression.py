@@ -63,7 +63,7 @@ def hidden(value):
 anonymous, guest, other, admin = Client(), Client(), Client(), Client()
 guest.call('/api/session', {'name': 'Sinh viên kiểm thử'})
 other.call('/api/session', {'name': 'Sinh viên kiểm thử'})
-admin.call('/api/auth/login', {'username': env.get('ADMIN_USERNAME', 'admin'), 'password': env['ADMIN_PASSWORD']})
+admin.call('/api/auth/login', {'username': env.get('ADMIN_USERNAME', 'admin123@gmail.com'), 'password': env['ADMIN_PASSWORD']})
 catalog = guest.call('/api/catalog')
 check('Public catalog has no keys or explanations', hidden(catalog))
 prefixes = ['/api/admin', '/api/%61dmin', '/%61pi/admin', '/%61pi/%61dmin', '/api/adm%69n']

@@ -28,7 +28,7 @@ def call(path, body=None, method=None):
         return json.load(r)
 
 
-actor = call('/auth/login', {'username': env.get('ADMIN_USERNAME', 'admin'), 'password': env['ADMIN_PASSWORD']})
+actor = call('/auth/login', {'username': env.get('ADMIN_USERNAME', 'admin123@gmail.com'), 'password': env['ADMIN_PASSWORD']})
 csrf = actor['csrf']
 assert actor['role'] == 'ADMIN'
 old_chapters = call('/admin/chapters')

@@ -21,6 +21,7 @@ import {
 import { api, setCsrf, duration } from "@/lib/api";
 import { Actor, Rank, Question } from "@/lib/types";
 import { GameProvider, useGame } from "./game-experience";
+import { Toast } from "./toast";
 const Session = createContext<{
   actor: Actor | null;
   ready: boolean;
@@ -100,11 +101,25 @@ export function Shell({ children }: { children: ReactNode }) {
   );
 }
 export function ErrorNote({ error }: { error: string }) {
-  return error ? (
-    <div role="alert" className="error">
+  const [dismissed, setDismissed] = useState("");
+  return error && error !== dismissed ? (
+    <Toast role="alert" className="error" onClose={() => setDismissed(error)}>
       <X size={18} />
-      {error}
-    </div>
+      <span>{error}</span>
+    </Toast>
+  ) : null;
+}
+export function SuccessNote({ children }: { children: ReactNode }) {
+  const [open, setOpen] = useState(true);
+  useEffect(() => {
+    const timer = setTimeout(() => setOpen(false), 5000);
+    return () => clearTimeout(timer);
+  }, []);
+  return open ? (
+    <Toast className="success" onClose={() => setOpen(false)}>
+      <Check size={18} />
+      <span>{children}</span>
+    </Toast>
   ) : null;
 }
 export function Loading() {

@@ -6,8 +6,8 @@ mkdir -p work data/postgres
 if [ ! -f .env ]; then
   cat > .env <<ENV
 DATABASE_PASSWORD=$(openssl rand -hex 24)
-ADMIN_PASSWORD=$(openssl rand -hex 12)
-ADMIN_USERNAME=admin
+ADMIN_PASSWORD=${ADMIN_PASSWORD:-Admin123@}
+ADMIN_USERNAME=${ADMIN_USERNAME:-admin123@gmail.com}
 APP_ORIGIN=http://localhost:3000
 SECURE_COOKIE=false
 SEED_DEMO=true

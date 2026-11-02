@@ -224,7 +224,7 @@ public class Auth {
       var rows =
           a.db.queryForList(
               "select * from staff where username=? and enabled=true",
-              Objects.toString(body.get("username"), ""));
+              Objects.toString(body.get("username"), "").strip());
       if (rows.isEmpty()
           || !a.passwords.matches(
               Objects.toString(body.get("password"), ""), (String) rows.getFirst().get("password")))
@@ -252,7 +252,7 @@ public class Auth {
           a.passwords.matches(body.getOrDefault("current", ""), old),
           "Mật khẩu hiện tại chưa đúng");
       String next = Errors.text(body.get("password"), 100);
-      Errors.require(next.length() >= 12, "Mật khẩu cần ít nhất 12 ký tự");
+      Errors.require(next.length() >= 8, "Mật khẩu cần ít nhất 8 ký tự");
       a.db.update("update staff set password=? where id=?", a.passwords.encode(next), p.id());
       a.db.update("delete from sessions where actor_id=? and csrf<>?", p.id(), p.csrf());
       return Map.of("ok", true);

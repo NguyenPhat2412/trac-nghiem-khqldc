@@ -299,7 +299,7 @@ export function StaffAdmin() {
             Tên đăng nhập
             <input
               required
-              pattern="[a-zA-Z0-9_.-]{3,60}"
+              pattern="[a-zA-Z0-9_.@-]{3,60}"
               value={form.username}
               onChange={(e) => setForm({ ...form, username: e.target.value })}
             />
@@ -309,7 +309,7 @@ export function StaffAdmin() {
             <input
               type="password"
               required
-              minLength={12}
+              minLength={8}
               value={form.password}
               onChange={(e) => setForm({ ...form, password: e.target.value })}
             />
