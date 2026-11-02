@@ -23,7 +23,8 @@ def call(path, body=None, method=None):
     req = urllib.request.Request(base + '/api' + path,
         data=json.dumps(body).encode() if body is not None else None,
         method=method or ('POST' if body is not None else 'GET'),
-        headers={'Content-Type': 'application/json', 'Origin': base, 'X-CSRF-Token': csrf})
+        headers={'Content-Type': 'application/json', 'Origin': base, 'X-CSRF-Token': csrf,
+                 'User-Agent': 'vju-quiz-admin-cli/1.0'})
     with client.open(req, timeout=60) as r:
         return json.load(r)
 

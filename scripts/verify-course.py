@@ -26,7 +26,8 @@ class Client:
         req = urllib.request.Request(BASE + '/api' + path,
             data=json.dumps(data).encode() if data is not None else None,
             method=method or ('POST' if data is not None else 'GET'),
-            headers={'Content-Type': 'application/json', 'Origin': BASE, 'X-CSRF-Token': self.csrf})
+            headers={'Content-Type': 'application/json', 'Origin': BASE, 'X-CSRF-Token': self.csrf,
+                     'User-Agent': 'vju-quiz-admin-cli/1.0'})
         with self.http.open(req, timeout=60) as response:
             result = json.load(response)
         if isinstance(result, dict) and 'csrf' in result:
