@@ -275,17 +275,18 @@ function RoomsAdmin() {
                 checked={mode === "EXAM"}
                 onChange={() => setMode("EXAM")}
               />
-              Làm cả đề tự động theo giờ cài đặt (Không cần chủ trì)
+              Làm cả đề tự động theo giờ cài đặt
             </label>
             <p className="muted">
-              Phòng mở ngay khi tạo. Người chơi tự chọn đáp án cho toàn bộ câu
-              hỏi; đúng khi hết giờ hệ thống tự chốt bài, tính điểm, hiện thứ
-              hạng và lời giải chi tiết cho cả phòng.
+              Người chơi vào phòng chờ đông đủ trước. Khi chủ phòng bấm mở đề,
+              đồng hồ mới bắt đầu tính giờ; người chơi tự làm trọn bộ câu hỏi,
+              hết giờ hệ thống tự chốt bài, tính điểm, hiện thứ hạng và lời giải
+              chi tiết.
             </p>
             {mode === "EXAM" && (
               <div className="room-duration-box">
                 <label>
-                  Thời gian mở phòng (phút)
+                  Thời gian làm bài (phút)
                   <div className="room-duration-row">
                     <input
                       type="number"

@@ -33,7 +33,7 @@ class ExamRoomTest {
   }
 
   @Test
-  void examRoomOpensImmediatelyWithoutLobbyAndHidesKeysAndRankingUntilFinished() {
+  void examRoomWaitsInLobbyUntilHostStartsThenStartsCountdown() {
     Quiz quiz = publishedQuiz();
     var db = mock(org.springframework.jdbc.core.JdbcTemplate.class);
     var realStore = new Store(db, new com.fasterxml.jackson.databind.ObjectMapper());
@@ -48,15 +48,15 @@ class ExamRoomTest {
 
     Map<String, Object> created = service.create(host, quiz.id, false, false, null, "EXAM", 15);
     assertEquals("EXAM", created.get("mode"));
-    assertEquals("OPEN", created.get("status"));
+    assertEquals("LOBBY", created.get("status"));
+    assertEquals(15 * 60, created.get("durationSeconds"));
+    assertEquals(0L, created.get("openedAt"));
+    assertEquals(0L, created.get("deadline"));
     assertEquals(List.of(), created.get("ranking"));
-    long openedAt = (Long) created.get("openedAt");
-    long deadline = (Long) created.get("deadline");
-    assertEquals(15 * 60 * 1000L, deadline - openedAt);
   }
 
   @Test
-  void examStudentSelectsChangesFlagsSubmitsAndOnlySeesResultsAfterExpiry() {
+  void examLobbyToOpenLifecycleMeasuresTimeFromHostStartAndRevealsOnlyAfterExpiry() {
     Store store = mock(Store.class);
     var service = new RoomService(store, new ContentService(store), mock(SimpMessagingTemplate.class));
 
@@ -65,13 +65,12 @@ class ExamRoomTest {
     r.hostId = "admin-1";
     r.title = "Đề Chương 5";
     r.mode = "EXAM";
-    r.status = "OPEN";
+    r.status = "LOBBY";
+    r.durationSeconds = 600;
     r.shuffleAnswers = true;
     r.quiz = publishedQuiz();
-    r.current = r.quiz.questions.size() - 1;
-    r.openedAt = System.currentTimeMillis() - 10_000L;
-    r.deadline = r.openedAt + 600_000L;
 
+    Actor host = new Actor("admin-1", "Admin", "ADMIN", "csrf");
     Actor studentA = new Actor("student-a", "Lan Anh", "GUEST", "csrf");
     Actor studentB = new Actor("student-b", "Minh Tuấn", "GUEST", "csrf");
 
@@ -110,8 +109,29 @@ class ExamRoomTest {
         .when(store)
         .roomHistory(eq(r), any());
 
-    var joinedA = service.join(studentA, r.id);
-    var joinedB = service.join(studentB, r.id);
+    // Students join while waiting in LOBBY: questions and countdown are NOT started yet
+    var lobbyA = service.join(studentA, r.id);
+    var lobbyB = service.join(studentB, r.id);
+    assertEquals("LOBBY", lobbyA.get("status"));
+    assertEquals("LOBBY", lobbyB.get("status"));
+    assertFalse(lobbyA.containsKey("examQuestions"));
+    assertEquals(0L, lobbyA.get("deadline"));
+
+    // Simulate Student A having waited 5 minutes in LOBBY before host starts
+    r.members.get(studentA.id()).joinedAt = System.currentTimeMillis() - 300_000L;
+
+    // Cannot answer before host opens the room
+    assertThrows(
+        RuntimeException.class,
+        () -> service.examAnswer(studentA, r.id, new PracticeService.Answer("q1", 0, null)));
+
+    // Host sees everyone ready and starts the exam room
+    var startedHostView = service.action(host, r.id, "start", null);
+    assertEquals("OPEN", startedHostView.get("status"));
+    assertEquals(600_000L, (Long) startedHostView.get("deadline") - (Long) startedHostView.get("openedAt"));
+
+    var joinedA = service.view(studentA, r);
+    var joinedB = service.view(studentB, r);
     assertEquals("OPEN", joinedA.get("status"));
     assertEquals(3, ((List<?>) joinedA.get("examQuestions")).size());
 
@@ -175,6 +195,8 @@ class ExamRoomTest {
     assertEquals("student-a", ranking.get(0).get("playerId"));
     assertEquals(3, ranking.get(0).get("correct"));
     assertEquals(100.0, ranking.get(0).get("score"));
+    // Lobby wait time (5 minutes before start) must NOT be counted against Student A's durationMs
+    assertTrue((Long) ranking.get(0).get("durationMs") < 60_000L);
     assertEquals("student-b", ranking.get(1).get("playerId"));
     assertEquals(1, ranking.get(1).get("correct"));
     assertEquals(33.33, ranking.get(1).get("score"));

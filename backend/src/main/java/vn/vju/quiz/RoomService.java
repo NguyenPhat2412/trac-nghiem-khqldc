@@ -91,14 +91,14 @@ public class RoomService {
       int minutes =
           durationMinutes == null || durationMinutes == 0 ? defaultMinutes : durationMinutes;
       Errors.require(
-          minutes >= 1 && minutes <= 180, "Thời gian mở phòng phải từ 1 đến 180 phút");
-      r.status = "OPEN";
+          minutes >= 1 && minutes <= 180, "Thời gian làm bài phải từ 1 đến 180 phút");
+      r.status = "LOBBY";
       r.untimed = false;
       r.advanceWhenReady = false;
       r.durationSeconds = minutes * 60;
-      r.openedAt = System.currentTimeMillis();
-      r.deadline = r.openedAt + r.durationSeconds * 1000L;
-      r.current = r.quiz.questions.size() - 1;
+      r.openedAt = 0;
+      r.deadline = 0;
+      r.current = -1;
     } else {
       r.untimed = untimed;
       r.advanceWhenReady = advanceWhenReady;
@@ -119,9 +119,11 @@ public class RoomService {
       return view(a, r);
     }
     if ("EXAM".equals(r.mode)) {
-      Errors.require(
-          r.status.equals("OPEN") && !r.locked && System.currentTimeMillis() < r.deadline,
-          "Phòng thi đã kết thúc hoặc đang khóa");
+      boolean canJoin =
+          !r.locked
+              && (r.status.equals("LOBBY")
+                  || (r.status.equals("OPEN") && System.currentTimeMillis() < r.deadline));
+      Errors.require(canJoin, "Phòng thi đã kết thúc hoặc đang khóa");
     } else {
       Errors.require(r.status.equals("LOBBY") && !r.locked, "Phòng đã bắt đầu hoặc đang khóa");
     }
@@ -290,7 +292,7 @@ public class RoomService {
     if (in.answer() != null) {
       Errors.require(in.answer() >= 0 && in.answer() < 4, "Đáp án không hợp lệ");
       progress.answers.put(q.id, order(m, q).get(in.answer()));
-      long start = m.joinedAt > 0 ? m.joinedAt : r.openedAt;
+      long start = Math.max(r.openedAt, m.joinedAt);
       progress.times.put(q.id, Math.max(0, now - start));
     }
     if (in.flagged() != null) {
@@ -341,12 +343,22 @@ public class RoomService {
         r.bannedIds.add(player);
         r.members.remove(player);
       }
-      case "start", "next" -> {
+      case "start" -> {
+        Errors.require(r.status.equals("LOBBY"), "Trạng thái phòng đã thay đổi");
+        if ("EXAM".equals(r.mode)) {
+          r.status = "OPEN";
+          r.openedAt = System.currentTimeMillis();
+          r.deadline = r.openedAt + r.durationSeconds * 1000L;
+          r.current = r.quiz.questions.size() - 1;
+        } else {
+          Errors.require(
+              r.members.values().stream().anyMatch(m -> !m.kicked), "Cần ít nhất một người chơi");
+          advance(r);
+        }
+      }
+      case "next" -> {
         Errors.require(!"EXAM".equals(r.mode), "Phòng làm cả đề tự động chạy theo thời gian");
-        Errors.require(
-            (action.equals("start") && r.status.equals("LOBBY"))
-                || (action.equals("next") && r.status.equals("REVEAL")),
-            "Trạng thái phòng đã thay đổi");
+        Errors.require(r.status.equals("REVEAL"), "Trạng thái phòng đã thay đổi");
         Errors.require(
             r.members.values().stream().anyMatch(m -> !m.kicked), "Cần ít nhất một người chơi");
         advance(r);
@@ -355,7 +367,7 @@ public class RoomService {
         Errors.require(!r.status.equals("FINISHED"), "Phòng đã kết thúc");
         long now = System.currentTimeMillis();
         if ("EXAM".equals(r.mode)) {
-          r.early = r.deadline > 0 && now < r.deadline;
+          r.early = r.status.equals("LOBBY") || (r.deadline > 0 && now < r.deadline);
           r.status = "FINISHED";
           r.finishedAt = now;
         } else {
@@ -527,10 +539,21 @@ public class RoomService {
     save(r);
   }
 
+  long examMemberDuration(Room r, Member m) {
+    if (r.openedAt <= 0) return 0L;
+    long endCap =
+        r.finishedAt > 0
+            ? r.finishedAt
+            : (r.deadline > 0 ? r.deadline : System.currentTimeMillis());
+    long end = m.submittedAt > 0 ? Math.min(m.submittedAt, endCap) : endCap;
+    long start = Math.max(r.openedAt, m.joinedAt);
+    return Math.max(0L, end - start);
+  }
+
   public List<Map<String, Object>> ranking(Room r) {
     boolean isExam = "EXAM".equals(r.mode);
     if (isExam) s.roomHistory(r, null);
-    int n = isExam ? r.quiz.questions.size() : r.current + 1;
+    int n = isExam ? (r.current >= 0 ? r.quiz.questions.size() : 0) : r.current + 1;
     List<Map<String, Object>> list = new ArrayList<>();
     for (Member m : r.members.values()) {
       if (m.kicked) continue;
@@ -538,17 +561,13 @@ public class RoomService {
       long time;
       if (isExam) {
         correct =
-            (int)
-                r.quiz.questions.stream()
-                    .filter(q -> Objects.equals(m.answers.get(q.id), q.correct))
-                    .count();
-        long endCap =
-            r.finishedAt > 0
-                ? r.finishedAt
-                : (r.deadline > 0 ? r.deadline : System.currentTimeMillis());
-        long end = m.submittedAt > 0 ? Math.min(m.submittedAt, endCap) : endCap;
-        long start = m.joinedAt > 0 ? m.joinedAt : r.openedAt;
-        time = Math.max(0, end - start);
+            r.current >= 0
+                ? (int)
+                    r.quiz.questions.stream()
+                        .filter(q -> Objects.equals(m.answers.get(q.id), q.correct))
+                        .count()
+                : 0;
+        time = examMemberDuration(r, m);
       } else {
         correct = r.compact ? m.completedCorrect : 0;
         time = r.compact ? m.completedDurationMs : 0;
@@ -728,17 +747,10 @@ public class RoomService {
         if (!m.kicked && (isHost || m.id.equals(a.id()))) {
           List<Question> questionsForDetail =
               isExam
-                  ? orderedQuestions(r, isHost ? null : m)
+                  ? (r.current >= 0 ? orderedQuestions(r, isHost ? null : m) : List.of())
                   : r.quiz.questions.subList(0, r.current + 1);
           long fallbackDuration =
-              isExam
-                  ? Math.max(
-                      0,
-                      (m.submittedAt > 0
-                              ? Math.min(m.submittedAt, r.finishedAt > 0 ? r.finishedAt : m.submittedAt)
-                              : (r.finishedAt > 0 ? r.finishedAt : r.deadline))
-                          - (m.joinedAt > 0 ? m.joinedAt : r.openedAt))
-                  : r.quiz.questionSeconds * 1000L;
+              isExam ? examMemberDuration(r, m) : r.quiz.questionSeconds * 1000L;
           detail.add(
               Map.of(
                   "playerId",

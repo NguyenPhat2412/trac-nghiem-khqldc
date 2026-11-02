@@ -391,7 +391,9 @@ export function RoomPage({ code }: { code: string }) {
           {isExam ? (
             <>
               <li>
-                Làm trọn bộ câu hỏi · Hết giờ hệ thống tự chấm và trả lời giải
+                {data.status === "LOBBY"
+                  ? "Đợi ở phòng chờ · Chỉ tính giờ khi chủ phòng bấm mở đề"
+                  : "Làm trọn bộ câu hỏi · Hết giờ hệ thống tự chấm và trả lời giải"}
               </li>
               <li>Ẩn đáp án và thứ hạng cho đến khi kết thúc phòng</li>
             </>
@@ -483,7 +485,18 @@ export function RoomPage({ code }: { code: string }) {
                 <h2>
                   <Users size={24} /> {data.members.length} người đã sẵn sàng
                 </h2>
-                {data.locked && <span className="badge">Đã khóa</span>}
+                <div className="button-row">
+                  {isExam && (
+                    <span className="badge">
+                      {Math.max(
+                        1,
+                        Math.round((data.durationSeconds || 60) / 60),
+                      )}{" "}
+                      phút làm bài
+                    </span>
+                  )}
+                  {data.locked && <span className="badge">Đã khóa</span>}
+                </div>
               </div>
               {data.members.length === 0 ? (
                 <p className="empty">Đang chờ những người chơi đầu tiên…</p>
@@ -526,14 +539,34 @@ export function RoomPage({ code }: { code: string }) {
                     <button
                       className="button"
                       disabled={
-                        busy || connectionBlocked || !data.members.length
+                        busy ||
+                        connectionBlocked ||
+                        (!isExam && !data.members.length)
                       }
                       onClick={() => action("start")}
                     >
                       <Play size={18} />
-                      Bắt đầu chơi
+                      {isExam
+                        ? `Mở đề · Tính giờ (${Math.max(1, Math.round((data.durationSeconds || 60) / 60))} phút)`
+                        : "Bắt đầu chơi"}
                     </button>
                   </>
+                ) : isExam ? (
+                  <div>
+                    <p className="waiting">
+                      <span className="pulse" />
+                      Đang đợi chủ phòng mở đề (
+                      {Math.max(
+                        1,
+                        Math.round((data.durationSeconds || 60) / 60),
+                      )}{" "}
+                      phút). Bạn đã sẵn sàng!
+                    </p>
+                    <p className="muted" style={{ marginTop: 6 }}>
+                      Thời gian làm bài chỉ bắt đầu tính khi chủ phòng bấm mở
+                      đề. Màn hình sẽ tự chuyển vào bài làm ngay khi đề mở.
+                    </p>
+                  </div>
                 ) : (
                   <p className="waiting">
                     <span className="pulse" />
