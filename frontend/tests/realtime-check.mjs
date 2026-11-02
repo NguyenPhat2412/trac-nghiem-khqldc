@@ -27,7 +27,7 @@ const outsider=await session({name:'Outsider'});const denied=await connect(outsi
 const forged=await connect(players[0]);forged.socket.send('SEND\ndestination:/topic/rooms/'+room.id+'\n\n{"score":100}\0');await delay(250);assert(forged.socket.readyState===WebSocket.CLOSED || forged.frames.some(f=>f.startsWith('ERROR')));console.log('PASS Client cannot forge broker events');
 await assert.rejects(()=>connect(players[0],'wrong'));console.log('PASS STOMP connect requires CSRF token');
 const latencies=await Promise.all(players.map(async(p,i)=>{const start=performance.now();await call(p,`/rooms/${room.id}/answer`,{questionId:opened.question.id,answer:i%4});return performance.now()-start;}));
-const final=await call(admin,`/rooms/${room.id}`);assert.equal(final.answered,100);assert.equal(final.status,'REVEAL');assert.equal(final.ranking.length,100);console.log('PASS 100 connected players submit without lost answers');
+const final=await call(admin,`/rooms/${room.id}`);assert.equal(final.answered,100);assert.equal(final.status,'REVEAL');assert.equal(final.ranking.length,0);console.log('PASS 100 connected players submit without lost answers');
 // Room and credentials intentionally persisted in ignored work/ for the restart check.
 const ownView=await call(players[0],`/rooms/${room.id}`);
 const state={admin,player:players[0],roomId:room.id,questionId:opened.question.id,version:final.version,options:ownView.question.options,correct:ownView.question.correct};await writeFile('../work/restart-state.json',JSON.stringify(state),{mode:0o600});

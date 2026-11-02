@@ -163,10 +163,14 @@ function RoomsAdmin() {
   const selectedQuiz = quizzes.data.find((q) => q.id === quiz);
   const availableCount =
     selectedQuiz?.questions?.length ?? selectedQuiz?.count ?? 0;
+  const [mode, setMode] = useState<"EXAM" | "LIVE">("EXAM");
+  const [durationMinutes, setDurationMinutes] = useState(20);
   const [untimed, setUntimed] = useState(false);
   const [advanceWhenReady, setAdvanceWhenReady] = useState(false);
   const [busy, setBusy] = useState(false);
   const router = useRouter();
+  const suggestMinutes = (count: number) =>
+    Math.min(180, Math.max(5, Math.ceil((Math.max(1, count) * 40) / 60)));
   return (
     <>
       <PageTitle
@@ -183,8 +187,13 @@ function RoomsAdmin() {
           try {
             const r = await api<Room>("/admin/rooms", "POST", {
               quizId: quiz,
-              untimed,
-              advanceWhenReady,
+              mode,
+              durationMinutes:
+                mode === "EXAM"
+                  ? Math.min(180, Math.max(1, Number(durationMinutes) || 15))
+                  : null,
+              untimed: mode === "LIVE" ? untimed : false,
+              advanceWhenReady: mode === "LIVE" ? advanceWhenReady : false,
               questionCount: questionCount || null,
             });
             router.push("/room/" + r.id);
@@ -202,8 +211,12 @@ function RoomsAdmin() {
             disabled={busy}
             value={quiz}
             onChange={(e) => {
-              setQuiz(e.target.value);
+              const nextQuizId = e.target.value;
+              setQuiz(nextQuizId);
               setQuestionCount(0);
+              const found = quizzes.data.find((q) => q.id === nextQuizId);
+              const cnt = found?.questions?.length ?? found?.count ?? 25;
+              setDurationMinutes(suggestMinutes(cnt));
             }}
           >
             <option value="">Chọn bộ quiz đã xuất bản</option>
@@ -222,7 +235,13 @@ function RoomsAdmin() {
             <select
               value={questionCount}
               disabled={busy || !quiz}
-              onChange={(e) => setQuestionCount(Number(e.target.value))}
+              onChange={(e) => {
+                const nextCount = Number(e.target.value);
+                setQuestionCount(nextCount);
+                setDurationMinutes(
+                  suggestMinutes(nextCount || availableCount || 25),
+                );
+              }}
               aria-describedby="room-question-count-help"
             >
               <option value={0}>
@@ -251,35 +270,100 @@ function RoomsAdmin() {
           <div>
             <label className="checkbox">
               <input
-                type="checkbox"
-                checked={untimed}
-                onChange={(e) => setUntimed(e.target.checked)}
-                aria-describedby="untimed-help"
+                type="radio"
+                name="room-mode"
+                checked={mode === "EXAM"}
+                onChange={() => setMode("EXAM")}
               />
-              Không giới hạn thời gian trả lời
+              Làm cả đề tự động theo giờ cài đặt (Không cần chủ trì)
             </label>
-            <p id="untimed-help" className="muted">
-              {untimed
-                ? "Người chơi đọc kỹ và trả lời theo nhịp của mình. Không có đồng hồ đếm ngược."
-                : "Mỗi câu dùng thời gian đã cấu hình trong bộ quiz."}
+            <p className="muted">
+              Phòng mở ngay khi tạo. Người chơi tự chọn đáp án cho toàn bộ câu
+              hỏi; đúng khi hết giờ hệ thống tự chốt bài, tính điểm, hiện thứ
+              hạng và lời giải chi tiết cho cả phòng.
             </p>
+            {mode === "EXAM" && (
+              <div className="room-duration-box">
+                <label>
+                  Thời gian mở phòng (phút)
+                  <div className="room-duration-row">
+                    <input
+                      type="number"
+                      min={1}
+                      max={180}
+                      required
+                      value={durationMinutes}
+                      onChange={(e) =>
+                        setDurationMinutes(Number(e.target.value))
+                      }
+                    />
+                    <div className="preset-pills">
+                      {[10, 15, 20, 30, 45, 60].map((m) => (
+                        <button
+                          key={m}
+                          type="button"
+                          className={`button small ${durationMinutes === m ? "" : "outline"}`}
+                          onClick={() => setDurationMinutes(m)}
+                        >
+                          {m} phút
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </label>
+              </div>
+            )}
           </div>
           <div>
             <label className="checkbox">
               <input
-                type="checkbox"
-                checked={advanceWhenReady}
-                onChange={(e) => setAdvanceWhenReady(e.target.checked)}
-                aria-describedby="ready-help"
+                type="radio"
+                name="room-mode"
+                checked={mode === "LIVE"}
+                onChange={() => setMode("LIVE")}
               />
-              Người chơi bấm chuyển câu sau lời giải
+              Chơi từng câu đồng bộ (Có chủ trì hoặc tự chuyển câu)
             </label>
-            <p id="ready-help" className="muted">
-              {advanceWhenReady
-                ? "Cả phòng chuyển khi tất cả người chơi bấm “Đã đọc xong”. Chơi một mình thì bấm là chuyển. Chủ trì vẫn có thể chuyển thủ công."
-                : "Chủ trì chuyển câu; nút “Đã đọc xong” của người chơi chỉ báo sẵn sàng."}
+            <p className="muted">
+              Đợi ở phòng chờ rồi đi lần lượt từng câu theo kiểu truyền thống.
             </p>
           </div>
+          {mode === "LIVE" && (
+            <>
+              <div>
+                <label className="checkbox">
+                  <input
+                    type="checkbox"
+                    checked={untimed}
+                    onChange={(e) => setUntimed(e.target.checked)}
+                    aria-describedby="untimed-help"
+                  />
+                  Không giới hạn thời gian trả lời
+                </label>
+                <p id="untimed-help" className="muted">
+                  {untimed
+                    ? "Người chơi đọc kỹ và trả lời theo nhịp của mình. Không có đồng hồ đếm ngược."
+                    : "Mỗi câu dùng thời gian đã cấu hình trong bộ quiz."}
+                </p>
+              </div>
+              <div>
+                <label className="checkbox">
+                  <input
+                    type="checkbox"
+                    checked={advanceWhenReady}
+                    onChange={(e) => setAdvanceWhenReady(e.target.checked)}
+                    aria-describedby="ready-help"
+                  />
+                  Người chơi bấm chuyển câu sau lời giải
+                </label>
+                <p id="ready-help" className="muted">
+                  {advanceWhenReady
+                    ? "Cả phòng chuyển khi tất cả người chơi bấm “Đã đọc xong”. Chơi một mình thì bấm là chuyển. Chủ trì vẫn có thể chuyển thủ công."
+                    : "Chủ trì chuyển câu; nút “Đã đọc xong” của người chơi chỉ báo sẵn sàng."}
+                </p>
+              </div>
+            </>
+          )}
         </fieldset>
         <button className="button" disabled={busy || !quiz}>
           <Plus size={18} />
@@ -297,6 +381,7 @@ function RoomsAdmin() {
               <tr>
                 <th>Mã phòng</th>
                 <th>Bộ quiz</th>
+                <th>Chế độ</th>
                 <th>Người chơi</th>
                 <th>Trạng thái</th>
                 <th />
@@ -310,6 +395,9 @@ function RoomsAdmin() {
                     <small>{date(r.createdAt)}</small>
                   </td>
                   <td>{r.title}</td>
+                  <td>
+                    {r.mode === "EXAM" ? "Làm cả đề tự động" : "Từng câu"}
+                  </td>
                   <td>{r.players}</td>
                   <td>
                     <span className="badge">{statusLabel(r.status)}</span>

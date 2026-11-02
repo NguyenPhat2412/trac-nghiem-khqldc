@@ -83,7 +83,7 @@ live=admin.call('/admin/rooms/'+loadcode+'/start','POST',{});questionid=live['qu
 def answer_one(pair):
  i,client=pair;t=time.perf_counter();client.call('/rooms/'+loadcode+'/answer','POST',{'questionId':questionid,'answer':i%4});return (time.perf_counter()-t)*1000
 with concurrent.futures.ThreadPoolExecutor(max_workers=100) as pool:latencies=list(pool.map(answer_one,enumerate(players)))
-loadresult=admin.call('/rooms/'+loadcode);check('100 concurrent submissions retained exactly once',loadresult['answered']==100 and loadresult['status']=='REVEAL' and len(loadresult['ranking'])==100)
+loadresult=admin.call('/rooms/'+loadcode);finishedload=admin.call('/admin/rooms/'+loadcode+'/finish','POST',{});check('100 concurrent submissions retained exactly once and ranking revealed only on finish',loadresult['answered']==100 and loadresult['status']=='REVEAL' and loadresult['ranking']==[] and len(finishedload['ranking'])==100)
 report={'passed':len(checks),'checks':checks,'load':{'players':100,'responses':100,'p50_ms':round(statistics.median(latencies),2),'p95_ms':round(sorted(latencies)[94],2),'max_ms':round(max(latencies),2)},'machine':platform.platform(),'timestamp':time.time()}
 with open('work/integration-results.json','w') as f:json.dump(report,f,ensure_ascii=False,indent=2)
 print(json.dumps(report['load']),flush=True)

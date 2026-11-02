@@ -82,6 +82,8 @@ export type Detail = {
 export type Room = {
   id: string;
   title: string;
+  mode?: "LIVE" | "EXAM";
+  durationSeconds?: number;
   status: string;
   host: boolean;
   untimed?: boolean;
@@ -97,10 +99,15 @@ export type Room = {
   early: boolean;
   current: number;
   count: number;
-  members: { id: string; name: string; shortId: string }[];
+  members: { id: string; name: string; shortId: string; submitted?: boolean }[];
   ranking: Rank[];
   question?: Question;
   myAnswer: number;
+  mySubmitted?: boolean;
+  submittedCount?: number;
+  examQuestions?: Question[];
+  examAnswers?: Record<string, number>;
+  examFlagged?: string[];
   myReady?: boolean;
   readyPlayers?: string[];
   answered: number;
@@ -126,6 +133,7 @@ export type Staff = {
 export type RoomSummary = {
   id: string;
   title: string;
+  mode?: "LIVE" | "EXAM";
   status: string;
   players: number;
   createdAt: number;

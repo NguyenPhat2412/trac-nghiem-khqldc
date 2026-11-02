@@ -81,7 +81,9 @@ public class Reports {
                 texts,
                 q,
                 Objects.equals(m.answers.get(q.id), q.correct),
-                m.times.getOrDefault(q.id, r.quiz.questionSeconds * 1000L));
+                "EXAM".equals(r.mode)
+                    ? -1
+                    : m.times.getOrDefault(q.id, r.quiz.questionSeconds * 1000L));
             chapters.merge(q.chapterId, 1L, Long::sum);
           }
     }

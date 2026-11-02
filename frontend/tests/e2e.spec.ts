@@ -159,6 +159,10 @@ test("admin content screens and synchronous multiplayer", async ({
   await page
     .getByRole("combobox", { name: "Bộ quiz", exact: true })
     .selectOption({ index: 1 });
+  await expect(
+    page.getByRole("spinbutton", { name: "Thời gian làm bài (phút)" }),
+  ).toBeVisible();
+  await page.getByText("Chơi từng câu đồng bộ", { exact: false }).click();
   await page.getByRole("button", { name: "Tạo phòng mới" }).click();
   await expect(page).toHaveURL(/\/room\//);
   const code = page.url().split("/").pop()!;
@@ -192,7 +196,7 @@ test("admin content screens and synchronous multiplayer", async ({
   ).toBeVisible();
   await expect(
     student.getByText("Thứ hạng hiện tại", { exact: true }),
-  ).toBeVisible();
+  ).toHaveCount(0);
   await student.screenshot({
     path: path.join(evidence, "mobile-live.png"),
     fullPage: true,

@@ -122,12 +122,38 @@ public class Api {
     return roomAnswers.submit(actor, code, in.questionId(), in.answer());
   }
 
+  @PutMapping("/rooms/{code}/exam-answer")
+  Object roomExamAnswer(@PathVariable String code, @RequestBody PracticeService.Answer in) {
+    var actor = Auth.actor();
+    auth.limit("room-exam-answer:" + actor.id(), 600);
+    return r.examAnswer(actor, code, in);
+  }
+
+  @PostMapping("/rooms/{code}/submit")
+  Object roomExamSubmit(@PathVariable String code) {
+    var actor = Auth.actor();
+    auth.limit("room-submit:" + actor.id(), 60);
+    return r.submitExam(actor, code);
+  }
+
   record CreateRoom(
-      String quizId, boolean untimed, boolean advanceWhenReady, Integer questionCount) {}
+      String quizId,
+      boolean untimed,
+      boolean advanceWhenReady,
+      Integer questionCount,
+      String mode,
+      Integer durationMinutes) {}
 
   @PostMapping("/admin/rooms")
   Object createRoom(@RequestBody CreateRoom b) {
-    return r.create(Auth.actor(), b.quizId(), b.untimed(), b.advanceWhenReady(), b.questionCount());
+    return r.create(
+        Auth.actor(),
+        b.quizId(),
+        b.untimed(),
+        b.advanceWhenReady(),
+        b.questionCount(),
+        b.mode(),
+        b.durationMinutes());
   }
 
   @PostMapping("/rooms/{code}/ready")
@@ -171,6 +197,8 @@ public class Api {
                     x.id,
                     "title",
                     x.title,
+                    "mode",
+                    x.mode == null ? "LIVE" : x.mode,
                     "status",
                     x.status,
                     "players",

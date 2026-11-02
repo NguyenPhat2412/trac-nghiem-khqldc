@@ -90,6 +90,15 @@ public class Store {
     rooms.history(room, playerId);
   }
 
+  public RoomPersistence.ExamProgress examProgress(String roomId, String playerId, boolean lock) {
+    return rooms.examProgress(roomId, playerId, lock);
+  }
+
+  public void saveExamProgress(
+      String roomId, String playerId, RoomPersistence.ExamProgress progress) {
+    rooms.saveExamProgress(roomId, playerId, progress);
+  }
+
   public void advanceRoom(Domain.Room room) {
     rooms.advance(room);
   }

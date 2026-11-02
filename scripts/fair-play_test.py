@@ -81,7 +81,8 @@ for p,v,answer in zip(players,views,answers):
     state=p.call('/rooms/'+code)
     assert state['myAnswer']==answer==state['question']['correct']
     assert state['distribution'][answer]==8 and sum(state['distribution'])==8
-check('Shuffled answers grade correctly and reveal matching distributions',all(x['score']==100 for x in state['ranking']))
-admin.call('/admin/rooms/'+code+'/finish',{})
+    assert state['ranking']==[]
+finished=admin.call('/admin/rooms/'+code+'/finish',{})
+check('Shuffled answers grade correctly after room finishes while hiding in-question ranking',len(finished['ranking'])==8 and all(x['score']==100 for x in finished['ranking']))
 check('Review retains each player answer layout',all(p.call('/rooms/'+code)['details'][0]['questions'][0]['answer']==answer for p,answer in zip(players,answers)))
 Path('work/fair-play-api-results.json').write_text(json.dumps({'passed':len(checks),'checks':checks},indent=2))

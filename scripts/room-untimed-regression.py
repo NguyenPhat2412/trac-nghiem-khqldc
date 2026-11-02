@@ -50,7 +50,7 @@ a.call(path+'/ready',{'questionId':qid},expected=400)
 outsider.call(path+'/answer',{'questionId':qid,'answer':0},expected=403)
 first=a.call(path+'/answer',{'questionId':qid,'answer':0});assert first['status']=='QUESTION' and 'correct' not in first['question']
 second=b.call(path+'/answer',{'questionId':qid,'answer':0});assert second['status']=='REVEAL'
-assert all(x['durationMs']>=86400000 for x in second['ranking'])
+assert second['ranking']==[]
 a.call(path+'/ready',{'questionId':qid});assert a.call(path)['status']=='REVEAL'
 print('PASS untimed survives restart and simulated 24-hour age; no expiry/key leak, late-in-clock answers accepted, own readiness only',flush=True)
 host.call('/admin/rooms/'+code+'/next',{})

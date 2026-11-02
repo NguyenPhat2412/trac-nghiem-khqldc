@@ -72,6 +72,7 @@ export const statusLabel = (s: string) =>
     PUBLISHED: "Đã xuất bản",
     ARCHIVED: "Đã ẩn",
     LOBBY: "Đang chờ",
+    OPEN: "Đang mở thi",
     QUESTION: "Đang trả lời",
     REVEAL: "Xem đáp án",
     FINISHED: "Đã kết thúc",

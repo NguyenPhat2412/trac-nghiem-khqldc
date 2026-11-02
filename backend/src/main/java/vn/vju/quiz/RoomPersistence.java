@@ -21,6 +21,13 @@ final class RoomPersistence {
   private final LinkedHashMap<String, Snapshot> snapshots = new LinkedHashMap<>(16, .75f, true);
   private long cacheWeight;
 
+  @JsonIgnoreProperties(ignoreUnknown = true)
+  static final class ExamProgress {
+    public Map<String, Integer> answers = new LinkedHashMap<>();
+    public Map<String, Long> times = new LinkedHashMap<>();
+    public Set<String> flagged = new LinkedHashSet<>();
+  }
+
   private record Snapshot(Quiz quiz, long weight) {}
 
   RoomPersistence(JdbcTemplate db, ObjectMapper json) {
@@ -103,7 +110,7 @@ final class RoomPersistence {
     // The winner commits the transition; other readers see committed state and its event.
     var rows =
         db.queryForList(
-            "select data::text from rooms where id=? and data->>'status'='QUESTION' and"
+            "select data::text from rooms where id=? and data->>'status' in ('QUESTION','OPEN') and"
                 + " (data->>'deadline')::bigint>0 and (data->>'deadline')::bigint<=? for update"
                 + " skip locked",
             String.class,
@@ -185,13 +192,46 @@ final class RoomPersistence {
     }
   }
 
+  ExamProgress examProgress(String roomId, String playerId, boolean lock) {
+    if (lock) {
+      db.update(
+          "insert into room_history(room_id,player_id,data) values (?,?,'{}'::jsonb) "
+              + "on conflict(room_id,player_id) do nothing",
+          roomId,
+          playerId);
+    }
+    var rows =
+        db.queryForList(
+            "select data::text from room_history where room_id=? and player_id=?"
+                + (lock ? " for update" : ""),
+            String.class,
+            roomId,
+            playerId);
+    return rows.isEmpty() ? new ExamProgress() : read(rows.getFirst(), ExamProgress.class);
+  }
+
+  void saveExamProgress(String roomId, String playerId, ExamProgress progress) {
+    db.update(
+        "insert into room_history(room_id,player_id,data) values (?,?,?::jsonb) "
+            + "on conflict(room_id,player_id) do update set data=excluded.data",
+        roomId,
+        playerId,
+        write(progress));
+  }
+
   void save(Room room) {
     if (!room.compact) {
       String raw = write(room.quiz);
       db.update("insert into room_snapshots(room_id,data) values (?,?::jsonb)", room.id, raw);
-      archive(room);
+      if (!"EXAM".equals(room.mode)) archive(room);
       compactLegacy(room);
       cacheAfterCommit(room.id, raw);
+    }
+    if ("EXAM".equals(room.mode)) {
+      for (Member m : room.members.values()) {
+        m.answers.clear();
+        m.times.clear();
+      }
     }
     try {
       db.update(

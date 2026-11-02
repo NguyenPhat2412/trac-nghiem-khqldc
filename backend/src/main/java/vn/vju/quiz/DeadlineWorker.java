@@ -25,7 +25,7 @@ public class DeadlineWorker {
     long now = System.currentTimeMillis();
     for (String id :
         s.db.queryForList(
-            "select id from rooms where data->>'status'='QUESTION' and"
+            "select id from rooms where data->>'status' in ('QUESTION','OPEN') and"
                 + " (data->>'deadline')::bigint>0 and (data->>'deadline')::bigint<=?",
             String.class,
             now)) rooms.tick(id);
