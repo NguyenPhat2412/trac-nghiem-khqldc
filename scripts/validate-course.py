@@ -33,12 +33,14 @@ def validate(source):
         assert type(q["correct"]) is int and 0 <= q["correct"] < 4, prefix
         assert q["difficulty"] in {"EASY", "MEDIUM", "HARD"}, prefix
         assert q["explanation"].strip() and len(q["explanation"]) <= 4000, prefix
-        assert q["source"] in {"blooket", "csv-nhom7", "textbook-authored", "textbook-2019-expanded"}, prefix
+        assert q["source"] in {"blooket", "csv-nhom7", "bo-cau-hoi-ch5", "textbook-authored", "textbook-2019-expanded"}, prefix
         for value in [q["text"], q["explanation"], *q["options"]]:
             assert not any(any(script in unicodedata.name(char, "") for script in
                                ("HEBREW", "ARABIC", "CYRILLIC", "CJK")) for char in value), f"Unexpected script: {prefix}"
-        if q["source"] == "textbook-2019-expanded":
+        if q["source"] in {"textbook-2019-expanded", "bo-cau-hoi-ch5"}:
             assert q.get("topic") and q.get("sourcePages"), prefix
+            if q["source"] == "bo-cau-hoi-ch5":
+                assert 1 <= q.get("sourceQuestion", 0) <= 25, prefix
             pages = [int(p) for p in re.findall(r"\d+", q["sourcePages"])]
             low, high = bounds[q["chapter"]]
             assert pages and all(low <= p <= high for p in pages), f"Page outside chapter: {prefix}"

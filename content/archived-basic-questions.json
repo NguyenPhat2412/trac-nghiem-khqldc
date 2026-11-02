@@ -1,5 +1,5 @@
 {
-  "reason": "Bốn câu ôn tập cơ bản có nội dung gần trùng bộ CSV Nhóm 7; lưu trữ để giữ lịch sử, thay bằng câu về ra quyết định trong ngân hàng 100 câu/chương.",
+  "reason": "Lưu trữ các câu tự biên soạn có nội dung gần trùng với bộ câu hỏi chuyên đề được bổ sung (4 câu Chương 3 gần trùng CSV Nhóm 7; 25 câu Chương 5 gần trùng Bộ 25 câu Chức năng lãnh đạo) để giữ lịch sử các lượt làm cũ và duy trì đúng 100 câu xuất bản mỗi chương.",
   "questions": [
     {
       "chapter": 3,
@@ -60,6 +60,404 @@
       "source": "textbook-authored",
       "page": 89,
       "difficulty": "EASY"
+    },
+    {
+      "chapter": 5,
+      "text": "Trọng tâm của chức năng lãnh đạo là gì?",
+      "options": [
+        "Gây ảnh hưởng và tạo động lực để con người thực hiện mục tiêu chung",
+        "Chỉ ban hành sơ đồ tổ chức",
+        "Chỉ kiểm kê tài sản",
+        "Chỉ lập bảng dự toán chi phí"
+      ],
+      "correct": 0,
+      "explanation": "Lãnh đạo tác động đến hành vi và sự nỗ lực của con người trong quá trình thực hiện nhiệm vụ.\nTự biên soạn theo Giáo trình Khoa học quản lý đại cương (2019), trang in 174. Không phải câu trích nguyên văn hoặc đáp án thi chính thức.",
+      "source": "textbook-authored",
+      "page": 174,
+      "difficulty": "EASY"
+    },
+    {
+      "chapter": 5,
+      "text": "Ảnh hưởng không chính thức của một người có thể xuất phát từ đâu?",
+      "options": [
+        "Chỉ từ quyết định bổ nhiệm",
+        "Chỉ từ quyền ký văn bản pháp lý",
+        "Chỉ từ cấp bậc ghi trên sơ đồ",
+        "Uy tín của người đó đối với cá nhân hoặc nhóm"
+      ],
+      "correct": 3,
+      "explanation": "Giáo trình phân biệt ảnh hưởng theo vị trí chính thức và ảnh hưởng nhờ uy tín trong nhóm.\nTự biên soạn theo Giáo trình Khoa học quản lý đại cương (2019), trang in 175. Không phải câu trích nguyên văn hoặc đáp án thi chính thức.",
+      "source": "textbook-authored",
+      "page": 175,
+      "difficulty": "EASY"
+    },
+    {
+      "chapter": 5,
+      "text": "Ảnh hưởng chính thức của người quản lý gắn trước hết với điều gì?",
+      "options": [
+        "Vị trí và thẩm quyền trong cơ cấu",
+        "Mức tín nhiệm tự phát của đồng nghiệp",
+        "Quan hệ thân thiết trong nhóm không chính thức",
+        "Sự ngưỡng mộ cá nhân ngoài hệ thống chức vụ"
+      ],
+      "correct": 0,
+      "explanation": "Ảnh hưởng chính thức đi cùng vị trí quản lý và thẩm quyền được tổ chức xác lập. Tự biên soạn theo giáo trình Khoa học quản lý đại cương (2019), tr. 175.",
+      "difficulty": "EASY",
+      "source": "textbook-2019-expanded",
+      "sourcePages": "175",
+      "topic": "Đặc trưng lãnh đạo"
+    },
+    {
+      "chapter": 5,
+      "text": "Vì sao lãnh đạo được xem là biểu hiện của nghệ thuật quản lý?",
+      "options": [
+        "Quyết định về con người chỉ cần trực giác",
+        "Tác động con người cần linh hoạt và sáng tạo",
+        "Nhu cầu con người luôn giữ nguyên qua thời gian",
+        "Một công thức tác động phù hợp mọi nhân viên"
+      ],
+      "correct": 1,
+      "explanation": "Nhu cầu, động cơ thay đổi nên quyết định cần kết hợp phân tích, kinh nghiệm và trách nhiệm. Tự biên soạn theo giáo trình Khoa học quản lý đại cương (2019), tr. 176.",
+      "difficulty": "MEDIUM",
+      "source": "textbook-2019-expanded",
+      "sourcePages": "176",
+      "topic": "Đặc trưng lãnh đạo"
+    },
+    {
+      "chapter": 5,
+      "text": "Lý thuyết quản lý tổng hợp và thích nghi nhấn mạnh điều gì về lãnh đạo?",
+      "options": [
+        "Thích ứng với hoàn cảnh khác nhau",
+        "Duy trì một cách tác động bất biến",
+        "Tách lãnh đạo khỏi tình huống",
+        "Chỉ dựa vào cấp bậc chức vụ"
+      ],
+      "correct": 0,
+      "explanation": "Cách tiếp cận này đề cao sự thích ứng của chức năng lãnh đạo với hoàn cảnh. Tự biên soạn theo giáo trình Khoa học quản lý đại cương (2019), tr. 175.",
+      "difficulty": "MEDIUM",
+      "source": "textbook-2019-expanded",
+      "sourcePages": "175",
+      "topic": "Các cách tiếp cận lãnh đạo"
+    },
+    {
+      "chapter": 5,
+      "text": "Kế hoạch và cơ cấu đã rõ nhưng nhân viên không muốn thực hiện. Kết luận nào phù hợp?",
+      "options": [
+        "Kiểm tra có thể thay hoàn toàn lãnh đạo",
+        "Cần lãnh đạo khơi dậy động lực thực hiện",
+        "Chỉ cần in thêm bản kế hoạch",
+        "Cơ cấu tự bảo đảm mọi nỗ lực"
+      ],
+      "correct": 1,
+      "explanation": "Tình huống vận dụng tự biên soạn. Kế hoạch, tổ chức và kiểm tra cần được hỗ trợ bằng sự hiểu biết và tác động đến con người. Tự biên soạn theo giáo trình Khoa học quản lý đại cương (2019), tr. 177.",
+      "difficulty": "MEDIUM",
+      "source": "textbook-2019-expanded",
+      "sourcePages": "177",
+      "topic": "Lãnh đạo và chức năng khác"
+    },
+    {
+      "chapter": 5,
+      "text": "Điểm xuất phát của quá trình hình thành động lực là gì?",
+      "options": [
+        "Kết quả đánh giá đã công bố",
+        "Nhu cầu cần được thỏa mãn",
+        "Bản báo cáo đã hoàn tất",
+        "Một chức danh quản lý mới"
+      ],
+      "correct": 1,
+      "explanation": "Mong muốn thỏa mãn nhu cầu tạo ra sự thôi thúc hành động. Tự biên soạn theo giáo trình Khoa học quản lý đại cương (2019), tr. 180–181.",
+      "difficulty": "EASY",
+      "source": "textbook-2019-expanded",
+      "sourcePages": "180–181",
+      "topic": "Hình thành động lực"
+    },
+    {
+      "chapter": 5,
+      "text": "Nhân viên mới muốn được tập thể chấp nhận là thành viên. Nhu cầu nào được thể hiện?",
+      "options": [
+        "Sinh lý",
+        "An toàn tài sản",
+        "Tự khẳng định",
+        "Xã hội"
+      ],
+      "correct": 3,
+      "explanation": "Tình huống vận dụng tự biên soạn. Nhu cầu xã hội gồm tham gia quan hệ và được người khác chấp nhận là thành viên. Tự biên soạn theo giáo trình Khoa học quản lý đại cương (2019), tr. 182.",
+      "difficulty": "EASY",
+      "source": "textbook-2019-expanded",
+      "sourcePages": "182",
+      "topic": "Các dạng nhu cầu"
+    },
+    {
+      "chapter": 5,
+      "text": "Nhân viên muốn đạt mức thành tích cao nhất và phát huy tối đa bản thân. Nhóm nhu cầu nào phù hợp?",
+      "options": [
+        "Được tham gia nhóm",
+        "Tự khẳng định",
+        "Sinh lý",
+        "An toàn việc làm"
+      ],
+      "correct": 1,
+      "explanation": "Tình huống vận dụng tự biên soạn. Theo giáo trình, tự khẳng định là mong muốn đạt tối đa thành tích và hoàn thành mục tiêu. Tự biên soạn theo giáo trình Khoa học quản lý đại cương (2019), tr. 182.",
+      "difficulty": "MEDIUM",
+      "source": "textbook-2019-expanded",
+      "sourcePages": "182",
+      "topic": "Các dạng nhu cầu"
+    },
+    {
+      "chapter": 5,
+      "text": "Nhóm nào bao quát các thành phần thu nhập nêu trong chương?",
+      "options": [
+        "Lương, trợ cấp, chức danh và quyền lực",
+        "Thưởng, thâm niên, văn hóa và tín nhiệm",
+        "Lương, phụ cấp, thưởng và phúc lợi",
+        "Phúc lợi, phản hồi, đào tạo và tham gia"
+      ],
+      "correct": 2,
+      "explanation": "Giáo trình liệt kê bốn thành phần thu nhập, trong đó tiền lương chiếm tỷ trọng lớn nhất. Tự biên soạn theo giáo trình Khoa học quản lý đại cương (2019), tr. 184.",
+      "difficulty": "EASY",
+      "source": "textbook-2019-expanded",
+      "sourcePages": "184",
+      "topic": "Chính sách nhân lực"
+    },
+    {
+      "chapter": 5,
+      "text": "Một nhóm cùng lắp ráp thiết bị, kết quả cần phối hợp cả nhóm. Hình thức lương nào phù hợp nhất?",
+      "options": [
+        "Theo số người báo cáo trực tiếp",
+        "Theo cổ phần từng khách hàng nắm giữ",
+        "Theo sản phẩm của nhóm",
+        "Theo sản phẩm gián tiếp của công nhân phụ"
+      ],
+      "correct": 2,
+      "explanation": "Tình huống vận dụng tự biên soạn. Công việc cần nhiều người phối hợp như lắp ráp, dây chuyền phù hợp trả theo sản phẩm nhóm. Tự biên soạn theo giáo trình Khoa học quản lý đại cương (2019), tr. 186.",
+      "difficulty": "MEDIUM",
+      "source": "textbook-2019-expanded",
+      "sourcePages": "186",
+      "topic": "Trả lương theo sản phẩm"
+    },
+    {
+      "chapter": 5,
+      "text": "Thợ điều chỉnh máy hỗ trợ kết quả của công nhân sản xuất chính. Hình thức nào giáo trình nêu cho trường hợp này?",
+      "options": [
+        "Theo sản phẩm trực tiếp cá nhân của thợ",
+        "Chia lãi bằng cổ phiếu",
+        "Thưởng chức danh cuối năm",
+        "Theo sản phẩm gián tiếp"
+      ],
+      "correct": 3,
+      "explanation": "Tình huống vận dụng tự biên soạn. Lương sản phẩm gián tiếp áp dụng cho công nhân phụ có ảnh hưởng kết quả công nhân chính. Tự biên soạn theo giáo trình Khoa học quản lý đại cương (2019), tr. 186.",
+      "difficulty": "MEDIUM",
+      "source": "textbook-2019-expanded",
+      "sourcePages": "186",
+      "topic": "Trả lương theo sản phẩm"
+    },
+    {
+      "chapter": 5,
+      "text": "Theo cách phân biệt trong giáo trình, phúc lợi khác thưởng ở điểm nào?",
+      "options": [
+        "Chỉ dành cho người vượt chỉ tiêu tháng",
+        "Dành giống nhau cho thành viên dù đóng góp khác nhau",
+        "Luôn căn cứ riêng từng sản phẩm vừa nghiệm thu",
+        "Chỉ dành cho người đứng đầu"
+      ],
+      "correct": 1,
+      "explanation": "Giáo trình phân biệt phúc lợi dành cho mọi thành viên với thưởng gắn đóng góp cụ thể. Tự biên soạn theo giáo trình Khoa học quản lý đại cương (2019), tr. 187.",
+      "difficulty": "MEDIUM",
+      "source": "textbook-2019-expanded",
+      "sourcePages": "187",
+      "topic": "Chính sách phúc lợi"
+    },
+    {
+      "chapter": 5,
+      "text": "Ngân sách tăng lương hạn chế nhưng lãnh đạo muốn giữ động lực. Bước nào nên ưu tiên?",
+      "options": [
+        "Hứa thưởng lớn mà không có khả năng thực hiện",
+        "Cắt mọi trao đổi về kỳ vọng của nhân viên",
+        "Tìm cách quan tâm phù hợp nhu cầu nhân viên",
+        "Giả định nhân viên không cần được ghi nhận"
+      ],
+      "correct": 2,
+      "explanation": "Tình huống vận dụng tự biên soạn. Giáo trình nhấn mạnh hiểu nhân viên và dùng phần thưởng phù hợp, không nhất thiết quá tốn kém. Tự biên soạn theo giáo trình Khoa học quản lý đại cương (2019), tr. 190–191.",
+      "difficulty": "MEDIUM",
+      "source": "textbook-2019-expanded",
+      "sourcePages": "190–191",
+      "topic": "Quan tâm nhân viên"
+    },
+    {
+      "chapter": 5,
+      "text": "Ba cơ sở của MBO được nêu là gì?",
+      "options": [
+        "Mục tiêu, mệnh lệnh một chiều và giám sát liên tục",
+        "Chỉ tiêu chung, thâm niên và đánh giá cảm tính",
+        "Ngân sách, cơ cấu phòng ban và đơn giá lao động",
+        "Mục tiêu, phản hồi và sự tham gia"
+      ],
+      "correct": 3,
+      "explanation": "MBO xây dựng trên xác định mục tiêu, thông tin phản hồi và mọi cá nhân tham gia. Tự biên soạn theo giáo trình Khoa học quản lý đại cương (2019), tr. 191.",
+      "difficulty": "EASY",
+      "source": "textbook-2019-expanded",
+      "sourcePages": "191",
+      "topic": "Quản lý theo mục tiêu"
+    },
+    {
+      "chapter": 5,
+      "text": "Mục tiêu cá nhân chỉ ghi “cố gắng tốt hơn”. Cần bổ sung điều gì để phù hợp MBO?",
+      "options": [
+        "Kết quả cụ thể và có thể đo lường",
+        "Một yêu cầu chung về tinh thần trách nhiệm",
+        "Một danh sách thao tác không có kết quả đầu ra",
+        "Một khẩu hiệu khuyến khích không có tiêu chí"
+      ],
+      "correct": 0,
+      "explanation": "Tình huống vận dụng tự biên soạn. MBO đặt mục tiêu cụ thể, đo được và định kỳ xem lại tiến bộ của nhân viên. Tự biên soạn theo giáo trình Khoa học quản lý đại cương (2019), tr. 191.",
+      "difficulty": "MEDIUM",
+      "source": "textbook-2019-expanded",
+      "sourcePages": "191",
+      "topic": "Quản lý theo mục tiêu"
+    },
+    {
+      "chapter": 5,
+      "text": "Nhân viên phải xin ý kiến về mọi chi tiết quen thuộc. Biện pháp làm phong phú nào phù hợp?",
+      "options": [
+        "Tăng số lần xin phép bằng văn bản",
+        "Giảm khả năng tự lựa chọn cách làm",
+        "Chuyển mọi quyết định về cấp cao nhất",
+        "Cho thêm quyền giải quyết trong phạm vi nhiệm vụ"
+      ],
+      "correct": 3,
+      "explanation": "Tình huống vận dụng tự biên soạn. Trao quyền, phân cấp tạo sự tự do hơn khi giải quyết vấn đề của công việc. Tự biên soạn theo giáo trình Khoa học quản lý đại cương (2019), tr. 192.",
+      "difficulty": "MEDIUM",
+      "source": "textbook-2019-expanded",
+      "sourcePages": "192",
+      "topic": "Làm phong phú công việc"
+    },
+    {
+      "chapter": 5,
+      "text": "Hai nhóm yếu tố được nêu ảnh hưởng mạnh đến lựa chọn phong cách là gì?",
+      "options": [
+        "Cấp bậc và số lượng phòng ban",
+        "Đơn giá lao động và tỷ lệ phúc lợi",
+        "Cá tính và hoàn cảnh tình huống",
+        "Mục tiêu doanh thu và định mức nguyên liệu"
+      ],
+      "correct": 2,
+      "explanation": "Lựa chọn phong cách phụ thuộc cá tính và hoàn cảnh, đồng thời xét mục tiêu và nhân lực. Tự biên soạn theo giáo trình Khoa học quản lý đại cương (2019), tr. 192–193.",
+      "difficulty": "MEDIUM",
+      "source": "textbook-2019-expanded",
+      "sourcePages": "192–193",
+      "topic": "Lựa chọn phong cách"
+    },
+    {
+      "chapter": 5,
+      "text": "Lãnh đạo trao đổi hai chiều và cho nhân viên tham gia quyết định phân việc. Phong cách nào nổi bật?",
+      "options": [
+        "Chuyên quyền",
+        "Tự do hoàn toàn",
+        "Quản lý suy giảm",
+        "Dân chủ"
+      ],
+      "correct": 3,
+      "explanation": "Tình huống vận dụng tự biên soạn. Giao tiếp hai chiều và quyết định có sự tham gia là đặc điểm phong cách dân chủ. Tự biên soạn theo giáo trình Khoa học quản lý đại cương (2019), tr. 193.",
+      "difficulty": "MEDIUM",
+      "source": "textbook-2019-expanded",
+      "sourcePages": "193",
+      "topic": "Phong cách dân chủ"
+    },
+    {
+      "chapter": 5,
+      "text": "Nhóm thảo luận rộng để đạt cam kết nhưng tiến trình quyết định kéo dài. Đây là đánh đổi nào?",
+      "options": [
+        "Ít trao đổi nhưng chi phí thông tin tăng",
+        "Tham gia cao nhưng tốn thời gian",
+        "Chính xác cao nhưng không cần giao tiếp",
+        "Tự do cao nhưng lãnh đạo giữ mọi quyền"
+      ],
+      "correct": 1,
+      "explanation": "Tình huống vận dụng tự biên soạn. Tốn thời gian là điểm yếu giáo trình nêu cho phong cách dân chủ. Tự biên soạn theo giáo trình Khoa học quản lý đại cương (2019), tr. 193.",
+      "difficulty": "MEDIUM",
+      "source": "textbook-2019-expanded",
+      "sourcePages": "193",
+      "topic": "Phong cách dân chủ"
+    },
+    {
+      "chapter": 5,
+      "text": "Nhân viên mới chưa biết cách làm nhiệm vụ. Phong cách nào phù hợp để chỉ cách làm và giám sát chặt?",
+      "options": [
+        "Ủy quyền",
+        "Hỗ trợ ít chỉ dẫn",
+        "Tự do hoàn toàn",
+        "Hướng dẫn"
+      ],
+      "correct": 3,
+      "explanation": "Tình huống vận dụng tự biên soạn. Hướng dẫn phù hợp người mới hoặc thực hiện chưa tốt, cần chỉ dẫn cụ thể và kiểm tra chặt. Tự biên soạn theo giáo trình Khoa học quản lý đại cương (2019), tr. 194–195.",
+      "difficulty": "MEDIUM",
+      "source": "textbook-2019-expanded",
+      "sourcePages": "194–195",
+      "topic": "Phong cách hướng dẫn"
+    },
+    {
+      "chapter": 5,
+      "text": "Nhân viên có năng lực nhưng thiếu tự tin. Lãnh đạo nên làm gì theo phong cách hỗ trợ?",
+      "options": [
+        "Chỉ dẫn mọi thao tác dù họ đã thành thạo",
+        "Rút khỏi mọi trao đổi ngay lập tức",
+        "Bàn khó khăn và khuyến khích họ tự giải quyết",
+        "Làm thay toàn bộ phần việc"
+      ],
+      "correct": 2,
+      "explanation": "Tình huống vận dụng tự biên soạn. Hỗ trợ giúp nhân viên tăng độc lập, tự tin mà người quản lý không làm thay. Tự biên soạn theo giáo trình Khoa học quản lý đại cương (2019), tr. 194–195.",
+      "difficulty": "MEDIUM",
+      "source": "textbook-2019-expanded",
+      "sourcePages": "194–195",
+      "topic": "Phong cách hỗ trợ"
+    },
+    {
+      "chapter": 5,
+      "text": "Hai chiều của ô bàn cờ quản lý biểu thị điều gì?",
+      "options": [
+        "Thu nhập cá nhân và số năm làm việc",
+        "Chi phí quảng cáo và số khách hàng",
+        "Quan tâm con người và quan tâm sản xuất",
+        "Tầm quản lý và số tầng bậc"
+      ],
+      "correct": 2,
+      "explanation": "Ô bàn cờ mô tả mức quan tâm con người và mức quan tâm kết quả sản xuất, công việc. Tự biên soạn theo giáo trình Khoa học quản lý đại cương (2019), tr. 196–197.",
+      "difficulty": "EASY",
+      "source": "textbook-2019-expanded",
+      "sourcePages": "196–197",
+      "topic": "Ô bàn cờ quản lý"
+    },
+    {
+      "chapter": 5,
+      "text": "Quản lý chỉ nhấn mạnh sản lượng và ít quan tâm nhân viên. Vị trí nào phù hợp?",
+      "options": [
+        "9.9",
+        "1.1",
+        "9.1",
+        "1.9"
+      ],
+      "correct": 2,
+      "explanation": "Tình huống vận dụng tự biên soạn. Phong cách 9.1 là chuyên quyền công việc, quan tâm kết quả cao và con người thấp. Tự biên soạn theo giáo trình Khoa học quản lý đại cương (2019), tr. 197.",
+      "difficulty": "MEDIUM",
+      "source": "textbook-2019-expanded",
+      "sourcePages": "197",
+      "topic": "Ô bàn cờ quản lý"
+    },
+    {
+      "chapter": 5,
+      "text": "Một chính sách nhân lực áp dụng cứng cho mọi nhóm, bất kể công việc và văn hóa. Hướng cải thiện nào phù hợp nhất?",
+      "options": [
+        "Giữ nguyên vì một cách luôn hiệu quả",
+        "Chỉ tăng thưởng tiền cho mọi người bằng nhau",
+        "Bỏ tìm hiểu con người để giảm thời gian",
+        "Đa dạng chính sách và điều chỉnh cách lãnh đạo"
+      ],
+      "correct": 3,
+      "explanation": "Tình huống vận dụng tự biên soạn. Phương thức tác động cần toàn diện, đa dạng và phù hợp người lao động, công việc, văn hóa tổ chức. Tự biên soạn theo giáo trình Khoa học quản lý đại cương (2019), tr. 198.",
+      "difficulty": "HARD",
+      "source": "textbook-2019-expanded",
+      "sourcePages": "198",
+      "topic": "Nâng cao hiệu quả lãnh đạo"
     }
   ]
 }

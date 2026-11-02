@@ -75,6 +75,8 @@ for n, quiz in enumerate(current, 1):
 check('Eight published quiz versions contain exactly their chapter’s 100 questions', True)
 group = next(q for q in quizzes if q['title'] == 'Nhóm 7 · Lập kế hoạch · 50 câu' and q['status'] == 'PUBLISHED')
 check('The separate original CSV quiz still has 50 questions', len(group['questions']) == 50)
+ch5_set = next(q for q in quizzes if q['title'] == 'Chương 5 · Chức năng lãnh đạo · 25 câu' and q['status'] == 'PUBLISHED')
+check('The dedicated Chapter 5 review quiz has 25 questions', len(ch5_set['questions']) == 25 and ch5_set['timeLimitSeconds'] == 1000)
 before_path = ROOT / 'work/course-before-800.json'
 if before_path.exists():
     before = json.loads(before_path.read_text())

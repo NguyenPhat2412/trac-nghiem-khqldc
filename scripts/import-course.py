@@ -39,6 +39,7 @@ for n, title in enumerate(source['chapters'], 1):
     description = ('100 câu ôn tập · ' +
                    ('Gồm câu Blooket được cung cấp và câu tự biên soạn theo giáo trình 2019.' if n < 3 else
                     '50 câu CSV Nhóm 7 về lập kế hoạch và 50 câu tự biên soạn về ra quyết định.' if n == 3 else
+                    '25 câu bộ ôn tập Chức năng lãnh đạo và 75 câu tự biên soạn theo giáo trình 2019.' if n == 5 else
                     'Tự biên soạn theo giáo trình 2019, có lời giải và trang tham khảo.'))
     chapter = existing or call('/admin/chapters', {
         'title': title, 'position': n, 'status': 'PUBLISHED',
@@ -89,12 +90,32 @@ if not any(q['title'] == group_title and q['status'] == 'PUBLISHED' for q in qui
         'status': 'PUBLISHED', 'questionIds': group_ids, 'timeLimitSeconds': 2000,
         'questionSeconds': 30, 'shuffle': True})
 
-# Archive four superseded basic questions only after replacement quizzes were published.
+ch5_quiz_title = 'Chương 5 · Chức năng lãnh đạo · 25 câu'
+ch5_by_text = {q['text']: q['id'] for q in all_questions if q['chapterId'] == chapter_ids[5] and q['status'] == 'PUBLISHED'}
+ch5_source_qs = sorted((q for q in source['questions'] if q['source'] == 'bo-cau-hoi-ch5'), key=lambda q: q['sourceQuestion'])
+ch5_ids = [ch5_by_text[q['text']] for q in ch5_source_qs if q['text'] in ch5_by_text]
+assert len(ch5_ids) == 25, 'Bộ Chương 5 · 25 câu cần đủ 25 câu trước khi xuất bản'
+ch5_desc = '25 câu ôn tập Chương 5 (10 dễ · 5 trung bình · 5 khó · 5 vận dụng) · Nguồn: Giáo trình Khoa học quản lý đại cương (2019), tr.172–198.'
+current_ch5 = next((q for q in quizzes if q['title'] == ch5_quiz_title and q['status'] == 'PUBLISHED'), None)
+snapshot_fields = ('text', 'options', 'correct', 'explanation', 'difficulty', 'imageUrl')
+ch5_snapshot_ok = current_ch5 and [q['id'] for q in current_ch5['questions']] == ch5_ids and all(
+    q['id'] in questions_by_id and all(q[field] == questions_by_id[q['id']][field] for field in snapshot_fields)
+    for q in current_ch5['questions'])
+if not (current_ch5 and current_ch5['description'] == ch5_desc and ch5_snapshot_ok):
+    prev_ch5 = max((q for q in quizzes if q['title'] == ch5_quiz_title), key=lambda q: q['version'], default=None)
+    call('/admin/quizzes' + ('/' + prev_ch5['id'] if prev_ch5 else ''), {'title': ch5_quiz_title,
+        'description': ch5_desc,
+        'status': 'PUBLISHED', 'questionIds': ch5_ids, 'timeLimitSeconds': 1000,
+        'questionSeconds': 30, 'shuffle': True}, 'PUT' if prev_ch5 else 'POST')
+
+# Archive superseded basic/expanded questions only after replacement quizzes were published.
 archive = json.loads((root / 'content/archived-basic-questions.json').read_text())
 superseded = {(chapter_ids[q['chapter']], q['text']) for q in archive['questions']}
-for q in existing_questions:
+archived_now = 0
+for q in all_questions:
     if (q['chapterId'], q['text']) in superseded and q['status'] != 'ARCHIVED':
         call('/admin/questions/' + q['id'], q | {'status': 'ARCHIVED'}, 'PUT')
+        archived_now += 1
 
 # Archive only the original, explicitly labelled demo content, after successful import.
 demo = {c['id'] for c in old_chapters if c['description'] == 'Dữ liệu minh họa · Cần đối chiếu giáo trình trước khi sử dụng chính thức.'}
@@ -111,11 +132,13 @@ for q in existing_questions:
     if q['chapterId'] in demo:
         call('/admin/questions/' + q['id'], q | {'status': 'ARCHIVED'}, 'PUT')
 catalog = call('/catalog')
-result = {'chapters': len(chapter_ids), 'importedNow': len(pending),
+result = {'chapters': len(chapter_ids), 'importedNow': len(pending), 'archivedNow': archived_now,
+          'publishedQuizzes': len(catalog['quizzes']),
           'courseQuestions': sum(c['count'] for c in catalog['chapters'] if c['id'] in chapter_ids.values()),
           'chapterCounts': {n: next(c['count'] for c in catalog['chapters'] if c['id'] == chapter_ids[n]) for n in chapter_ids},
           'chapterIds': chapter_ids}
 assert result['courseQuestions'] == 800 and all(v == 100 for v in result['chapterCounts'].values()), result
+assert result['publishedQuizzes'] >= 10, result
 (root / 'work').mkdir(exist_ok=True)
 (root / 'work/course-import.json').write_text(json.dumps(result, ensure_ascii=False, indent=2))
 call('/auth/logout', {})
